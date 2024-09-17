@@ -1,30 +1,24 @@
 import React, { useState } from 'react';
-import { TextField, Button, Box, Checkbox, FormControlLabel, Typography, Divider } from '@mui/material';
-import Select from '@mui/material/Select';
-import MenuItem from '@mui/material/MenuItem';
-import InputLabel from '@mui/material/InputLabel';
-import FormControl from '@mui/material/FormControl';
+import { TextField, Button, Box, Checkbox, FormControlLabel, Typography, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
 
 const Registro = () => {
   const [formData, setFormData] = useState({
     nombreUsuario: '',
-    nombre:'',
+    nombre: '',
     apellido: '',
     interes: '',
-    edad:'',
-    ubicacion:'',
+    edad: '',
+    ubicacion: '',
     aceptarTerminos: false,
     email: '',
     password: '',
-    
   });
 
-  const [rol, setRol] = React.useState('');
+  const [rol, setRol] = useState('');
 
   const rolChange = (event) => {
     setRol(event.target.value);
   };
-
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -71,7 +65,7 @@ const Registro = () => {
           onChange={handleChange}
           margin="normal"
           required
-        />                
+        />
         <TextField
           fullWidth
           label="Email"
@@ -85,16 +79,13 @@ const Registro = () => {
         <TextField
           fullWidth
           label="Confirmar Email"
-          name="email"
+          name="confirmEmail" 
           type="email"
           value={formData.email}
           onChange={handleChange}
           margin="normal"
           required
         />
-
-
-
         <TextField
           fullWidth
           label="Password"
@@ -105,45 +96,43 @@ const Registro = () => {
           margin="normal"
           required
         />
-          <TextField
-            fullWidth
-            label="Edad"
-            name="edad"
-            type="edad"
-            value={formData.edad}
-            onChange={handleChange}
-            margin="normal"
-            required
-          />         
-    
-        
-        <FormControl fullWidth>
-          <InputLabel id="demo-simple-select-label">Rol</InputLabel>
+        <TextField
+          fullWidth
+          label="Edad"
+          name="edad"
+          type="number" 
+          value={formData.edad}
+          onChange={handleChange}
+          margin="normal"
+          required
+        />
+        <FormControl fullWidth margin="normal">
+          <InputLabel id="rol-label">Rol</InputLabel>
           <Select
-            labelId="demo-simple-select-label"
-            id="demo-simple-select"
+            labelId="rol-label"
+            id="rol-select"
             value={rol}
-            label="Edad"
+            label="Rol"
             onChange={rolChange}
           >
             <MenuItem value="Asistente">Asistente</MenuItem>
             <MenuItem value="Artista">Artista</MenuItem>
           </Select>
         </FormControl>
-        <FormControl fullWidth>
-          <InputLabel id="demo-simple-select-label">Ubicacion</InputLabel>
-            <Select
-              labelId="demo-simple-select-label"
-              id="demo-simple-select"
-              value={formData.ubicacion}
-              label="Edad"
-              onChange={handleChange}
-            >
-              <MenuItem >Asistente</MenuItem>
-              <MenuItem >Artista</MenuItem>
-            </Select>
-          </FormControl>
-
+        <FormControl fullWidth margin="normal">
+          <InputLabel id="ubicacion-label">Ubicación</InputLabel>
+          <Select
+            labelId="ubicacion-label"
+            id="ubicacion-select"
+            value={formData.ubicacion}
+            label="Ubicación"
+            onChange={handleChange}
+            name="ubicacion"
+          >
+            <MenuItem value="Ubicacion1">Ubicacion1</MenuItem>
+            <MenuItem value="Ubicacion2">Ubicacion2</MenuItem>
+          </Select>
+        </FormControl>
         <FormControlLabel
           control={
             <Checkbox
@@ -154,12 +143,12 @@ const Registro = () => {
           }
           label="Aceptar los Términos y Condiciones"
         />
-
         <Button
           fullWidth
           variant="contained"
           type="submit"
           color="primary"
+          sx={{ mt: 2 }}
         >
           Registrarse
         </Button>
