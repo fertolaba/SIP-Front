@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import '../ui/login.css';
 import { TextField, Button, Box, Checkbox, FormControlLabel, Typography, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
 
 const Registro = () => {
@@ -34,11 +35,15 @@ const Registro = () => {
   };
 
   return (
-    <Box sx={{ maxWidth: 400, mx: 'auto', mt: 4 }}>
+    
+    <div id='login'>
+      <div id='login-image'></div>
+      <div id='login-register'>
+      <Box sx={{ maxWidth: 800, mx: 'auto', mt: 4 }} id='login-form'>
       <Typography variant="h4" gutterBottom>
-        Crear cuenta
+        Registrarse
       </Typography>
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} id='login-form' >
         <TextField
           fullWidth
           label="Nombre de usuario"
@@ -48,6 +53,7 @@ const Registro = () => {
           margin="normal"
           required
         />
+        <div id='column'>
         <TextField
           fullWidth
           label="Nombre"
@@ -58,6 +64,7 @@ const Registro = () => {
           required
         />
         <TextField
+          className='left'
           fullWidth
           label="Apellido"
           name="apellido"
@@ -65,7 +72,7 @@ const Registro = () => {
           onChange={handleChange}
           margin="normal"
           required
-        />
+        /></div>
         <TextField
           fullWidth
           label="Email"
@@ -96,6 +103,8 @@ const Registro = () => {
           margin="normal"
           required
         />
+        <div id='column'>
+
         <TextField
           fullWidth
           label="Edad"
@@ -109,6 +118,7 @@ const Registro = () => {
         <FormControl fullWidth margin="normal">
           <InputLabel id="rol-label">Rol</InputLabel>
           <Select
+                  className='left'
             labelId="rol-label"
             id="rol-select"
             value={rol}
@@ -118,7 +128,7 @@ const Registro = () => {
             <MenuItem value="Asistente">Asistente</MenuItem>
             <MenuItem value="Artista">Artista</MenuItem>
           </Select>
-        </FormControl>
+        </FormControl></div>
         <FormControl fullWidth margin="normal">
           <InputLabel id="ubicacion-label">Ubicación</InputLabel>
           <Select
@@ -144,6 +154,7 @@ const Registro = () => {
           label="Aceptar los Términos y Condiciones"
         />
         <Button
+          className='register'
           fullWidth
           variant="contained"
           type="submit"
@@ -152,8 +163,15 @@ const Registro = () => {
         >
           Registrarse
         </Button>
+        <Typography variant="body1" align="center" sx={{ mt: 2 }}>
+              ¿Ya tienes cuenta? <Button  color="primary">Inicia sesión</Button>
+            </Typography>
       </form>
     </Box>
+
+      </div>
+    </div>
+    
   );
 };
 
