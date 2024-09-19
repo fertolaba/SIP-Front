@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import '../ui/login.css';
-import { TextField, Button, Box, Checkbox, FormControlLabel, Typography, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
+import { TextField, Button, Box, Checkbox, FormControlLabel, Typography, FormControl, InputLabel, Select, MenuItem, FormHelperText } from '@mui/material';
 
 const Registro = () => {
   const [formData, setFormData] = useState({
@@ -17,6 +17,7 @@ const Registro = () => {
   });
 
   const [rol, setRol] = useState([]);
+  const [errors, setErrors] = useState({});
 
   const rolChange = (event) => {
     const { value } = event.target;
@@ -36,8 +37,65 @@ const Registro = () => {
     });
   };
 
+  const formValido=()=>{
+    const { nombreUsuario, nombre, apellido, edad, ubicacion, intereses, email, confirmEmail, password, aceptarTerminos } = formData;
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const newErrors = {};
+
+    if (!nombreUsuario) {
+      newErrors.nombreUsuario = "El nombre de usuario es obligatorio.";
+
+    }
+    else if (!nombre) {
+      newErrors.nombre ="El nombre es obligatorio.";
+
+    }
+    else if (!apellido) {
+      newErrors.apellido ="El apellido es obligatorio.";
+
+    }
+    else if (!emailRegex.test(email)) {
+      newErrors.email = "Por favor ingresa un email válido.";
+
+    }
+    else if (email !== confirmEmail) {
+      newErrors.confirmEmail ='Los correos electrónicos no coinciden.';
+
+    }
+    else if (password.length < 6) {
+      newErrors.password = "La contraseña debe tener al menos 6 caracteres.";
+
+    }
+    else if (edad<15 || edad>99 ){
+      newErrors.edad = 'Debe tener entre 15 y 100 años';
+
+    }
+    else if (rol.length === 0) {
+      newErrors.rol ="Debes seleccionar al menos un rol.";
+
+    }
+    else if (intereses.length === 0) {
+      newErrors.intereses ="Debes seleccionar al menos un interes musical.";
+
+    }
+    else if (!ubicacion) {
+      newErrors.ubicacion ="Debes seleccionar una ubicación.";
+
+    }
+    else if (!aceptarTerminos) {
+      newErrors.aceptarTerminos ="Debes aceptar los Términos y Condiciones.";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!formValido()) {
+      return;
+    }
 
     const registerRequest = {
       email: formData.email,
@@ -47,34 +105,30 @@ const Registro = () => {
       edad: parseInt(formData.edad), 
       password: formData.password,
       role: rol , 
+      intereses: formData.intereses,
+      ubicacion: formData.ubicacion
     };
     console.log('Datos del registro:', registerRequest);
 
-    if (formData.email !== formData.confirmEmail) {
-      alert('Los correos electrónicos no coinciden.');
-    }
-    else if (formData.edad<15 || formData.edad>99 ){
-      alert('Debe tener entre 15 y 100 años');
-    }else {
-      try {
-        const response = await fetch('http://localhost:4002/api/v1/auth/register', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(registerRequest),
-        });
+    try {
+      const response = await fetch('http://localhost:4002/api/v1/auth/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(registerRequest),
+      });
 
-        if (!response.ok) {
-          throw new Error('Error en el registro');
-        }
-
-        const data = await response.json();
-        console.log('Registro exitoso:', data);
-      } catch (error) {
-        console.error('Error al registrar:', error);
+      if (!response.ok) {
+        throw new Error('Error en el registro');
       }
+
+      const data = await response.json();
+      console.log('Registro exitoso:', data);
+    } catch (error) {
+      console.error('Error al registrar:', error);
     }
+
   };
 
   return (
@@ -93,7 +147,8 @@ const Registro = () => {
               value={formData.nombreUsuario}
               onChange={handleChange}
               margin="normal"
-              required
+              error={Boolean(errors.nombreUsuario)}
+              helperText={errors.nombreUsuario}
             />
             <div id='column'>
               <TextField
@@ -103,7 +158,8 @@ const Registro = () => {
                 value={formData.nombre}
                 onChange={handleChange}
                 margin="normal"
-                required
+                error={Boolean(errors.nombre)}
+                helperText={errors.nombre}               
               />
               <TextField
                 className='left'
@@ -113,7 +169,8 @@ const Registro = () => {
                 value={formData.apellido}
                 onChange={handleChange}
                 margin="normal"
-                required
+                error={Boolean(errors.apellido)}
+                helperText={errors.apellido}  
               />
             </div>
             <TextField
@@ -124,17 +181,19 @@ const Registro = () => {
               value={formData.email}
               onChange={handleChange}
               margin="normal"
-              required
+              error={Boolean(errors.email)}
+              helperText={errors.email}
             />
             <TextField
               fullWidth
               label="Confirmar Email"
               name="confirmEmail"
               type="email"
-              value={formData.confirmEmail} // Aquí podrías manejar un campo separado para confirmar el email si lo deseas
+              value={formData.confirmEmail}
               onChange={handleChange}
               margin="normal"
-              required
+              error={Boolean(errors.confirmEmail)}
+              helperText={errors.confirmEmail}
             />
             <TextField
               fullWidth
@@ -144,7 +203,8 @@ const Registro = () => {
               value={formData.password}
               onChange={handleChange}
               margin="normal"
-              required
+              error={Boolean(errors.password)}
+              helperText={errors.password}
             />
             <div id='column'>
               <TextField
@@ -155,7 +215,8 @@ const Registro = () => {
                 value={formData.edad}
                 onChange={handleChange}
                 margin="normal"
-                required
+                error={Boolean(errors.edad)}
+                helperText={errors.edad}
               />
               <FormControl fullWidth margin="normal">
                 <InputLabel id="rol-label">Rol</InputLabel>
@@ -172,6 +233,7 @@ const Registro = () => {
                   <MenuItem value="CLIENT">Asistente</MenuItem>
                   <MenuItem value="ARTIST">Artista</MenuItem>
                 </Select>
+                <FormHelperText>{errors.rol}</FormHelperText>
               </FormControl>
             </div>
             <FormControl fullWidth margin="normal">
@@ -189,6 +251,7 @@ const Registro = () => {
                 <MenuItem value="Genero1">Genero1</MenuItem>
                 <MenuItem value="Genero2">Genero2</MenuItem>
               </Select>
+              <FormHelperText>{errors.intereses}</FormHelperText>
             </FormControl>
             <FormControl fullWidth margin="normal">
               <InputLabel id="ubicacion-label">Ubicación</InputLabel>
@@ -203,6 +266,7 @@ const Registro = () => {
                 <MenuItem value="Ubicacion1">Ubicacion1</MenuItem>
                 <MenuItem value="Ubicacion2">Ubicacion2</MenuItem>
               </Select>
+              <FormHelperText>{errors.ubicacion}</FormHelperText>
             </FormControl>
             <FormControlLabel
               control={
@@ -213,7 +277,13 @@ const Registro = () => {
                 />
               }
               label="Aceptar los Términos y Condiciones"
+              error={Boolean(errors.aceptarTerminos)}
             />
+            {errors.aceptarTerminos && (
+              <Typography color="error" variant="body2">
+                {errors.aceptarTerminos}
+              </Typography>
+            )}
             <Button
               className='register'
               fullWidth
