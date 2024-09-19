@@ -9,22 +9,30 @@ const Registro = () => {
     apellido: '',
     edad: '',
     ubicacion: '',
+    intereses: [],
     aceptarTerminos: false,
     email: '',
+    confirmEmail: '',
     password: '',
   });
 
-  const [rol, setRol] = useState('');
+  const [rol, setRol] = useState([]);
 
   const rolChange = (event) => {
-    setRol(event.target.value);
+    const { value } = event.target;
+    setRol(typeof value === 'string' ? value.split(',') : value);
   };
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
+  
     setFormData({
       ...formData,
-      [name]: type === 'checkbox' ? checked : value,
+      [name]: type === 'checkbox'
+        ? checked
+        : Array.isArray(value)
+        ? value
+        : value, 
     });
   };
 
@@ -42,23 +50,30 @@ const Registro = () => {
     };
     console.log('Datos del registro:', registerRequest);
 
-    try {
-      const response = await fetch('http://localhost:4002/api/v1/auth/register', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(registerRequest),
-      });
+    if (formData.email !== formData.confirmEmail) {
+      alert('Los correos electrónicos no coinciden.');
+    }
+    else if (formData.edad<15 || formData.edad>99 ){
+      alert('Debe tener entre 15 y 100 años');
+    }else {
+      try {
+        const response = await fetch('http://localhost:4002/api/v1/auth/register', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(registerRequest),
+        });
 
-      if (!response.ok) {
-        throw new Error('Error en el registro');
+        if (!response.ok) {
+          throw new Error('Error en el registro');
+        }
+
+        const data = await response.json();
+        console.log('Registro exitoso:', data);
+      } catch (error) {
+        console.error('Error al registrar:', error);
       }
-
-      const data = await response.json();
-      console.log('Registro exitoso:', data);
-    } catch (error) {
-      console.error('Error al registrar:', error);
     }
   };
 
@@ -116,7 +131,7 @@ const Registro = () => {
               label="Confirmar Email"
               name="confirmEmail"
               type="email"
-              value={formData.email} // Aquí podrías manejar un campo separado para confirmar el email si lo deseas
+              value={formData.confirmEmail} // Aquí podrías manejar un campo separado para confirmar el email si lo deseas
               onChange={handleChange}
               margin="normal"
               required
@@ -148,15 +163,33 @@ const Registro = () => {
                   className='left'
                   labelId="rol-label"
                   id="rol-select"
+                  multiple
                   value={rol}
                   label="Rol"
                   onChange={rolChange}
+                  renderValue={(selected) => selected.join(', ')}
                 >
                   <MenuItem value="CLIENT">Asistente</MenuItem>
                   <MenuItem value="ARTIST">Artista</MenuItem>
                 </Select>
               </FormControl>
             </div>
+            <FormControl fullWidth margin="normal">
+              <InputLabel id="intereses-label">Intereses musicales</InputLabel>
+              <Select
+                labelId="intereses-label"
+                id="intereses-select"
+                multiple
+                value={formData.intereses}
+                label="Intereses"
+                onChange={handleChange}
+                name="intereses"
+                renderValue={(selected) => selected.join(', ')}
+              >
+                <MenuItem value="Genero1">Genero1</MenuItem>
+                <MenuItem value="Genero2">Genero2</MenuItem>
+              </Select>
+            </FormControl>
             <FormControl fullWidth margin="normal">
               <InputLabel id="ubicacion-label">Ubicación</InputLabel>
               <Select
