@@ -11,7 +11,7 @@ import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import { styled } from '@mui/material/styles';
 import { useNavigate } from "react-router-dom";
-import fetchWithTimeout from "./_fetchWithTimeOut";
+import fetchWithTimeout from "../_fetchWithTimeOut";
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: 'flex',
@@ -41,7 +41,6 @@ export default function Login() {
   const [loginError, setLoginError] = React.useState('');
   const navigate = useNavigate();
 
-
   const handleRegisterRedirect = () => {
     navigate('/registro'); 
   };
@@ -61,8 +60,13 @@ export default function Login() {
     setLoginError(''); 
 
     try {
-      const user = await loginHandle(credentials);
+      const user = await handleLogin (credentials);
       console.log('Usuario autenticado:', user);
+
+      localStorage.setItem('token', user.accessToken);
+      localStorage.setItem('role', user.role);
+
+      handleRedirect(user.role);
     } catch (error) {
       setLoginError('Error al iniciar sesión. Por favor, verifica tus credenciales.');
     } finally {
@@ -97,7 +101,7 @@ export default function Login() {
     return isValid;
   };
 
-  const loginHandle = async (credentials) => {
+  const handleLogin  = async (credentials) => {
     try {
       const response = await fetchWithTimeout('http://localhost:4002/api/v1/auth/authenticate', {
         method: 'POST',
@@ -115,6 +119,16 @@ export default function Login() {
     } catch (error) {
       console.error('Error fetching data:', error);
       throw error; 
+    }
+  };
+
+  const handleRedirect = (role) => {
+    if (role === 'CLIENT') {
+        navigate('/client-dashboard'); 
+    } else if (role === 'ARTIST') {
+        navigate('/artist-dashboard'); 
+    } else {
+        navigate('/login'); 
     }
   };
 

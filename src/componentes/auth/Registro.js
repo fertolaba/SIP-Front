@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import '../ui/login.css';
+import '../../ui/login.css';
 import { TextField, Button, Box, Checkbox, FormControlLabel, Typography, FormControl, InputLabel, Select, MenuItem, FormHelperText, Link } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+import fetchWithTimeout from '../_fetchWithTimeOut';
 
 const Registro = () => {
   const [formData, setFormData] = useState({
@@ -116,7 +117,7 @@ const Registro = () => {
     console.log('Datos del registro:', registerRequest);
 
     try {
-      const response = await fetch('http://localhost:4002/api/v1/auth/register', {
+      const response = await fetchWithTimeout('http://localhost:4002/api/v1/auth/register', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -130,6 +131,8 @@ const Registro = () => {
 
       const data = await response.json();
       console.log('Registro exitoso:', data);
+      
+
     } catch (error) {
       console.error('Error al registrar:', error);
     }
