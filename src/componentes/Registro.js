@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import '../ui/login.css';
-import { TextField, Button, Box, Checkbox, FormControlLabel, Typography, FormControl, InputLabel, Select, MenuItem, FormHelperText } from '@mui/material';
+import { TextField, Button, Box, Checkbox, FormControlLabel, Typography, FormControl, InputLabel, Select, MenuItem, FormHelperText, Link } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 
 const Registro = () => {
   const [formData, setFormData] = useState({
@@ -18,11 +19,15 @@ const Registro = () => {
 
   const [rol, setRol] = useState([]);
   const [errors, setErrors] = useState({});
+  const navigate = useNavigate();
+
+  const handleRegisterRedirect = () => {
+    navigate('/login'); 
+  };
 
   const rolChange = (event) => {
-    const { value } = event.target;
-    setRol(typeof value === 'string' ? value.split(',') : value);
-  };
+    setRol(event.target.value); 
+};
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -101,7 +106,7 @@ const Registro = () => {
       email: formData.email,
       username: formData.nombreUsuario,
       name: formData.nombre,
-      lastname: formData.apellido,
+      lastName: formData.apellido,
       edad: parseInt(formData.edad), 
       password: formData.password,
       role: rol , 
@@ -161,17 +166,17 @@ const Registro = () => {
                 error={Boolean(errors.nombre)}
                 helperText={errors.nombre}               
               />
-              <TextField
-                className='left'
-                fullWidth
-                label="Apellido"
-                name="apellido"
-                value={formData.apellido}
-                onChange={handleChange}
-                margin="normal"
-                error={Boolean(errors.apellido)}
-                helperText={errors.apellido}  
-              />
+            <TextField
+              className='left'
+              fullWidth
+              label="Apellido"
+              name="apellido"
+              value={formData.apellido}
+              onChange={handleChange}
+              margin="normal"
+              error={Boolean(errors.apellido)}
+              helperText={errors.apellido}
+            />
             </div>
             <TextField
               fullWidth
@@ -218,23 +223,21 @@ const Registro = () => {
                 error={Boolean(errors.edad)}
                 helperText={errors.edad}
               />
-              <FormControl fullWidth margin="normal">
+            <FormControl fullWidth margin="normal">
                 <InputLabel id="rol-label">Rol</InputLabel>
                 <Select
-                  className='left'
-                  labelId="rol-label"
-                  id="rol-select"
-                  multiple
-                  value={rol}
-                  label="Rol"
-                  onChange={rolChange}
-                  renderValue={(selected) => selected.join(', ')}
+                    className='left'
+                    labelId="rol-label"
+                    id="rol-select"
+                    value={rol}
+                    label="Rol"
+                    onChange={rolChange}
                 >
-                  <MenuItem value="CLIENT">Asistente</MenuItem>
-                  <MenuItem value="ARTIST">Artista</MenuItem>
+                    <MenuItem value="CLIENT">Asistente</MenuItem>
+                    <MenuItem value="ARTIST">Artista</MenuItem>
                 </Select>
                 <FormHelperText>{errors.rol}</FormHelperText>
-              </FormControl>
+            </FormControl>
             </div>
             <FormControl fullWidth margin="normal">
               <InputLabel id="intereses-label">Intereses musicales</InputLabel>
@@ -295,7 +298,9 @@ const Registro = () => {
               Registrarse
             </Button>
             <Typography variant="body1" align="center" sx={{ mt: 2 }}>
-              ¿Ya tienes cuenta? <Button color="primary">Inicia sesión</Button>
+              ¿Ya tienes cuenta?<Link component="button" onClick={handleRegisterRedirect}>
+            Iniciar sesion
+          </Link>
             </Typography>
           </form>
         </Box>
