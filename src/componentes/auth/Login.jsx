@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import MuiCard from '@mui/material/Card';
@@ -12,33 +12,19 @@ import Typography from '@mui/material/Typography';
 import { styled } from '@mui/material/styles';
 import { useNavigate } from "react-router-dom";
 import fetchWithTimeout from "../_fetchWithTimeOut";
+import '../../ui/login.css';
 
-const Card = styled(MuiCard)(({ theme }) => ({
-  display: 'flex',
-  flexDirection: 'column',
-  alignSelf: 'center',
-  width: '100%',
-  padding: theme.spacing(4),
-  gap: theme.spacing(2),
-  boxShadow:
-    'hsla(220, 30%, 5%, 0.05) 0px 5px 15px 0px, hsla(220, 25%, 10%, 0.05) 0px 15px 35px -5px',
-  [theme.breakpoints.up('sm')]: {
-    width: '450px',
-  },
-  ...theme.applyStyles('dark', {
-    boxShadow:
-      'hsla(220, 30%, 5%, 0.5) 0px 5px 15px 0px, hsla(220, 25%, 10%, 0.08) 0px 15px 35px -5px',
-  }),
-}));
 
 export default function Login() {
 
-  const [emailError, setEmailError] = React.useState(false);
-  const [emailErrorMessage, setEmailErrorMessage] = React.useState('');
-  const [passwordError, setPasswordError] = React.useState(false);
-  const [passwordErrorMessage, setPasswordErrorMessage] = React.useState('');
   const [loading, setLoading] = React.useState(false);
   const [loginError, setLoginError] = React.useState('');
+
+  const [errors, setErrors] = useState({});
+
+  const [email, setEmail] = React.useState('');
+  const [password, setPassword] = React.useState('');
+
   const navigate = useNavigate();
 
   const handleRegisterRedirect = () => {
@@ -75,30 +61,18 @@ export default function Login() {
   };
 
   const validateInputs = () => {
-    const email = document.getElementById('email');
-    const password = document.getElementById('password');
 
-    let isValid = true;
+    const newErrors = {};
 
-    if (!email.value || !/\S+@\S+\.\S+/.test(email.value)) {
-      setEmailError(true);
-      setEmailErrorMessage('Por favor, introduce un correo válido.');
-      isValid = false;
-    } else {
-      setEmailError(false);
-      setEmailErrorMessage('');
+    if (!email || !/\S+@\S+\.\S+/.test(email)) {
+      newErrors.email="Por favor, introduce un correo válido."
+    }
+    else if (!password || password.length < 6) {
+      newErrors.password="La contraseña debe tener al menos 6 caracteres."
     }
 
-    if (!password.value || password.value.length < 6) {
-      setPasswordError(true);
-      setPasswordErrorMessage('La contraseña debe tener al menos 6 caracteres.');
-      isValid = false;
-    } else {
-      setPasswordError(false);
-      setPasswordErrorMessage('');
-    }
-
-    return isValid;
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
 
   const handleLogin  = async (credentials) => {
@@ -133,70 +107,58 @@ export default function Login() {
   };
 
   return (
-    <Card variant="outlined">
-      <Typography
-        component="h1"
-        variant="h4"
-        sx={{ width: '100%', fontSize: 'clamp(2rem, 10vw, 2.15rem)' }}
-      >
-        Iniciar sesión
-      </Typography>
-      <Box
-        component="form"
-        onSubmit={handleSubmit}
-        noValidate
-        sx={{ display: 'flex', flexDirection: 'column', width: '100%', gap: 2 }}
-      >
-        <FormControl>
-          <FormLabel htmlFor="email">Correo electrónico</FormLabel>
-          <TextField
-            error={emailError}
-            helperText={emailErrorMessage}
-            id="email"
-            type="email"
-            name="email"
-            placeholder="tu@correo.com"
-            autoComplete="email"
-            autoFocus
-            required
-            fullWidth
-            variant="outlined"
-            color={emailError ? 'error' : 'primary'}
-          />
-        </FormControl>
-        <FormControl>
-          <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-            <FormLabel htmlFor="password">Contraseña</FormLabel>
-          </Box>
-          <TextField
-            error={passwordError}
-            helperText={passwordErrorMessage}
-            name="password"
-            placeholder="••••••"
-            type="password"
-            id="password"
-            autoComplete="current-password"
-            required
-            fullWidth
-            variant="outlined"
-            color={passwordError ? 'error' : 'primary'}
-          />
-        </FormControl>
-        {loginError && <Typography color="error">{loginError}</Typography>}
-        <FormControlLabel
-          control={<Checkbox value="remember" color="primary" />}
-          label="Recuérdame"
-        />
-        <Button type="submit" fullWidth variant="contained" disabled={loading}>
-          {loading ? 'Cargando...' : 'Iniciar sesión'}
-        </Button>
-        <Typography sx={{ textAlign: 'center' }}>
-          ¿No tienes una cuenta?{' '}
-          <Link component="button" onClick={handleRegisterRedirect}>
-            Registrarse
-          </Link>
-        </Typography>
-      </Box>
-    </Card>
+    <div id='login'>
+      <div id='login-image2'></div>
+      <div id='login-register'>
+        <Box sx={{ maxWidth: 800, mx: 'auto', mt: 4 }} id='login-form'>
+          <Typography variant="h4" gutterBottom>
+            Iniciar sesion
+          </Typography>
+          <form onSubmit={handleSubmit} id='login-form'>
+            <TextField
+              fullWidth
+              label="Email"
+              name="email"
+              type="email"
+              onChange={(e) => setEmail(e.target.value)}
+              value={email}
+              margin="normal"
+              error={Boolean(errors.email)}
+              helperText={errors.email}
+            />
+            <TextField
+              fullWidth
+              label="Password"
+              name="password"
+              type="password"
+              onChange={(e) => setPassword(e.target.value)}
+              value={password}
+              margin="normal"
+              error={Boolean(errors.password)}
+              helperText={errors.password}
+            />
+            <FormControlLabel
+              control={<Checkbox value="remember" color="primary" />}
+              label="Recuérdame"
+            />
+            <Button
+              className='register'
+              fullWidth
+              variant="contained"
+              type="submit"
+              color="primary"
+              sx={{ mt: 2 }}
+            >
+              {loading ? 'Cargando...' : 'Iniciar sesión'}
+            </Button>
+            <Typography variant="body1" align="center" sx={{ mt: 2 }}>
+              ¿No tienes una cuenta?{' '} <Link component="button" onClick={handleRegisterRedirect}>
+                Registrarse
+              </Link>
+            </Typography>
+          </form>
+        </Box>
+      </div>
+    </div>
   );
 }

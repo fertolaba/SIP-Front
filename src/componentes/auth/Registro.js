@@ -301,7 +301,7 @@ const Registro = () => {
               Registrarse
             </Button>
             <Typography variant="body1" align="center" sx={{ mt: 2 }}>
-              ¿Ya tienes cuenta?<Link component="button" onClick={handleRegisterRedirect}>
+              ¿Ya tienes cuenta? <Link component="button" onClick={handleRegisterRedirect}>
             Iniciar sesion
           </Link>
             </Typography>
