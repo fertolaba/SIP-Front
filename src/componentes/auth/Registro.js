@@ -131,6 +131,7 @@ const Registro = () => {
 
       const data = await response.json();
       console.log('Registro exitoso:', data);
+      handleRegisterRedirect()
       
 
     } catch (error) {
