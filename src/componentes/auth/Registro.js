@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import '../../ui/login.css';
 import { TextField, Button, Box, Checkbox, FormControlLabel, Typography, FormControl, InputLabel, Select, MenuItem, FormHelperText, Link } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import fetchWithTimeout from '../_fetchWithTimeOut';
+import fetchWithTimeout from '../error/_fetchWithTimeOut';
 
 const Registro = () => {
   const [formData, setFormData] = useState({
@@ -48,49 +48,18 @@ const Registro = () => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     const newErrors = {};
 
-    if (!nombreUsuario) {
-      newErrors.nombreUsuario = "El nombre de usuario es obligatorio.";
-
-    }
-    else if (!nombre) {
-      newErrors.nombre ="El nombre es obligatorio.";
-
-    }
-    else if (!apellido) {
-      newErrors.apellido ="El apellido es obligatorio.";
-
-    }
-    else if (!emailRegex.test(email)) {
-      newErrors.email = "Por favor ingresa un email válido.";
-
-    }
-    else if (email !== confirmEmail) {
-      newErrors.confirmEmail ='Los correos electrónicos no coinciden.';
-
-    }
-    else if (password.length < 6) {
-      newErrors.password = "La contraseña debe tener al menos 6 caracteres.";
-
-    }
-    else if (edad<15 || edad>99 ){
-      newErrors.edad = 'Debe tener entre 15 y 100 años';
-
-    }
-    else if (rol.length === 0) {
-      newErrors.rol ="Debes seleccionar al menos un rol.";
-
-    }
-    else if (intereses.length === 0) {
-      newErrors.intereses ="Debes seleccionar al menos un interes musical.";
-
-    }
-    else if (!ubicacion) {
-      newErrors.ubicacion ="Debes seleccionar una ubicación.";
-
-    }
-    else if (!aceptarTerminos) {
-      newErrors.aceptarTerminos ="Debes aceptar los Términos y Condiciones.";
-    }
+    if (!nombreUsuario) newErrors.nombreUsuario = "El nombre de usuario es obligatorio.";
+    if (!nombre) newErrors.nombre = "El nombre es obligatorio.";
+    if (!apellido) newErrors.apellido = "El apellido es obligatorio.";
+    if (!emailRegex.test(email)) newErrors.email = "Por favor ingresa un email válido.";
+    if (email !== confirmEmail) newErrors.confirmEmail = "Los correos electrónicos no coinciden.";
+    if (!confirmEmail) newErrors.confirmEmail = "Por favor ingresa un email.";
+    if (password.length < 6) newErrors.password = "La contraseña debe tener al menos 6 caracteres.";
+    if (edad < 15 || edad > 99) newErrors.edad = 'Debe tener entre 15 y 100 años';
+    if (!ubicacion) newErrors.ubicacion = "Debes seleccionar una ubicación.";
+    if (intereses.length === 0) newErrors.intereses = "Debes seleccionar al menos un interes musical.";
+    if (!aceptarTerminos) newErrors.aceptarTerminos = "Debes aceptar los Términos y Condiciones.";
+    if (rol.length === 0)newErrors.rol ="Debes seleccionar al menos un rol.";
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
