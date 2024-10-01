@@ -158,7 +158,6 @@ const Registro = () => {
               fullWidth
               label="Email"
               name="email"
-              type="email"
               value={formData.email}
               onChange={handleChange}
               margin="normal"
@@ -169,7 +168,6 @@ const Registro = () => {
               fullWidth
               label="Confirmar Email"
               name="confirmEmail"
-              type="email"
               value={formData.confirmEmail}
               onChange={handleChange}
               margin="normal"
@@ -180,7 +178,6 @@ const Registro = () => {
               fullWidth
               label="Password"
               name="password"
-              type="password"
               value={formData.password}
               onChange={handleChange}
               margin="normal"
@@ -199,23 +196,23 @@ const Registro = () => {
                 error={Boolean(errors.edad)}
                 helperText={errors.edad}
               />
-            <FormControl fullWidth margin="normal">
-                <InputLabel id="rol-label">Rol</InputLabel>
-                <Select
-                    className='left'
-                    labelId="rol-label"
-                    id="rol-select"
-                    value={rol}
-                    label="Rol"
-                    onChange={rolChange}
-                >
-                    <MenuItem value="CLIENT">Asistente</MenuItem>
-                    <MenuItem value="ARTIST">Artista</MenuItem>
-                </Select>
-                <FormHelperText>{errors.rol}</FormHelperText>
+            <FormControl fullWidth margin="normal" error={Boolean(errors.rol)}>
+              <InputLabel id="rol-label">Rol</InputLabel>
+              <Select
+                className='left'
+                labelId="rol-label"
+                id="rol-select"
+                value={rol}
+                label="Rol"
+                onChange={rolChange}
+              >
+                <MenuItem value="CLIENT">Asistente</MenuItem>
+                <MenuItem value="ARTIST">Artista</MenuItem>
+              </Select>
+              <FormHelperText>{errors.rol}</FormHelperText>
             </FormControl>
             </div>
-            <FormControl fullWidth margin="normal">
+            <FormControl fullWidth margin="normal" error={Boolean(errors.intereses)}>
               <InputLabel id="intereses-label">Intereses musicales</InputLabel>
               <Select
                 labelId="intereses-label"
@@ -232,7 +229,7 @@ const Registro = () => {
               </Select>
               <FormHelperText>{errors.intereses}</FormHelperText>
             </FormControl>
-            <FormControl fullWidth margin="normal">
+            <FormControl fullWidth margin="normal" error={Boolean(errors.ubicacion)}>
               <InputLabel id="ubicacion-label">Ubicación</InputLabel>
               <Select
                 labelId="ubicacion-label"
@@ -284,6 +281,7 @@ const Registro = () => {
       <Popup trigger={isPopupOpen} setTrigger={setIsPopupOpen}>
         <h3>Registro exitoso</h3>
         <p>Tu cuenta ha sido registrada exitosamente.</p>
+        <Link component="button" onClick={handleRegisterRedirect}>Ir al login </Link>
       </Popup>
     </div>
   );
