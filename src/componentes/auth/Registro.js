@@ -3,6 +3,7 @@ import '../../ui/login.css';
 import { TextField, Button, Box, Checkbox, FormControlLabel, Typography, FormControl, InputLabel, Select, MenuItem, FormHelperText, Link } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import fetchWithTimeout from '../error/_fetchWithTimeOut';
+import Popup from './Popup';
 
 const Registro = () => {
   const [formData, setFormData] = useState({
@@ -20,6 +21,7 @@ const Registro = () => {
 
   const [rol, setRol] = useState([]);
   const [errors, setErrors] = useState({});
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
   const navigate = useNavigate();
 
   const handleRegisterRedirect = () => {
@@ -100,6 +102,8 @@ const Registro = () => {
 
       const data = await response.json();
       console.log('Registro exitoso:', data);
+      setIsPopupOpen(true);  
+      
       
 
     } catch (error) {
@@ -277,6 +281,10 @@ const Registro = () => {
           </form>
         </Box>
       </div>
+      <Popup trigger={isPopupOpen} setTrigger={setIsPopupOpen}>
+        <h3>Registro exitoso</h3>
+        <p>Tu cuenta ha sido registrada exitosamente.</p>
+      </Popup>
     </div>
   );
 };
