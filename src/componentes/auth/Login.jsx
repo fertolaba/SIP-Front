@@ -147,6 +147,11 @@ export default function Login() {
             >
               {loading ? 'Cargando...' : 'Iniciar sesión'}
             </Button>
+            {loginError && (
+              <Typography color="error" variant="body2" sx={{ mt: 2 }}>
+                {loginError}
+              </Typography>
+            )}
             <Typography variant="body1" align="center" sx={{ mt: 2 }}>
               ¿No tienes una cuenta?{' '} <Link component="button" onClick={handleRegisterRedirect}>
                 Registrarse

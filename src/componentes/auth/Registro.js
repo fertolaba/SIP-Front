@@ -224,8 +224,16 @@ const Registro = () => {
                 name="intereses"
                 renderValue={(selected) => selected.join(', ')}
               >
-                <MenuItem value="Genero1">Genero1</MenuItem>
-                <MenuItem value="Genero2">Genero2</MenuItem>
+                <MenuItem value="ROCK">Rock</MenuItem>
+                <MenuItem value="POP">Pop</MenuItem>
+                <MenuItem value="JAZZ">Jazz</MenuItem>
+                <MenuItem value="CLASSICAL">Classical</MenuItem>
+                <MenuItem value="HIPHOP">Hiphop</MenuItem>
+                <MenuItem value="REGGAE">Reggae</MenuItem>
+                <MenuItem value="ELECTRONIC">Electronic</MenuItem>
+                <MenuItem value="METAL">Metal</MenuItem>
+                <MenuItem value="LATIN">Latin</MenuItem>
+
               </Select>
               <FormHelperText>{errors.intereses}</FormHelperText>
             </FormControl>
