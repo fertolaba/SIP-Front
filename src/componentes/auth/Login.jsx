@@ -104,8 +104,8 @@ export default function Login() {
 
   return (
     <div id='login'>
-      <div id='login-image2'></div>
-      <div id='login-register'>
+      <div id='login-image' className="login"></div>
+      <div id='login-register' className="login">
         <Box sx={{ maxWidth: 800, mx: 'auto', mt: 4 }} id='login-form'>
           <Typography variant="h4" gutterBottom>
             Iniciar sesion
