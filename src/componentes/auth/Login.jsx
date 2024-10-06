@@ -113,7 +113,7 @@ export default function Login() {
           <form onSubmit={handleSubmit} id='login-form'>
             <TextField
               fullWidth
-              label="Email"
+              label="Mail"
               name="email"
               type="email"
               onChange={(e) => setEmail(e.target.value)}
@@ -124,7 +124,7 @@ export default function Login() {
             />
             <TextField
               fullWidth
-              label="Password"
+              label="Contraseña"
               name="password"
               type="password"
               onChange={(e) => setPassword(e.target.value)}
@@ -152,7 +152,7 @@ export default function Login() {
                 {loginError}
               </Typography>
             )}
-            <Typography variant="body1" align="center" sx={{ mt: 2 }}>
+            <Typography variant="body1" align="center" sx={{ mt: 2 }} class="text">
               ¿No tienes una cuenta?{' '} <Link component="button" onClick={handleRegisterRedirect}>
                 Registrarse
               </Link>

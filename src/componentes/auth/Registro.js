@@ -176,7 +176,7 @@ const Registro = () => {
             />
             <TextField
               fullWidth
-              label="Password"
+              label="Contraseña"
               name="password"
               value={formData.password}
               onChange={handleChange}
@@ -247,8 +247,8 @@ const Registro = () => {
                 onChange={handleChange}
                 name="ubicacion"
               >
-                <MenuItem value="Ubicacion1">Ubicacion1</MenuItem>
-                <MenuItem value="Ubicacion2">Ubicacion2</MenuItem>
+                <MenuItem value="Belgrano">Belgrano</MenuItem>
+                <MenuItem value="Nunez">Nuñez</MenuItem>
               </Select>
               <FormHelperText>{errors.ubicacion}</FormHelperText>
             </FormControl>
@@ -278,7 +278,7 @@ const Registro = () => {
             >
               Registrarse
             </Button>
-            <Typography variant="body1" align="center" sx={{ mt: 2 }}>
+            <Typography variant="body1" align="center" sx={{ mt: 2 }} class="text">
               ¿Ya tienes cuenta? <Link component="button" onClick={handleRegisterRedirect}>
             Iniciar sesion
           </Link>

@@ -56,6 +56,10 @@
 #login-register .register{
     border-radius: 20px;
 }
+#login-form label , #login-form button,#login-form span,#login-form text{
+    font-family: "Poppins", sans-serif;
+
+}
 
 
 
