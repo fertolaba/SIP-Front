@@ -206,7 +206,7 @@ const Registro = () => {
             />
             <TextField
               fullWidth
-              label="Password"
+              label="Contraseña"
               name="password"
               type="password"
               value={formData.password}
@@ -270,8 +270,8 @@ const Registro = () => {
                 onChange={handleChange}
                 name="ubicacion"
               >
-                <MenuItem value="Ubicacion1">Ubicacion1</MenuItem>
-                <MenuItem value="Ubicacion2">Ubicacion2</MenuItem>
+                <MenuItem value="Belgrano">Belgrano</MenuItem>
+                <MenuItem value="Nunez">Nuñez</MenuItem>
               </Select>
               <FormHelperText>{errors.ubicacion}</FormHelperText>
             </FormControl>
