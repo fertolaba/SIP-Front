@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import '../../ui/login.css';
 import { TextField, Button, Box, Checkbox, FormControlLabel, Typography, FormControl, InputLabel, Select, MenuItem, FormHelperText, Link } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import fetchWithTimeout from '../_fetchWithTimeOut';
+import fetchWithTimeout from '../error/_fetchWithTimeOut';
+import Popup from './Popup';
 
 const Registro = () => {
   const [formData, setFormData] = useState({
@@ -20,6 +21,7 @@ const Registro = () => {
 
   const [rol, setRol] = useState([]);
   const [errors, setErrors] = useState({});
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
   const navigate = useNavigate();
 
   const handleRegisterRedirect = () => {
@@ -48,49 +50,18 @@ const Registro = () => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     const newErrors = {};
 
-    if (!nombreUsuario) {
-      newErrors.nombreUsuario = "El nombre de usuario es obligatorio.";
-
-    }
-    else if (!nombre) {
-      newErrors.nombre ="El nombre es obligatorio.";
-
-    }
-    else if (!apellido) {
-      newErrors.apellido ="El apellido es obligatorio.";
-
-    }
-    else if (!emailRegex.test(email)) {
-      newErrors.email = "Por favor ingresa un email válido.";
-
-    }
-    else if (email !== confirmEmail) {
-      newErrors.confirmEmail ='Los correos electrónicos no coinciden.';
-
-    }
-    else if (password.length < 6) {
-      newErrors.password = "La contraseña debe tener al menos 6 caracteres.";
-
-    }
-    else if (edad<15 || edad>99 ){
-      newErrors.edad = 'Debe tener entre 15 y 100 años';
-
-    }
-    else if (rol.length === 0) {
-      newErrors.rol ="Debes seleccionar al menos un rol.";
-
-    }
-    else if (intereses.length === 0) {
-      newErrors.intereses ="Debes seleccionar al menos un interes musical.";
-
-    }
-    else if (!ubicacion) {
-      newErrors.ubicacion ="Debes seleccionar una ubicación.";
-
-    }
-    else if (!aceptarTerminos) {
-      newErrors.aceptarTerminos ="Debes aceptar los Términos y Condiciones.";
-    }
+    if (!nombreUsuario) newErrors.nombreUsuario = "El nombre de usuario es obligatorio.";
+    if (!nombre) newErrors.nombre = "El nombre es obligatorio.";
+    if (!apellido) newErrors.apellido = "El apellido es obligatorio.";
+    if (!emailRegex.test(email)) newErrors.email = "Por favor ingresa un email válido.";
+    if (email !== confirmEmail) newErrors.confirmEmail = "Los correos electrónicos no coinciden.";
+    if (!confirmEmail) newErrors.confirmEmail = "Por favor ingresa un email.";
+    if (password.length < 6) newErrors.password = "La contraseña debe tener al menos 6 caracteres.";
+    if (edad < 15 || edad > 99) newErrors.edad = 'Debe tener entre 15 y 100 años';
+    if (!ubicacion) newErrors.ubicacion = "Debes seleccionar una ubicación.";
+    if (intereses.length === 0) newErrors.intereses = "Debes seleccionar al menos un interes musical.";
+    if (!aceptarTerminos) newErrors.aceptarTerminos = "Debes aceptar los Términos y Condiciones.";
+    if (rol.length === 0)newErrors.rol ="Debes seleccionar al menos un rol.";
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -131,7 +102,8 @@ const Registro = () => {
 
       const data = await response.json();
       console.log('Registro exitoso:', data);
-      handleRegisterRedirect()
+      setIsPopupOpen(true);  
+      
       
 
     } catch (error) {
@@ -186,7 +158,6 @@ const Registro = () => {
               fullWidth
               label="Email"
               name="email"
-              type="email"
               value={formData.email}
               onChange={handleChange}
               margin="normal"
@@ -197,7 +168,6 @@ const Registro = () => {
               fullWidth
               label="Confirmar Email"
               name="confirmEmail"
-              type="email"
               value={formData.confirmEmail}
               onChange={handleChange}
               margin="normal"
@@ -208,7 +178,6 @@ const Registro = () => {
               fullWidth
               label="Password"
               name="password"
-              type="password"
               value={formData.password}
               onChange={handleChange}
               margin="normal"
@@ -227,23 +196,23 @@ const Registro = () => {
                 error={Boolean(errors.edad)}
                 helperText={errors.edad}
               />
-            <FormControl fullWidth margin="normal">
-                <InputLabel id="rol-label">Rol</InputLabel>
-                <Select
-                    className='left'
-                    labelId="rol-label"
-                    id="rol-select"
-                    value={rol}
-                    label="Rol"
-                    onChange={rolChange}
-                >
-                    <MenuItem value="CLIENT">Asistente</MenuItem>
-                    <MenuItem value="ARTIST">Artista</MenuItem>
-                </Select>
-                <FormHelperText>{errors.rol}</FormHelperText>
+            <FormControl fullWidth margin="normal" error={Boolean(errors.rol)}>
+              <InputLabel id="rol-label">Rol</InputLabel>
+              <Select
+                className='left'
+                labelId="rol-label"
+                id="rol-select"
+                value={rol}
+                label="Rol"
+                onChange={rolChange}
+              >
+                <MenuItem value="CLIENT">Asistente</MenuItem>
+                <MenuItem value="ARTIST">Artista</MenuItem>
+              </Select>
+              <FormHelperText>{errors.rol}</FormHelperText>
             </FormControl>
             </div>
-            <FormControl fullWidth margin="normal">
+            <FormControl fullWidth margin="normal" error={Boolean(errors.intereses)}>
               <InputLabel id="intereses-label">Intereses musicales</InputLabel>
               <Select
                 labelId="intereses-label"
@@ -255,12 +224,20 @@ const Registro = () => {
                 name="intereses"
                 renderValue={(selected) => selected.join(', ')}
               >
-                <MenuItem value="Genero1">Genero1</MenuItem>
-                <MenuItem value="Genero2">Genero2</MenuItem>
+                <MenuItem value="ROCK">Rock</MenuItem>
+                <MenuItem value="POP">Pop</MenuItem>
+                <MenuItem value="JAZZ">Jazz</MenuItem>
+                <MenuItem value="CLASSICAL">Classical</MenuItem>
+                <MenuItem value="HIPHOP">Hiphop</MenuItem>
+                <MenuItem value="REGGAE">Reggae</MenuItem>
+                <MenuItem value="ELECTRONIC">Electronic</MenuItem>
+                <MenuItem value="METAL">Metal</MenuItem>
+                <MenuItem value="LATIN">Latin</MenuItem>
+
               </Select>
               <FormHelperText>{errors.intereses}</FormHelperText>
             </FormControl>
-            <FormControl fullWidth margin="normal">
+            <FormControl fullWidth margin="normal" error={Boolean(errors.ubicacion)}>
               <InputLabel id="ubicacion-label">Ubicación</InputLabel>
               <Select
                 labelId="ubicacion-label"
@@ -309,6 +286,11 @@ const Registro = () => {
           </form>
         </Box>
       </div>
+      <Popup trigger={isPopupOpen} setTrigger={setIsPopupOpen}>
+        <h3>Registro exitoso</h3>
+        <p>Tu cuenta ha sido registrada exitosamente.</p>
+        <Link component="button" onClick={handleRegisterRedirect}>Ir al login </Link>
+      </Popup>
     </div>
   );
 };

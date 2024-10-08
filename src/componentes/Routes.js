@@ -4,15 +4,18 @@ import Login from "./auth/Login";
 import { ClientDashboard } from "./ClientDashboard";
 import AuthRoute from "./AuthRoute";
 import { ArtistDashboard } from "./ArtistDashboard";
+import ErrorPage from "./error/ErrorPage";
 
 const router = createBrowserRouter([
     {
         path: "/registro",
-        element: <Registro /> 
+        element: <Registro />, 
+        errorElement: <ErrorPage />
     },
     {
         path: "/login", 
-        element: <Login />
+        element: <Login />,
+        errorElement: <ErrorPage />
     },
     {
         path: "/client-dashboard",
@@ -21,6 +24,7 @@ const router = createBrowserRouter([
                 <ClientDashboard />
             </AuthRoute>
         ),
+        errorElement: <ErrorPage />
     },
     {
         path: "/artist-dashboard",
@@ -29,6 +33,11 @@ const router = createBrowserRouter([
                 <ArtistDashboard />
             </AuthRoute>
         ),
+        errorElement: <ErrorPage />
+    },
+    {
+        path: "*", 
+        element: <Login />, 
     },
 ]);
 
