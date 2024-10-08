@@ -88,7 +88,7 @@ const Registro = () => {
     console.log('Datos del registro:', registerRequest);
 
     try {
-      const response = await fetchWithTimeout('http://localhost:4002/api/v1/auth/register', {
+      const response = await fetchWithTimeout('http://18.216.229.3:4002/api/v1/auth/register', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

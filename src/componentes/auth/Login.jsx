@@ -73,7 +73,7 @@ export default function Login() {
 
   const handleLogin  = async (credentials) => {
     try {
-      const response = await fetchWithTimeout('http://localhost:4002/api/v1/auth/authenticate', {
+      const response = await fetchWithTimeout('http://18.216.229.3:4002/api/v1/auth/authenticate', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
