@@ -4,6 +4,7 @@ import Login from './componentes/auth/Login';
 import Register from './componentes/auth/Registro';
 import ClientDashboard from './componentes/ClientDashboard';
 import ArtistDashboard from './componentes/ArtistDashboard';
+import BusquedaEventos from './componentes/BusquedaEventos'
 
 
 function App() {
@@ -15,6 +16,7 @@ function App() {
         <Route path="/registro" element={<Register/>} />
         <Route path="/client-dashboard" element={<ClientDashboard/>} />
         <Route path="/artist-dashboard" element={<ArtistDashboard/>} />
+        <Route path="/busquedaEventos" element={<BusquedaEventos/>} />
 
       </Routes>
     </BrowserRouter>

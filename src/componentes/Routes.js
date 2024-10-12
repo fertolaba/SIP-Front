@@ -5,11 +5,17 @@ import { ClientDashboard } from "./ClientDashboard";
 import AuthRoute from "./AuthRoute";
 import { ArtistDashboard } from "./ArtistDashboard";
 import ErrorPage from "./error/ErrorPage";
+import {BusquedaEventos} from "./BusquedaEventos";
 
 const router = createBrowserRouter([
     {
         path: "/registro",
         element: <Registro />, 
+        errorElement: <ErrorPage />
+    },
+    {
+        path: "/busquedaEventos",
+        element:<BusquedaEventos/>,
         errorElement: <ErrorPage />
     },
     {
