@@ -7,3 +7,4 @@ export const ArtistDashboard = () => {
   </div>
   )
 }
+export default ArtistDashboard;

@@ -104,11 +104,11 @@ export default function Login() {
 
   return (
     <div id='login'>
-      <div id='login-image2'></div>
-      <div id='login-register'>
+      <div id='login-image' className="login"></div>
+      <div id='login-register' className="login">
         <Box sx={{ maxWidth: 800, mx: 'auto', mt: 4 }} id='login-form'>
           <Typography variant="h4" gutterBottom>
-            Iniciar sesion
+            Iniciar sesión
           </Typography>
           <form onSubmit={handleSubmit} id='login-form'>
             <TextField
@@ -124,7 +124,7 @@ export default function Login() {
             />
             <TextField
               fullWidth
-              label="Password"
+              label="Contraseña"
               name="password"
               type="password"
               onChange={(e) => setPassword(e.target.value)}
