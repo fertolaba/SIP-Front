@@ -1,6 +1,6 @@
 import { useJsApiLoader } from "@react-google-maps/api";
 import { useState, useEffect } from "react";
-import { Typography, TextField, Button, Select, MenuItem, Box, InputLabel, Alert } from "@mui/material";
+import { Typography, TextField, Button, Select, MenuItem, Box, InputLabel } from "@mui/material";
 import MapComponent from "./utils/Map";
 import haversineDistance from './utils/HaversineDistance';
 import axios from "axios"; 
@@ -143,32 +143,29 @@ const fetchEvents = async () => {
   }, [filteredEvents]);
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", backgroundColor: "#f5f5f5" }}>
-      <Box sx={{ padding: "10px", backgroundColor: "#f5f5f5", display: "flex", alignItems: "center", justifyContent: "flex-end", gap: "15px", zIndex: 10 }}>
-        {/* Mostrar un mensaje de error si hay alguno */}
-      {errorMessage && (
-        <Alert severity="error" sx={{ margin: "10px" }}>
-          {"Por favor ingresa una dirección válida."}
-        </Alert>
-      )}
+    <Box style={{display: "flex", flexDirection: "column",backgroundColor: "#f5f5f5"}}>
+      <Box sx={{ padding: "10px", backgroundColor: "#f5f5f5", display: "flex", alignItems: "center", justifyContent: "flex-end",
+        gap: "15px", zIndex: 10, flexDirection: { xs: 'column', md: 'row' },  }}>
         <TextField
           label="Ingresa una dirección"
           variant="outlined"
           value={address}
+          error={Boolean(errorMessage)}
+          helperText={errorMessage}
           onChange={(e) => setAddress(e.target.value)}
-          sx={{ width: "40%" }}
+          sx={{ width: { xs: "100%", md: "40%" } }} 
         />
-        <Button variant="contained" onClick={handleGeocodeAddress}>
+        <Button sx={{width:{xs:"100%",md:"13%"}}}variant="contained" onClick={handleGeocodeAddress}>
           Buscar dirección
         </Button>
-        <Button variant="contained" onClick={handleGetUserLocation}>
+        <Button sx={{width:{xs:"100%",md:"13%"}}} variant="contained" onClick={handleGetUserLocation}>
           Usar mi ubicación actual
         </Button>
         <InputLabel>Rango de búsqueda: </InputLabel>
         <Select
           value={distanceFilter}
           onChange={(e) => setDistanceFilter(parseInt(e.target.value))}
-          sx={{ width: "5%" }}
+          sx={{ width: { xs: "100%", md: "5%" } }}
         >
           <MenuItem value={2}>2 km</MenuItem>
           <MenuItem value={5}>5 km</MenuItem>
@@ -178,8 +175,8 @@ const fetchEvents = async () => {
         </Select>
       </Box>
 
-      <div style={{ display: "flex", flex: 1 }}>
-        <Box sx={{ width: "30%", padding: "10px", backgroundColor: "#f5f5f5" }}>
+      <Box sx={{ display: {md:"flex", xs:"block"}, flex: 1 }}>
+        <Box sx={{ width: {md: "30%"}, padding: "10px", backgroundColor: "#f5f5f5" }}>
           <Typography variant="h6">Lista de Eventos</Typography>
           <ul style={{ listStyle: "none", padding: 0 }}>
             {filteredEvents.length === 0 ? (
@@ -213,7 +210,6 @@ const fetchEvents = async () => {
             )}
           </ul>
         </Box>
-
         <MapComponent
           isLoaded={isLoaded}
           selectedEvent={selectedEvent}
@@ -222,8 +218,8 @@ const fetchEvents = async () => {
           filteredEvents={filteredEvents}
           mapCenter={mapCenter}
         />
-      </div>
-    </div>
+      </Box>
+    </Box>
   );
 }
 
