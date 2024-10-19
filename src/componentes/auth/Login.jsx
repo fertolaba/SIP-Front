@@ -23,6 +23,8 @@ export default function Login() {
 
   const navigate = useNavigate();
 
+  
+
   const handleRegisterRedirect = () => {
     navigate('/registro'); 
   };
@@ -42,9 +44,11 @@ export default function Login() {
     setLoginError(''); 
 
     try {
-      const user = await handleLogin (credentials);
+      const user = await handleLogin(credentials);
       console.log('Usuario autenticado:', user);
 
+   
+      localStorage.setItem('userId', user.userId); 
       localStorage.setItem('token', user.accessToken);
       localStorage.setItem('role', user.role);
 
@@ -54,7 +58,10 @@ export default function Login() {
     } finally {
       setLoading(false);
     }
-  };
+};
+
+
+  
 
   const validateInputs = () => {
 
@@ -96,7 +103,7 @@ export default function Login() {
     if (role === 'CLIENT') {
         navigate('/client-dashboard'); 
     } else if (role === 'ARTIST') {
-        navigate('/artist-dashboard'); 
+        navigate('/AltaEventos'); 
     } else {
         navigate('/login'); 
     }

@@ -13,6 +13,7 @@ import {
 } from "@mui/material";
 import { LocalizationProvider, DatePicker, TimePicker } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import fetchWithTimeout from "./error/_fetchWithTimeOut";
 
 const AltaEventos = ({ genres, localities, eventTypes }) => {
   const [eventData, setEventData] = useState({
@@ -23,9 +24,31 @@ const AltaEventos = ({ genres, localities, eventTypes }) => {
     time: null,
     genre: "",
     price: "",
-    eventType: "",
     locality: "",
   });
+
+  const userId = localStorage.getItem('userId');
+
+  const getLatLongFromAddress = async (address) => {
+    const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(address)}&format=json`;
+
+    try {
+      const response = await fetch(url);
+      const data = await response.json();
+
+      if (data.length > 0) {
+        return {
+          lat: data[0].lat,
+          lng: data[0].lon
+        };
+      } else {
+        throw new Error('Error al obtener coordenadas');
+      }
+    } catch (error) {
+      console.error(error);
+      return null;
+    }
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -40,15 +63,63 @@ const AltaEventos = ({ genres, localities, eventTypes }) => {
     setEventData({ ...eventData, time: newTime });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const dateTime = new Date(eventData.date);
-    if (eventData.time) {
-      dateTime.setHours(eventData.time.getHours());
-      dateTime.setMinutes(eventData.time.getMinutes());
+
+    const address = eventData.location;
+    const coordinates = await getLatLongFromAddress(address);
+
+    if (coordinates) {
+      
+      const date = eventData.date;
+      const time = eventData.time;
+
+      
+      const dateTime = new Date(date);
+      dateTime.setHours(time.getHours());
+      dateTime.setMinutes(time.getMinutes());
+
+      const registerRequest = {
+        name: eventData.name,
+        description: eventData.description,
+        location: eventData.location,
+        latitude: coordinates.lat,
+        longitude: coordinates.lng,
+        dateTime: dateTime.toISOString(),
+        price: eventData.price,
+        organizerId: localStorage.getItem('userId'),
+        genres: [eventData.genre],
+      };
+
+      try {
+        const response = await fetch('http://localhost:4002/api/events', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(registerRequest),
+        });
+
+        if (!response.ok) {
+          throw new Error('Error al crear evento');
+        }
+
+        const data = await response.json();
+        console.log('Registro exitoso:', data);
+      } catch (error) {
+        console.error('Error al crear evento:', error);
+      }
+    } else {
+      console.error('No se pudieron obtener las coordenadas');
     }
-    console.log({ ...eventData, dateTime }); 
   };
+
+  const musicGenres = [
+    "ROCK", "POP", "JAZZ", "FOLKLORE", "TANGO", "CUMBIA", "REGGAETON", "TRAP", 
+    "ELECTRONICA", "CUARTETO", "HEAVY_METAL", "PUNK", "BLUES", "INDIE", "SKA", 
+    "SALSA", "LATIN_JAZZ", "BOSSA_NOVA", "RUMBA", "HIP_HOP", "RB", "REGGAE", 
+    "FUSION", "FOLKLORE_MODERNO", "ALTERNATIVE", "PUNK_ROCK", "CLASICO", "GRUNGE"
+  ];
 
   return (
     <Card style={{ backgroundColor: "#f5f5f5", padding: "20px", marginTop: "20px" }}>
@@ -113,9 +184,9 @@ const AltaEventos = ({ genres, localities, eventTypes }) => {
                   onChange={handleChange}
                   required
                 >
-                  {genres?.map((genre) => (
-                    <MenuItem key={genre.id} value={genre.id}>
-                      {genre.name}
+                  {musicGenres.map((genre) => (
+                    <MenuItem key={genre} value={genre}>
+                      {genre.replace('_', ' ')}
                     </MenuItem>
                   ))}
                 </Select>
@@ -131,40 +202,6 @@ const AltaEventos = ({ genres, localities, eventTypes }) => {
                 onChange={handleChange}
                 helperText="Deja en blanco si el evento es gratuito"
               />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <FormControl fullWidth>
-                <InputLabel>Tipo de evento</InputLabel>
-                <Select
-                  name="eventType"
-                  value={eventData.eventType}
-                  onChange={handleChange}
-                  required
-                >
-                  {eventTypes?.map((type) => (
-                    <MenuItem key={type.id} value={type.id}>
-                      {type.name}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <FormControl fullWidth>
-                <InputLabel>Localidad</InputLabel>
-                <Select
-                  name="locality"
-                  value={eventData.locality}
-                  onChange={handleChange}
-                  required
-                >
-                  {localities?.map((locality) => (
-                    <MenuItem key={locality.id} value={locality.id}>
-                      {locality.name}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
             </Grid>
             <Grid item xs={12}>
               <Button type="submit" variant="contained" color="primary" fullWidth>
