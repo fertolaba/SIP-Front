@@ -12,7 +12,7 @@ const ClientDashboard = () => {
   const [events, setEvents] = useState([]);
 
   useEffect(() => {
-    fetch('http://localhost:4002/api/events') // Ajusta esto según la URL de tu API
+    fetch('http://localhost:4002/api/events') 
       .then(response => response.json())
       .then(data => setEvents(data))
       .catch(error => console.error('Error fetching events:', error));

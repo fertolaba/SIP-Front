@@ -4,6 +4,8 @@ import { Typography, TextField, Button, Select, MenuItem, Box, InputLabel, Alert
 import MapComponent from "./utils/Map";
 import haversineDistance from './utils/HaversineDistance';
 import axios from "axios"; 
+import Header from './Header';
+import Footer from './Footer';
 
 function BusquedaEventos() {
   const { isLoaded } = useJsApiLoader({
@@ -143,7 +145,9 @@ const fetchEvents = async () => {
   }, [filteredEvents]);
 
   return (
+    
     <div style={{ display: "flex", flexDirection: "column", backgroundColor: "#f5f5f5" }}>
+      <Header/>
       <Box sx={{ padding: "10px", backgroundColor: "#f5f5f5", display: "flex", alignItems: "center", justifyContent: "flex-end", gap: "15px", zIndex: 10 }}>
         {/* Mostrar un mensaje de error si hay alguno */}
       {errorMessage && (
@@ -223,6 +227,7 @@ const fetchEvents = async () => {
           mapCenter={mapCenter}
         />
       </div>
+      <Footer/>
     </div>
   );
 }

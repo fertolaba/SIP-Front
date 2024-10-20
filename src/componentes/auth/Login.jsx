@@ -103,7 +103,7 @@ export default function Login() {
     if (role === 'CLIENT') {
         navigate('/client-dashboard'); 
     } else if (role === 'ARTIST') {
-        navigate('/AltaEventos'); 
+        navigate('/artist-dashboard'); 
     } else {
         navigate('/login'); 
     }

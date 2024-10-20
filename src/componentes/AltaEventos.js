@@ -10,10 +10,14 @@ import {
   InputLabel,
   FormControl,
   Grid,
+  Link
 } from "@mui/material";
 import { LocalizationProvider, DatePicker, TimePicker } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
-import fetchWithTimeout from "./error/_fetchWithTimeOut";
+import Header from './Header';
+import Footer from './Footer';
+import Popup from "./auth/Popup";
+import { useNavigate } from 'react-router-dom';
 
 const AltaEventos = ({ genres, localities, eventTypes }) => {
   const [eventData, setEventData] = useState({
@@ -28,6 +32,12 @@ const AltaEventos = ({ genres, localities, eventTypes }) => {
   });
 
   const userId = localStorage.getItem('userId');
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
+  const navigate = useNavigate();
+
+  const handleRegisterRedirect = () => {
+    navigate('/artist-dashboard'); 
+  };
 
   const getLatLongFromAddress = async (address) => {
     const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(address)}&format=json`;
@@ -65,20 +75,18 @@ const AltaEventos = ({ genres, localities, eventTypes }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+  
     const address = eventData.location;
     const coordinates = await getLatLongFromAddress(address);
-
+  
     if (coordinates) {
-      
       const date = eventData.date;
       const time = eventData.time;
-
-      
+  
       const dateTime = new Date(date);
       dateTime.setHours(time.getHours());
       dateTime.setMinutes(time.getMinutes());
-
+  
       const registerRequest = {
         name: eventData.name,
         description: eventData.description,
@@ -87,10 +95,10 @@ const AltaEventos = ({ genres, localities, eventTypes }) => {
         longitude: coordinates.lng,
         dateTime: dateTime.toISOString(),
         price: eventData.price,
-        organizerId: localStorage.getItem('userId'),
+        organizerId: userId,
         genres: [eventData.genre],
       };
-
+  
       try {
         const response = await fetch('http://localhost:4002/api/events', {
           method: 'POST',
@@ -99,13 +107,15 @@ const AltaEventos = ({ genres, localities, eventTypes }) => {
           },
           body: JSON.stringify(registerRequest),
         });
-
+  
         if (!response.ok) {
           throw new Error('Error al crear evento');
         }
-
+  
         const data = await response.json();
         console.log('Registro exitoso:', data);
+        
+        setIsPopupOpen(true);  
       } catch (error) {
         console.error('Error al crear evento:', error);
       }
@@ -113,7 +123,7 @@ const AltaEventos = ({ genres, localities, eventTypes }) => {
       console.error('No se pudieron obtener las coordenadas');
     }
   };
-
+  
   const musicGenres = [
     "ROCK", "POP", "JAZZ", "FOLKLORE", "TANGO", "CUMBIA", "REGGAETON", "TRAP", 
     "ELECTRONICA", "CUARTETO", "HEAVY_METAL", "PUNK", "BLUES", "INDIE", "SKA", 
@@ -122,96 +132,105 @@ const AltaEventos = ({ genres, localities, eventTypes }) => {
   ];
 
   return (
-    <Card style={{ backgroundColor: "#f5f5f5", padding: "20px", marginTop: "20px" }}>
-      <CardContent>
-        <Typography variant="h5" gutterBottom>
-          Alta de Evento
-        </Typography>
-        <form onSubmit={handleSubmit}>
-          <Grid container spacing={2}>
-            <Grid item xs={12}>
-              <TextField
-                fullWidth
-                label="Nombre del evento"
-                name="name"
-                value={eventData.name}
-                onChange={handleChange}
-                required
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                fullWidth
-                label="Descripción del evento"
-                name="description"
-                value={eventData.description}
-                onChange={handleChange}
-                required
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                fullWidth
-                label="Ubicación"
-                name="location"
-                value={eventData.location}
-                onChange={handleChange}
-                required
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <LocalizationProvider dateAdapter={AdapterDateFns}>
-                <DatePicker
-                  label="Fecha"
-                  value={eventData.date}
-                  onChange={handleDateChange}
-                  renderInput={(params) => <TextField {...params} fullWidth required />}
-                />
-                <TimePicker
-                  label="Hora"
-                  value={eventData.time}
-                  onChange={handleTimeChange}
-                  renderInput={(params) => <TextField {...params} fullWidth required />}
-                />
-              </LocalizationProvider>
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <FormControl fullWidth>
-                <InputLabel>Género musical</InputLabel>
-                <Select
-                  name="genre"
-                  value={eventData.genre}
+    <>
+      <Header />
+      <Card style={{ backgroundColor: "#f5f5f5", padding: "20px", margin: "20px auto", maxWidth: "600px" }}>
+        <CardContent>
+          <Typography variant="h5" gutterBottom>
+            Alta de Evento
+          </Typography>
+          <form onSubmit={handleSubmit}>
+            <Grid container spacing={2}>
+              <Grid item xs={12}>
+                <TextField
+                  fullWidth
+                  label="Nombre del evento"
+                  name="name"
+                  value={eventData.name}
                   onChange={handleChange}
                   required
-                >
-                  {musicGenres.map((genre) => (
-                    <MenuItem key={genre} value={genre}>
-                      {genre.replace('_', ' ')}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  fullWidth
+                  label="Descripción del evento"
+                  name="description"
+                  value={eventData.description}
+                  onChange={handleChange}
+                  required
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  fullWidth
+                  label="Ubicación"
+                  name="location"
+                  value={eventData.location}
+                  onChange={handleChange}
+                  required
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <LocalizationProvider dateAdapter={AdapterDateFns}>
+                  <DatePicker
+                    label="Fecha"
+                    value={eventData.date}
+                    onChange={handleDateChange}
+                    renderInput={(params) => <TextField {...params} fullWidth required />}
+                  />
+                  <TimePicker
+                    label="Hora"
+                    value={eventData.time}
+                    onChange={handleTimeChange}
+                    renderInput={(params) => <TextField {...params} fullWidth required />}
+                  />
+                </LocalizationProvider>
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <FormControl fullWidth>
+                  <InputLabel>Género musical</InputLabel>
+                  <Select
+                    name="genre"
+                    value={eventData.genre}
+                    onChange={handleChange}
+                    required
+                  >
+                    {musicGenres.map((genre) => (
+                      <MenuItem key={genre} value={genre}>
+                        {genre.replace('_', ' ')}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  fullWidth
+                  label="Precio de la entrada"
+                  name="price"
+                  type="number"
+                  value={eventData.price}
+                  onChange={handleChange}
+                  helperText="Deja en blanco si el evento es gratuito"
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <Button type="submit" variant="contained" color="primary" fullWidth>
+                  Crear Evento
+                </Button>
+              </Grid>
             </Grid>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                fullWidth
-                label="Precio de la entrada"
-                name="price"
-                type="number"
-                value={eventData.price}
-                onChange={handleChange}
-                helperText="Deja en blanco si el evento es gratuito"
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <Button type="submit" variant="contained" color="primary" fullWidth>
-                Crear Evento
-              </Button>
-            </Grid>
-          </Grid>
-        </form>
-      </CardContent>
-    </Card>
+          </form>
+        </CardContent>
+      </Card>
+      <Popup trigger={isPopupOpen} setTrigger={setIsPopupOpen}>
+        <h3>Evento creado </h3>
+        <p>Tu evento ha sido registrado exitosamente.</p>
+        <Link component="button" onClick={handleRegisterRedirect}>Ok </Link>
+      </Popup>
+      <Footer />
+    </>
   );
 };
 
