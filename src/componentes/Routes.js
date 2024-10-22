@@ -6,6 +6,7 @@ import AuthRoute from "./AuthRoute";
 import { ArtistDashboard } from "./ArtistDashboard";
 import ErrorPage from "./error/ErrorPage";
 import {BusquedaEventos} from "./BusquedaEventos";
+import AltaEventos from "./AltaEventos";
 
 const router = createBrowserRouter([
     {
@@ -28,6 +29,15 @@ const router = createBrowserRouter([
         element: (
             <AuthRoute allowedRoles={['CLIENT']}>
                 <ClientDashboard />
+            </AuthRoute>
+        ),
+        errorElement: <ErrorPage />
+    },
+    {
+        path: "/AltaEventos",
+        element: (
+            <AuthRoute allowedRoles={['ARTIST']}>  
+                <AltaEventos />
             </AuthRoute>
         ),
         errorElement: <ErrorPage />

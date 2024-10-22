@@ -1,0 +1,354 @@
+#client-home {
+    align-items: center;
+    padding: 2rem;
+}
+
+#client-main {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+/*---------------CARDS EVENTS -----------*/
+.card-event {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    overflow: hidden;
+    width: 300px;
+    margin: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background-color: #fff;
+  }
+  
+  .card-image {
+    width: 100%;
+    height: 200px;
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #f0f0f0; 
+  }
+  
+  .no-image {
+    color: #888;
+    font-size: 18px;
+  }
+  
+  .card-info {
+    padding: 15px;
+  }
+  
+  .card-info h3 {
+    margin: 0;
+    font-size: 1.2em;
+    color: #333;
+  }
+  
+  .card-info .location,
+  .card-info .date,
+  .card-info .price {
+    margin: 5px 0;
+    color: #777;
+  }
+  
+  .card-buttons {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 15px;
+  }
+  
+  .button-entradas {
+    background-color: #ff7f50;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    color: white;
+    cursor: pointer;
+  }
+  
+
+
+
+/*     HEADER         */
+#header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-radius: 30px;
+    text-decoration: none;
+    color: black;
+    padding: 10px 20px;
+  }
+  
+  #header #logo {
+    text-align: left;
+  }
+  
+  #header #nav {
+    flex: 1;
+    text-align: center;
+  }
+  
+  #header  #nav-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+  }
+  
+  #nav-item {
+    margin: 0 15px;
+  }
+  #nav div
+{
+    width: 50%;
+}
+  #nav-link {
+    text-decoration: none;
+    color: black;
+  }
+  #nav-link:hover {
+    
+    color: #A64900;
+  }
+  
+  #profile {
+    border-color: #333;
+    border-style: solid;
+    text-align: right;
+    border-color: #333;
+    border-style: solid;
+    BORDER-WIDTH: thin;
+    PADDING: 10PX;
+    WIDTH: 90PX;
+    BORDER-RADIUS: 40PX;
+    TEXT-ALIGN: CENTER;
+    margin: auto;
+  }
+  
+
+  /* ---------- SEARCH BAR ---------------*/
+  .search-bar {
+    display: flex;
+    align-items: center;
+    background-color: #A64900;
+    border-radius: 50px;
+    padding: 10px 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 90%;
+    margin: 20px auto;
+  }
+  
+  .search-item {
+    display: flex;
+    align-items: center;
+    padding: 0 10px;
+    flex: 1;
+  }
+  
+  .search-item input {
+    border: none;
+    outline: none;
+    background-color: transparent;
+    color: white;
+    font-size: 14px;
+    width: 100%;
+  }
+  
+  .search-item i {
+    margin-right: 10px;
+    color: white;
+  }
+  .search-item input {
+    border: none;
+    outline: none;
+    background-color: transparent;
+    color: white; 
+    font-size: 14px;
+    width: 100%;
+    
+  }
+  .search-item select{
+    padding: 0.5%;
+    border-radius: 5px;
+    border-style: none;
+    color: white;
+    background: none;
+  }
+  
+  .search-item input::placeholder , .search-item p{
+    color: white; 
+    opacity: 0.8;
+  }
+  
+  
+  .divider {
+    height: 30px;
+    width: 1px;
+    background-color: #ffffff;
+  }
+  
+  .search-btn {
+    background-color: #4F2200;
+    color: white;
+    border: none;
+    border-radius: 30px;
+    padding: 10px 20px;
+    cursor: pointer;
+    margin-left: 20px;
+    font-size: 14px;
+    font-weight: bold;
+  }
+  
+
+.line-below {
+    width: 100%;
+    height: 2px;
+    background-color: #ddd;
+    margin-top: 20px;
+  }
+
+.client-home-img{
+    padding: 5%;
+    background-image: url('../img/home-image.jpg');
+    background-size: cover;
+    background-position: center;
+    border-radius: 40px;
+    height: auto;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1), 0 6px 20px rgba(0, 0, 0, 0.1);
+    
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+  opacity: 0;
+}
+
+
+/*              FOOTER                 */
+
+
+/*               Alta eventos           */
+@import url('https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100..900;1,100..900&display=swap');
+
+#logEvent{
+  --Paper-shadow: 0px;
+  font-weight: bold;
+}
+.logEvent-container {
+  background-color: #ffffff;
+  border-radius: 15px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 40px;
+  max-width: 700px;
+  margin: 30px auto;
+
+}
+#eventLog-date{
+  width: 47.5%;
+  margin-right: 2.5%;
+}
+#eventLog-time{
+  width: 47.5%;
+  margin-left: 2.5%;
+}
+#logEvent-form label, #logEvent-form button, #customFont{
+  font-family: "Raleway", sans-serif;
+}
+#customFont h5{
+  font-weight:600;
+}
+#logEvent-form div{
+  border-radius: 12px;
+}
+#logEvent-button button{
+  border-radius: 12px;
+  background-color:#A64900;
+
+}
+#logEvent-button button:hover {
+  border-radius: 12px;
+  background-color: #4F2200;
+}
+
+/*                   BUSQUEDA DE EVENTOS MAPA                         */
+#eventSearch-container label, #eventSearch-container button, #eventSearch-container h6{
+  font-family: "Raleway", sans-serif;
+
+}
+#eventSearch-container button{
+  border-radius: 12px;
+  background-color:#A64900;
+
+}
+#eventSearch-container button:hover {
+  border-radius: 12px;
+  background-color: #4F2200;
+}
+#eventSearch-container div {
+  border-radius: 12px;
+  
+}
+.eventMap-input div:before {
+  border-bottom: 2px solid #ccc; /* Color por defecto */
+}
+
+.custom-textfield div:after {
+  border-bottom: 2px solid  #A64900; /* Color cuando está enfocado */
+}
+
+.custom-textfield div:before {
+  border-bottom: 2px solid orange; /* Color cuando se pasa el mouse */
+}
+
+
+
+
+/* Estilos para dispositivos móviles */
+@media (max-width: 768px) {
+  .client-home-img{
+    display: none;
+  }
+  #header{
+      display: block;
+      margin: auto;
+  }
+  #header div,#header #logo{
+    text-align: center;
+    margin-bottom: 2%;
+    margin-top: 2%;
+  }
+  #header #profile{
+    margin-top: 5%;
+  } 
+  .search-bar{
+    display: block;
+    padding: 5%;
+  }
+  .divider{
+    display: none;
+  }
+  .search-item input {
+    font-size: 16px;
+  }
+  .search-item  {
+    padding: 2%;
+  }
+  .sreacrh-btn{
+    margin: auto;
+  }
+  #eventSearch-container{
+    display: contents;
+  }
+  #eventSearch-container div{
+    align-self: center;
+    width: fit-content;
+  }#eventSearch-container button{
+    width: 80%;
+    margin:0% 0% 2% 10%;
+  }#eventSerach-map div{
+    display: block;
+  }
+}

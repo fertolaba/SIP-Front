@@ -4,6 +4,10 @@ import { Typography, TextField, Button, Select, MenuItem, Box, InputLabel } from
 import MapComponent from "./utils/Map";
 import haversineDistance from './utils/HaversineDistance';
 import axios from "axios"; 
+import Header from './Header';
+import Footer from './Footer';
+import '../ui/main.css';
+
 
 function BusquedaEventos() {
   const { isLoaded } = useJsApiLoader({
@@ -143,9 +147,16 @@ const fetchEvents = async () => {
   }, [filteredEvents]);
 
   return (
-    <Box style={{display: "flex", flexDirection: "column",backgroundColor: "#f5f5f5"}}>
-      <Box sx={{ padding: "10px", backgroundColor: "#f5f5f5", display: "flex", alignItems: "center", justifyContent: "flex-end",
-        gap: "15px", zIndex: 10, flexDirection: { xs: 'column', md: 'row' },  }}>
+    
+    <div style={{ display: "flex", flexDirection: "column", backgroundColor: "#f5f5f5" }}>
+      <Header/>
+      <Box id='eventSearch-container' sx={{ padding: "10px", backgroundColor: "#f5f5f5", display: "flex", alignItems: "center", justifyContent: "flex-end", gap: "15px", zIndex: 10 }}>
+        {/* Mostrar un mensaje de error si hay alguno */}
+      {errorMessage && (
+        <Alert severity="error" sx={{ margin: "10px" }}>
+          {"Por favor ingresa una dirección válida."}
+        </Alert>
+      )}
         <TextField
           label="Ingresa una dirección"
           variant="outlined"
@@ -153,9 +164,9 @@ const fetchEvents = async () => {
           error={Boolean(errorMessage)}
           helperText={errorMessage}
           onChange={(e) => setAddress(e.target.value)}
-          sx={{ width: { xs: "100%", md: "40%" } }} 
+          sx={{ width: "40%" }}
         />
-        <Button sx={{width:{xs:"100%",md:"13%"}}}variant="contained" onClick={handleGeocodeAddress}>
+        <Button variant="contained" onClick={handleGeocodeAddress}>
           Buscar dirección
         </Button>
         <Button sx={{width:{xs:"100%",md:"13%"}}} variant="contained" onClick={handleGetUserLocation}>
@@ -175,8 +186,8 @@ const fetchEvents = async () => {
         </Select>
       </Box>
 
-      <Box sx={{ display: {md:"flex", xs:"block"}, flex: 1 }}>
-        <Box sx={{ width: {md: "30%"}, padding: "10px", backgroundColor: "#f5f5f5" }}>
+      <div style={{ display: "flex", flex: 1 }}>
+        <Box sx={{ width: "30%", padding: "10px", backgroundColor: "#f5f5f5" }}>
           <Typography variant="h6">Lista de Eventos</Typography>
           <ul style={{ listStyle: "none", padding: 0 }}>
             {filteredEvents.length === 0 ? (
@@ -218,8 +229,8 @@ const fetchEvents = async () => {
           filteredEvents={filteredEvents}
           mapCenter={mapCenter}
         />
-      </Box>
-    </Box>
+      </div>
+    </div>
   );
 }
 
