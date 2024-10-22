@@ -121,6 +121,8 @@ const ClientDashboard = () => {
             placeholder="Precio mínimo" 
             value={minPrice}
             onChange={(e) => setMinPrice(e.target.value)}
+            min="0"
+            max="100000"
           />
         </div>
         <div className="divider"></div>
@@ -130,6 +132,8 @@ const ClientDashboard = () => {
             placeholder="Precio máximo" 
             value={maxPrice}
             onChange={(e) => setMaxPrice(e.target.value)}
+            min="0"
+            max="100000"
           />
         </div>
         <button className="search-btn" onClick={fetchEvents}>

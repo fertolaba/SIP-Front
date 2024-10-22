@@ -16,7 +16,7 @@ function App() {
         <Route path="/registro" element={<Register/>} />
         <Route path="/client-dashboard" element={<ClientDashboard/>} />
         <Route path="/artist-dashboard" element={<ArtistDashboard/>} />
-        <Route path="/busquedaEventos" element={<BusquedaEventos/>} />
+        <Route path="/BusquedaEventos" element={<BusquedaEventos/>} />
         <Route path="/AltaEventos" element={<AltaEventos/>} />
 
       </Routes>
