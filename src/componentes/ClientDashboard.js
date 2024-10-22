@@ -5,18 +5,21 @@ import '../ui/main.css';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import AppsIcon from '@mui/icons-material/Apps';
 import Footer from './Footer';
+import { LocalizationProvider, DatePicker } from '@mui/x-date-pickers';
+import { TextField } from "@mui/material";
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import format from 'date-fns/format';
 
 const ClientDashboard = () => {
   const [events, setEvents] = useState([]);
   const [name, setName] = useState('');
-  const [startDate, setStartDate] = useState('');
+  const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState('');
   const [genres, setGenres] = useState('');
   const [minPrice, setMinPrice] = useState('');
   const [maxPrice, setMaxPrice] = useState('');
 
-  // Lista de géneros preestablecidos
-  const genreOptions = ['Rock','Jazz', 'Cumbia', 'Electronica', 'Reggae','Tango', 'Rumba'];
+  const genreOptions = ['Rock', 'Jazz', 'Cumbia', 'Electronica', 'Reggae', 'Tango', 'Rumba'];
 
   const addDefaultTime = (date, time) => {
     return date ? `${date}T${time}` : '';
@@ -30,14 +33,14 @@ const ClientDashboard = () => {
   };
 
   useEffect(() => {
-    loadAllEvents();  // Cargar todos los eventos cuando se monta el componente
+    loadAllEvents(); 
   }, []); 
 
   const fetchEvents = () => {
     const params = new URLSearchParams();
     if (name) params.append('name', name);
 
-    if (startDate) params.append('startDate', addDefaultTime(startDate, '00:00:00'));
+    if (startDate) params.append('startDate', addDefaultTime(format(startDate, 'yyyy-MM-dd'), '00:00:00'));
     if (endDate) params.append('endDate', addDefaultTime(endDate, '23:59:59'));
 
     if (genres) params.append('genres', genres);
@@ -52,12 +55,12 @@ const ClientDashboard = () => {
 
   const clearFilters = () => {
     setName('');
-    setStartDate('');
+    setStartDate(null);
     setEndDate('');
     setGenres('');
     setMinPrice('');
     setMaxPrice('');
-    loadAllEvents();  // Recargar todos los eventos sin filtros
+    loadAllEvents();  
   };
 
   return (
@@ -75,15 +78,15 @@ const ClientDashboard = () => {
           />
         </div>
         <div className="divider"></div>
-        <div className="search-item">
-          <CalendarTodayIcon style={{ fontSize:'small', verticalAlign: 'middle', marginRight: '5px', color:'white' }} />
-          <input 
-            type="date" 
-            placeholder="Fecha inicio" 
+        <LocalizationProvider dateAdapter={AdapterDateFns}>
+          <DatePicker
+            label="Fecha inicio"
             value={startDate}
-            onChange={(e) => setStartDate(e.target.value)}
+            onChange={(newDate) => setStartDate(newDate)}
+            renderInput={(params) => <TextField {...params} fullWidth />}
           />
-        </div>
+        </LocalizationProvider>
+
         <div className="divider"></div>
         <div className="search-item">
           <CalendarTodayIcon style={{ fontSize:'small', verticalAlign: 'middle', marginRight: '5px', color:'white' }} />
@@ -97,7 +100,6 @@ const ClientDashboard = () => {
         <div className="divider"></div>
         <div className="search-item">
           <AppsIcon style={{ fontSize:'medium', verticalAlign: 'middle', marginRight: '5px', color:'white' }} />
-          {/* Dropdown con géneros preestablecidos */}
           <select 
             value={genres} 
             onChange={(e) => setGenres(e.target.value)}
