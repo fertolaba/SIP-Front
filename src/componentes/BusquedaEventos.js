@@ -6,6 +6,8 @@ import haversineDistance from './utils/HaversineDistance';
 import axios from "axios"; 
 import Header from './Header';
 import Footer from './Footer';
+import '../ui/main.css';
+
 
 function BusquedaEventos() {
   const { isLoaded } = useJsApiLoader({
@@ -148,7 +150,7 @@ const fetchEvents = async () => {
     
     <div style={{ display: "flex", flexDirection: "column", backgroundColor: "#f5f5f5" }}>
       <Header/>
-      <Box sx={{ padding: "10px", backgroundColor: "#f5f5f5", display: "flex", alignItems: "center", justifyContent: "flex-end", gap: "15px", zIndex: 10 }}>
+      <Box id='eventSearch-container' sx={{ padding: "10px", backgroundColor: "#f5f5f5", display: "flex", alignItems: "center", justifyContent: "flex-end", gap: "15px", zIndex: 10 }}>
         {/* Mostrar un mensaje de error si hay alguno */}
       {errorMessage && (
         <Alert severity="error" sx={{ margin: "10px" }}>
@@ -161,7 +163,9 @@ const fetchEvents = async () => {
           value={address}
           onChange={(e) => setAddress(e.target.value)}
           sx={{ width: "40%" }}
+          className="eventMap-input" // Agrega la clase personalizada aquí
         />
+
         <Button variant="contained" onClick={handleGeocodeAddress}>
           Buscar dirección
         </Button>
@@ -182,7 +186,7 @@ const fetchEvents = async () => {
         </Select>
       </Box>
 
-      <div style={{ display: "flex", flex: 1 }}>
+      <div id='eventSerach-map' style={{ display: "flex", flex: 1 }}>
         <Box sx={{ width: "30%", padding: "10px", backgroundColor: "#f5f5f5" }}>
           <Typography variant="h6">Lista de Eventos</Typography>
           <ul style={{ listStyle: "none", padding: 0 }}>

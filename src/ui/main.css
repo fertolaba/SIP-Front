@@ -273,6 +273,37 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   background-color: #4F2200;
 }
 
+/*                   BUSQUEDA DE EVENTOS MAPA                         */
+#eventSearch-container label, #eventSearch-container button, #eventSearch-container h6{
+  font-family: "Raleway", sans-serif;
+
+}
+#eventSearch-container button{
+  border-radius: 12px;
+  background-color:#A64900;
+
+}
+#eventSearch-container button:hover {
+  border-radius: 12px;
+  background-color: #4F2200;
+}
+#eventSearch-container div {
+  border-radius: 12px;
+  
+}
+.eventMap-input div:before {
+  border-bottom: 2px solid #ccc; /* Color por defecto */
+}
+
+.custom-textfield div:after {
+  border-bottom: 2px solid  #A64900; /* Color cuando está enfocado */
+}
+
+.custom-textfield div:before {
+  border-bottom: 2px solid orange; /* Color cuando se pasa el mouse */
+}
+
+
 
 
 /* Estilos para dispositivos móviles */
@@ -307,5 +338,17 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   }
   .sreacrh-btn{
     margin: auto;
+  }
+  #eventSearch-container{
+    display: contents;
+  }
+  #eventSearch-container div{
+    align-self: center;
+    width: fit-content;
+  }#eventSearch-container button{
+    width: 80%;
+    margin:0% 0% 2% 10%;
+  }#eventSerach-map div{
+    display: block;
   }
 }
