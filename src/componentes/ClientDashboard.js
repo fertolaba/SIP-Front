@@ -65,7 +65,7 @@ const ClientDashboard = () => {
       <Header />
       <div className="client-home-img"></div>
 
-      <div className="search-bar">
+      <div className="search-bar" id='customFont'>
         <div className="search-item">
           <input 
             type="text" 
@@ -76,6 +76,8 @@ const ClientDashboard = () => {
         </div>
         <div className="divider"></div>
         <div className="search-item">
+
+
           <CalendarTodayIcon style={{ fontSize:'small', verticalAlign: 'middle', marginRight: '5px', color:'white' }} />
           <input 
             type="date" 
