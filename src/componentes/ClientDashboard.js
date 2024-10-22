@@ -3,6 +3,7 @@ import EventCard from './EventCard';
 import Header from './Header';
 import '../ui/main.css';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
+import { Typography, TextField, Button, Select, MenuItem, Box, InputLabel,Alert } from "@mui/material";
 import AppsIcon from '@mui/icons-material/Apps';
 import Footer from './Footer';
 
@@ -100,15 +101,18 @@ const ClientDashboard = () => {
         <div className="search-item">
           <AppsIcon style={{ fontSize:'medium', verticalAlign: 'middle', marginRight: '5px', color:'white' }} />
           {/* Dropdown con géneros preestablecidos */}
-          <select 
+          <Select 
             value={genres} 
             onChange={(e) => setGenres(e.target.value)}
+            displayEmpty
+            inputProps={{ 'aria-label': 'Without label' }}
+            sx={{ width: { xs: "100%"}, color:'white',backgroundColor:'transparent', fontSize:"14" }}
           >
-            <option value="">Seleccionar género</option>
+            <MenuItem value="">Seleccionar Genero</MenuItem>
             {genreOptions.map((genre, index) => (
-              <option key={index} value={genre}>{genre}</option>
+              <MenuItem key={index} value={genre}>{genre}</MenuItem>
             ))}
-          </select>
+          </Select>
         </div>
         <div className="divider"></div>
         <div className="search-item">

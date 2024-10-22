@@ -14,6 +14,7 @@ import {
 } from "@mui/material";
 import { LocalizationProvider, DatePicker, TimePicker } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import { renderTimeViewClock } from '@mui/x-date-pickers/timeViewRenderers';
 import Header from './Header';
 import Footer from './Footer';
 import Popup from "./auth/Popup";
@@ -88,6 +89,7 @@ const AltaEventos = ({ genres, localities, eventTypes }) => {
       const dateTime = new Date(date);
       dateTime.setHours(time.getHours());
       dateTime.setMinutes(time.getMinutes());
+      dateTime.setHours(dateTime.getHours() - 3);
   
       const registerRequest = {
         name: eventData.name,
@@ -191,6 +193,11 @@ const AltaEventos = ({ genres, localities, eventTypes }) => {
                       label="Hora"
                       value={eventData.time}
                       onChange={handleTimeChange}
+                      viewRenderers={{
+                        hours: renderTimeViewClock,
+                        minutes: renderTimeViewClock,
+                        seconds: renderTimeViewClock,
+                      }}
                       renderInput={(params) => <TextField {...params} fullWidth required />}
                     />
                   </LocalizationProvider>

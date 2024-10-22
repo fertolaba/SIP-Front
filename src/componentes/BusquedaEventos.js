@@ -1,6 +1,6 @@
 import { useJsApiLoader } from "@react-google-maps/api";
 import { useState, useEffect } from "react";
-import { Typography, TextField, Button, Select, MenuItem, Box, InputLabel } from "@mui/material";
+import { Typography, TextField, Button, Select, MenuItem, Box, InputLabel,Alert } from "@mui/material";
 import MapComponent from "./utils/Map";
 import haversineDistance from './utils/HaversineDistance';
 import axios from "axios"; 
@@ -151,12 +151,6 @@ const fetchEvents = async () => {
     <div style={{ display: "flex", flexDirection: "column", backgroundColor: "#f5f5f5" }}>
       <Header/>
       <Box id='eventSearch-container' sx={{ padding: "10px", backgroundColor: "#f5f5f5", display: "flex", alignItems: "center", justifyContent: "flex-end", gap: "15px", zIndex: 10 }}>
-        {/* Mostrar un mensaje de error si hay alguno */}
-      {errorMessage && (
-        <Alert severity="error" sx={{ margin: "10px" }}>
-          {"Por favor ingresa una dirección válida."}
-        </Alert>
-      )}
         <TextField
           label="Ingresa una dirección"
           variant="outlined"
@@ -230,6 +224,7 @@ const fetchEvents = async () => {
           mapCenter={mapCenter}
         />
       </div>
+      <Footer />
     </div>
   );
 }
