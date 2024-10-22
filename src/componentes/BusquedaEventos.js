@@ -97,13 +97,28 @@ const fetchEvents = async () => {
   };
 
   // Función para actualizar los eventos filtrados según la ubicación y el rango
-  const updateFilteredEvents = () => {
+  const updateFilteredEvents = async () => {
+    console.log(userLocation.lat)
     if (userLocation) {
-      const filtered = allEvents.filter((event) => {
-        const distance = haversineDistance(userLocation, event.location); 
-        return distance <= distanceFilter; 
-      });
-      setFilteredEvents(filtered);
+      try {
+        const response = await axios.get("http://localhost:4002/api/events/proximity", {
+          params: {
+            lat: userLocation.lat,
+            lng: userLocation.lng,
+            radius: distanceFilter,
+          },
+        });
+        const eventos = response.data.map((event) => ({
+          ...event,
+          location: { lat: event.latitude, lng: event.longitude }, 
+          address: "", 
+        }));
+        console.log(response.data)
+        setFilteredEvents(eventos); // Actualiza el estado de los eventos filtrados
+      } catch (error) {
+        console.error("Error al obtener eventos por proximidad: ", error);
+        setErrorMessage("No se pudieron obtener eventos por proximidad.");
+      }
     }
   };
 
