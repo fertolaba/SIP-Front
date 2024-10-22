@@ -92,7 +92,7 @@ const ClientDashboard = () => {
           <CalendarTodayIcon style={{ fontSize:'small', verticalAlign: 'middle', marginRight: '5px', color:'white' }} />
           <input 
             type="date" 
-            placeholder="Fecha fin" 
+            placeholder="Fecha fin"
             value={endDate}
             onChange={(e) => setEndDate(e.target.value)}
           />
