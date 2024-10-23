@@ -169,9 +169,17 @@
     color: white; 
     font-size: 14px;
     width: 100%;
+    
+  }
+  .search-item select{
+    padding: 0.5%;
+    border-radius: 5px;
+    border-style: none;
+    color: white;
+    background: none;
   }
   
-  .search-item input::placeholder {
+  .search-item input::placeholder , .search-item p{
     color: white; 
     opacity: 0.8;
   }
@@ -204,7 +212,6 @@
   }
 
 .client-home-img{
-    background-color: rgb(195, 195, 255);
     padding: 5%;
     background-image: url('../img/home-image.jpg');
     background-size: cover;
@@ -215,8 +222,87 @@
     
 }
 
+input[type="date"]::-webkit-calendar-picker-indicator {
+  opacity: 0;
+}
+
 
 /*              FOOTER                 */
+
+
+/*               Alta eventos           */
+@import url('https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100..900;1,100..900&display=swap');
+
+#logEvent{
+  --Paper-shadow: 0px;
+  font-weight: bold;
+}
+.logEvent-container {
+  background-color: #ffffff;
+  border-radius: 15px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 40px;
+  max-width: 700px;
+  margin: 30px auto;
+
+}
+#eventLog-date{
+  width: 47.5%;
+  margin-right: 2.5%;
+}
+#eventLog-time{
+  width: 47.5%;
+  margin-left: 2.5%;
+}
+#logEvent-form label, #logEvent-form button, #customFont{
+  font-family: "Raleway", sans-serif;
+}
+#customFont h5{
+  font-weight:600;
+}
+#logEvent-form div{
+  border-radius: 12px;
+}
+#logEvent-button button{
+  border-radius: 12px;
+  background-color:#A64900;
+
+}
+#logEvent-button button:hover {
+  border-radius: 12px;
+  background-color: #4F2200;
+}
+
+/*                   BUSQUEDA DE EVENTOS MAPA                         */
+#eventSearch-container label, #eventSearch-container button, #eventSearch-container h6{
+  font-family: "Raleway", sans-serif;
+
+}
+#eventSearch-container button{
+  border-radius: 12px;
+  background-color:#A64900;
+
+}
+#eventSearch-container button:hover {
+  border-radius: 12px;
+  background-color: #4F2200;
+}
+#eventSearch-container div {
+  border-radius: 12px;
+  
+}
+.eventMap-input div:before {
+  border-bottom: 2px solid #ccc; /* Color por defecto */
+}
+
+.custom-textfield div:after {
+  border-bottom: 2px solid  #A64900; /* Color cuando está enfocado */
+}
+
+.custom-textfield div:before {
+  border-bottom: 2px solid orange; /* Color cuando se pasa el mouse */
+}
+
 
 
 
@@ -252,5 +338,17 @@
   }
   .sreacrh-btn{
     margin: auto;
+  }
+  #eventSearch-container{
+    display: contents;
+  }
+  #eventSearch-container div{
+    align-self: center;
+    width: fit-content;
+  }#eventSearch-container button{
+    width: 80%;
+    margin:0% 0% 2% 10%;
+  }#eventSerach-map div{
+    display: block;
   }
 }

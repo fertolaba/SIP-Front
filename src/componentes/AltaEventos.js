@@ -18,6 +18,8 @@ import Header from './Header';
 import Footer from './Footer';
 import Popup from "./auth/Popup";
 import { useNavigate } from 'react-router-dom';
+import '../ui/main.css';
+
 
 const AltaEventos = ({ genres, localities, eventTypes }) => {
   const [eventData, setEventData] = useState({
@@ -134,12 +136,12 @@ const AltaEventos = ({ genres, localities, eventTypes }) => {
   return (
     <>
       <Header />
-      <Card style={{ backgroundColor: "#f5f5f5", padding: "20px", margin: "20px auto", maxWidth: "600px" }}>
-        <CardContent>
-          <Typography variant="h5" gutterBottom>
+      <Card  elevation={0} id="customFont"  style={{ Papershadow: '0px',padding: "20px", margin: "20px auto", maxWidth: "600px"  }}>
+        <CardContent id="customFont" className = 'logEvent-container' style={{padding:'20px'}}>
+          <Typography variant="h5" gutterBottom id="customFont" >
             Alta de Evento
           </Typography>
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={handleSubmit} id="logEvent-form">
             <Grid container spacing={2}>
               <Grid item xs={12}>
                 <TextField
@@ -171,22 +173,30 @@ const AltaEventos = ({ genres, localities, eventTypes }) => {
                   required
                 />
               </Grid>
-              <Grid item xs={12}>
-                <LocalizationProvider dateAdapter={AdapterDateFns}>
-                  <DatePicker
-                    label="Fecha"
-                    value={eventData.date}
-                    onChange={handleDateChange}
-                    renderInput={(params) => <TextField {...params} fullWidth required />}
-                  />
-                  <TimePicker
-                    label="Hora"
-                    value={eventData.time}
-                    onChange={handleTimeChange}
-                    renderInput={(params) => <TextField {...params} fullWidth required />}
-                  />
-                </LocalizationProvider>
+              <Grid container item xs={12} spacing={6}>
+                <Grid item xs={6}>
+                  <LocalizationProvider  fullWidth dateAdapter={AdapterDateFns}>
+                    <DatePicker
+                      
+                      label="Fecha"
+                      value={eventData.date}
+                      onChange={handleDateChange}
+                      renderInput={(params) => <TextField {...params} fullWidth required />}
+                    />
+                  </LocalizationProvider>
+                </Grid>
+                <Grid item xs={6}>
+                  <LocalizationProvider dateAdapter={AdapterDateFns}>
+                    <TimePicker
+                      label="Hora"
+                      value={eventData.time}
+                      onChange={handleTimeChange}
+                      renderInput={(params) => <TextField {...params} fullWidth required />}
+                    />
+                  </LocalizationProvider>
+                </Grid>
               </Grid>
+  
               <Grid item xs={12} sm={6}>
                 <FormControl fullWidth>
                   <InputLabel>Género musical</InputLabel>
@@ -215,8 +225,8 @@ const AltaEventos = ({ genres, localities, eventTypes }) => {
                   helperText="Deja en blanco si el evento es gratuito"
                 />
               </Grid>
-              <Grid item xs={12}>
-                <Button type="submit" variant="contained" color="primary" fullWidth>
+              <Grid item xs={12} id="logEvent-button">
+                <Button  type="submit" variant="contained" color="primary" fullWidth>
                   Crear Evento
                 </Button>
               </Grid>
