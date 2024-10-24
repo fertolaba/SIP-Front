@@ -1,22 +1,11 @@
 import React, { useState } from "react";
-import {
-  Card,
-  CardContent,
-  Typography,
-  TextField,
-  Button,
-  MenuItem,
-  Select,
-  InputLabel,
-  FormControl,
-  Grid,
-  Link
-} from "@mui/material";
+import {Card,  CardContent,Typography,TextField,Button,MenuItem,Select,InputLabel,FormControl,Grid,Link} from "@mui/material";
 import { LocalizationProvider, DatePicker, TimePicker } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
-import Header from './Header';
-import Footer from './Footer';
-import Popup from "./auth/Popup";
+import { renderTimeViewClock } from '@mui/x-date-pickers/timeViewRenderers';
+import Header from '../componentes/Header';
+import Footer from '../componentes/Footer';
+import Popup from "../componentes/auth/Popup";
 import { useNavigate } from 'react-router-dom';
 import '../ui/main.css';
 
@@ -88,6 +77,7 @@ const AltaEventos = ({ genres, localities, eventTypes }) => {
       const dateTime = new Date(date);
       dateTime.setHours(time.getHours());
       dateTime.setMinutes(time.getMinutes());
+      dateTime.setHours(dateTime.getHours() - 3);
   
       const registerRequest = {
         name: eventData.name,
@@ -191,6 +181,11 @@ const AltaEventos = ({ genres, localities, eventTypes }) => {
                       label="Hora"
                       value={eventData.time}
                       onChange={handleTimeChange}
+                      viewRenderers={{
+                        hours: renderTimeViewClock,
+                        minutes: renderTimeViewClock,
+                        seconds: renderTimeViewClock,
+                      }}
                       renderInput={(params) => <TextField {...params} fullWidth required />}
                     />
                   </LocalizationProvider>

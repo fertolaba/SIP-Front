@@ -1,13 +1,8 @@
 import React, { useState } from "react";
-import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
-import Checkbox from '@mui/material/Checkbox';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Link from '@mui/material/Link';
-import TextField from '@mui/material/TextField';
-import Typography from '@mui/material/Typography';
+import { TextField, Button, Box, Checkbox, FormControlLabel, Typography,Link, IconButton, InputAdornment } from '@mui/material';
 import { useNavigate } from "react-router-dom";
 import fetchWithTimeout from "../error/_fetchWithTimeOut";
+import { Visibility, VisibilityOff } from '@mui/icons-material';
 import '../../ui/login.css';
 
 
@@ -15,7 +10,7 @@ export default function Login() {
 
   const [loading, setLoading] = React.useState(false);
   const [loginError, setLoginError] = React.useState('');
-
+  const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState({});
 
   const [email, setEmail] = React.useState('');
@@ -28,6 +23,11 @@ export default function Login() {
   const handleRegisterRedirect = () => {
     navigate('/registro'); 
   };
+
+  const handleClickShowPassword = () => {
+    setShowPassword(!showPassword);
+  };
+
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -133,12 +133,27 @@ export default function Login() {
               fullWidth
               label="Contraseña"
               name="password"
-              type="password"
-              onChange={(e) => setPassword(e.target.value)}
+              type={showPassword ? 'text' : 'password'}
               value={password}
+              onChange={(e) => setPassword(e.target.value)}
               margin="normal"
               error={Boolean(errors.password)}
               helperText={errors.password}
+              slotProps={{
+                     input: {
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton
+                      aria-label="toggle password visibility"
+                      onClick={handleClickShowPassword}
+                      edge="end"
+                    >
+                      {showPassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              },
+              }}
             />
             <FormControlLabel
               control={<Checkbox value="remember" color="primary" />}

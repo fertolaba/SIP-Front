@@ -1,13 +1,11 @@
 import { useJsApiLoader } from "@react-google-maps/api";
 import { useState, useEffect } from "react";
-import { Typography, TextField, Button, Select, MenuItem, Box, InputLabel, Alert } from "@mui/material";
-import MapComponent from "./utils/Map";
-import haversineDistance from './utils/HaversineDistance';
-import axios from "axios"; 
-import Header from './Header';
-import Footer from './Footer';
+import { Typography, TextField, Button, Select, MenuItem, Box, InputLabel } from "@mui/material";
+import MapComponent from "../componentes/utils/Map";
+import axios from "axios";
+import Header from '../componentes/Header';
+import Footer from '../componentes/Footer';
 import '../ui/main.css';
-
 
 function BusquedaEventos() {
   const { isLoaded } = useJsApiLoader({
@@ -18,73 +16,69 @@ function BusquedaEventos() {
   const [userLocation, setUserLocation] = useState(null);
   const [address, setAddress] = useState("");
   const [distanceFilter, setDistanceFilter] = useState(100000); 
-  const [allEvents, setAllEvents] = useState([]); // Todos los eventos
-  const [filteredEvents, setFilteredEvents] = useState([]); // Eventos filtrados
-  const [mapCenter, setMapCenter] = useState({ lat: -34.6131500, lng: -58.3772300 }); // Centro del mapa
-  const [errorMessage, setErrorMessage] = useState(""); // Estado para manejar el mensaje de error
+  const [allEvents, setAllEvents] = useState([]); 
+  const [filteredEvents, setFilteredEvents] = useState([]); 
+  const [mapCenter, setMapCenter] = useState({ lat: -34.6131500, lng: -58.3772300 });
+  const [errorMessage, setErrorMessage] = useState(""); 
 
-//función para obtener eventos del backend
-const fetchEvents = async () => {
-  try {
-    const response = await axios.get("http://localhost:4002/api/events");
-    
-    const eventos = response.data.map((event) => ({
-      ...event,
-      location: { lat: event.latitude, lng: event.longitude }, 
-      address: "", 
-    }));
-    
-    // Ordena los eventos por fecha antes de guardarlos
-    const eventosOrdenados = eventos.sort((a, b) => {
-      const dateA = new Date(a.dateTime); // Convierte la fecha a un objeto Date
-      const dateB = new Date(b.dateTime);
-      return dateA - dateB; // Ordena de menor a mayor (más cercano primero)
-    });
-    
-    setAllEvents(eventosOrdenados); // Guarda los eventos ordenados
-    setFilteredEvents(eventosOrdenados); // Inicializa con los eventos ordenados
-  } catch (error) {
-    console.error("Error obteniendo eventos desde el backend: ", error);
-  }
-};
+  // Obtener eventos del backend
+  const fetchEvents = async () => {
+    try {
+      const response = await axios.get("http://localhost:4002/api/events");
+      const eventos = response.data.map((event) => ({
+        ...event,
+        location: { lat: event.latitude, lng: event.longitude },
+        address: "", 
+      }));
 
+      const eventosOrdenados = eventos.sort((a, b) => new Date(a.dateTime) - new Date(b.dateTime));
+      setAllEvents(eventosOrdenados);
+      setFilteredEvents(eventosOrdenados);
+    } catch (error) {
+      console.error("Error obteniendo eventos desde el backend: ", error);
+    }
+  };
 
   useEffect(() => {
     fetchEvents();
   }, []);
 
-  // Función de geocodificación directa: convierte una dirección a coordenadas
+  // Geocodificación directa: convertir dirección a coordenadas
   const handleGeocodeAddress = async () => {
     if (!address) {
-      setErrorMessage("Por favor ingresa una dirección válida."); // Mostrar error si está vacío
+      setErrorMessage("Por favor ingresa una dirección válida.");
       return;
     }
 
-    const geocoder = new window.google.maps.Geocoder();
-    geocoder.geocode({ address }, (results, status) => {
-      if (status === "OK") {
-        const { lat, lng } = results[0].geometry.location;
-        setUserLocation({
-          lat: lat(),
-          lng: lng(),
-        });
-        setMapCenter({ lat: lat(), lng: lng() }); // Actualiza el centro del mapa
-        setErrorMessage(""); // Limpia el mensaje de error
-      } else {
-        setErrorMessage("No se pudo geocodificar la dirección. Intenta con otra."); // Error de geocodificación
-      }
-    });
+    if (isLoaded) {
+      const geocoder = new window.google.maps.Geocoder();
+      geocoder.geocode({ address }, (results, status) => {
+        if (status === "OK") {
+          const { lat, lng } = results[0].geometry.location;
+          setUserLocation({
+            lat: lat(),
+            lng: lng(),
+          });
+          setMapCenter({ lat: lat(), lng: lng() });
+          setErrorMessage("");
+        } else {
+          setErrorMessage("No se pudo geocodificar la dirección. Intenta con otra.");
+        }
+      });
+    } else {
+      setErrorMessage("Google Maps API no está cargada correctamente.");
+    }
   };
 
-  // Función para obtener la ubicación actual del usuario
+  // Obtener la ubicación actual del usuario
   const handleGetUserLocation = () => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
           const { latitude, longitude } = position.coords;
           setUserLocation({ lat: latitude, lng: longitude });
-          setMapCenter({ lat: latitude, lng: longitude }); // Actualiza el centro del mapa
-          setErrorMessage(""); // Limpia el mensaje de error si se obtiene la ubicación correctamente
+          setMapCenter({ lat: latitude, lng: longitude });
+          setErrorMessage("");
         },
         (error) => {
           console.error("Error obteniendo la geolocalización: ", error);
@@ -96,87 +90,93 @@ const fetchEvents = async () => {
     }
   };
 
-  // Función para actualizar los eventos filtrados según la ubicación y el rango
-  const updateFilteredEvents = () => {
+  // Actualizar eventos filtrados por proximidad
+  const updateFilteredEvents = async () => {
     if (userLocation) {
-      const filtered = allEvents.filter((event) => {
-        const distance = haversineDistance(userLocation, event.location); 
-        return distance <= distanceFilter; 
-      });
-      setFilteredEvents(filtered);
+      try {
+        const response = await axios.get("http://localhost:4002/api/events/proximity", {
+          params: {
+            lat: userLocation.lat,
+            lng: userLocation.lng,
+            radius: distanceFilter,
+          },
+        });
+        const eventos = response.data.map((event) => ({
+          ...event,
+          location: { lat: event.latitude, lng: event.longitude },
+          address: "", 
+        }));
+        setFilteredEvents(eventos);
+      } catch (error) {
+        console.error("Error al obtener eventos por proximidad: ", error);
+        setErrorMessage("No se pudieron obtener eventos por proximidad.");
+      }
     }
   };
 
-  // Efecto para actualizar los eventos cuando cambian el rango o la ubicación del usuario
   useEffect(() => {
     if (userLocation) {
       updateFilteredEvents();
     }
-  }, [userLocation, distanceFilter]); 
+  }, [userLocation, distanceFilter]);
 
-  // Función de geocodificación inversa para obtener direcciones a partir de latitud y longitud
+  // Geocodificación inversa para obtener direcciones
   const geocodeLatLng = (lat, lng, callback) => {
-    const geocoder = new window.google.maps.Geocoder();
-    const latlng = { lat, lng };
+    if (isLoaded) {
+      const geocoder = new window.google.maps.Geocoder();
+      const latlng = { lat, lng };
 
-    geocoder.geocode({ location: latlng }, (results, status) => {
-      if (status === "OK") {
-        if (results[0]) {
-          callback(results[0].formatted_address);
+      geocoder.geocode({ location: latlng }, (results, status) => {
+        if (status === "OK") {
+          if (results[0]) {
+            callback(results[0].formatted_address);
+          } else {
+            console.error("No se encontraron resultados.");
+            callback("Dirección no disponible");
+          }
         } else {
-          console.error("No se encontraron resultados.");
-          callback("Dirección no disponible");
+          console.error("Falla en Geocodificación Inversa: " + status);
+          callback("Error al obtener dirección");
         }
-      } else {
-        console.error("Falla en Geocodificación Inversa: " + status);
-        callback("Error al obtener dirección");
-      }
-    });
+      });
+    }
   };
 
-  // Efecto para asignar direcciones a los eventos filtrados
   useEffect(() => {
     filteredEvents.forEach((event) => {
       if (!event.address) {
         geocodeLatLng(event.location.lat, event.location.lng, (address) => {
-          event.address = address; // Asigna la dirección
-          setFilteredEvents((prevEvents) => [...prevEvents]); // Forzar re-render
+          event.address = address;
+          setFilteredEvents((prevEvents) => [...prevEvents]);
         });
       }
     });
   }, [filteredEvents]);
 
   return (
-    
     <div style={{ display: "flex", flexDirection: "column", backgroundColor: "#f5f5f5" }}>
       <Header/>
       <Box id='eventSearch-container' sx={{ padding: "10px", backgroundColor: "#f5f5f5", display: "flex", alignItems: "center", justifyContent: "flex-end", gap: "15px", zIndex: 10 }}>
-        {/* Mostrar un mensaje de error si hay alguno */}
-      {errorMessage && (
-        <Alert severity="error" sx={{ margin: "10px" }}>
-          {"Por favor ingresa una dirección válida."}
-        </Alert>
-      )}
         <TextField
           label="Ingresa una dirección"
           variant="outlined"
           value={address}
+          error={Boolean(errorMessage)}
+          helperText={errorMessage}
           onChange={(e) => setAddress(e.target.value)}
           sx={{ width: "40%" }}
-          className="eventMap-input" // Agrega la clase personalizada aquí
         />
-
         <Button variant="contained" onClick={handleGeocodeAddress}>
           Buscar dirección
         </Button>
-        <Button variant="contained" onClick={handleGetUserLocation}>
+        <Button sx={{width:{xs:"100%",md:"13%"}}} variant="contained" onClick={handleGetUserLocation}>
           Usar mi ubicación actual
         </Button>
         <InputLabel>Rango de búsqueda: </InputLabel>
         <Select
           value={distanceFilter}
           onChange={(e) => setDistanceFilter(parseInt(e.target.value))}
-          sx={{ width: "5%" }}
+          sx={{ width: { xs: "100%", md: "5%" } }}
         >
           <MenuItem value={2}>2 km</MenuItem>
           <MenuItem value={5}>5 km</MenuItem>
@@ -186,7 +186,7 @@ const fetchEvents = async () => {
         </Select>
       </Box>
 
-      <div id='eventSerach-map' style={{ display: "flex", flex: 1 }}>
+      <div style={{ display: "flex", flex: 1 }}>
         <Box sx={{ width: "30%", padding: "10px", backgroundColor: "#f5f5f5" }}>
           <Typography variant="h6">Lista de Eventos</Typography>
           <ul style={{ listStyle: "none", padding: 0 }}>
@@ -221,7 +221,6 @@ const fetchEvents = async () => {
             )}
           </ul>
         </Box>
-
         <MapComponent
           isLoaded={isLoaded}
           selectedEvent={selectedEvent}
@@ -231,7 +230,7 @@ const fetchEvents = async () => {
           mapCenter={mapCenter}
         />
       </div>
-      <Footer/>
+      <Footer />
     </div>
   );
 }
