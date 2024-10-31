@@ -62,8 +62,10 @@ const ClientDashboard = () => {
   };
 
   return (
+    <>
+    <Header/>
     <div id='client-home'>
-      <Header />
+      
       <div className="client-home-img"></div>
 
       <div className="search-bar" id='customFont'>
@@ -161,8 +163,9 @@ const ClientDashboard = () => {
       </div>
       <div className="line-below"></div>
 
-      <Footer />
     </div>
+    <Footer />
+    </>
   );
 };
 

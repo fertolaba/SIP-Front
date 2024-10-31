@@ -6,6 +6,8 @@ import ClientDashboard from './pages/ClientDashboard';
 import ArtistDashboard from './pages/ArtistDashboard';
 import BusquedaEventos from './pages/BusquedaEventos'
 import AltaEventos from './pages/AltaEventos'
+import MiPerfil from './pages/MiPerfil';
+import { lightTheme , darkTheme } from './componentes/utils/Theme';
 
 function App() {
   return (
@@ -18,6 +20,7 @@ function App() {
         <Route path="/artist-dashboard" element={<ArtistDashboard/>} />
         <Route path="/BusquedaEventos" element={<BusquedaEventos/>} />
         <Route path="/AltaEventos" element={<AltaEventos/>} />
+        <Route path="/MiPerfil" element={<MiPerfil/>} />
 
       </Routes>
     </BrowserRouter>
