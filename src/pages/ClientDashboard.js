@@ -152,6 +152,7 @@ const ClientDashboard = () => {
         {events.map(event => (
           <EventCard 
             key={event.id} 
+            eventId = {event.id}
             name={event.name} 
             description={event.description} 
             price={event.price} 
