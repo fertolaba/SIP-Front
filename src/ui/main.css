@@ -81,6 +81,15 @@
     color: white;
     cursor: pointer;
   }
+
+  .button-eliminar {
+    background-color: #fc1d1d;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    color: white;
+    cursor: pointer;
+  }
   
   .button-asisto {
     background-color:#4F2200;
@@ -98,7 +107,11 @@
     
     background-color:#4F2200;
   }
-  
+
+  .button-eliminar:hover {
+    
+    background-color:#d80505 ;
+  }
   
 
 

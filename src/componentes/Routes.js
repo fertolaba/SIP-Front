@@ -7,6 +7,9 @@ import { ArtistDashboard } from "./ArtistDashboard";
 import ErrorPage from "./error/ErrorPage";
 import {BusquedaEventos} from "./BusquedaEventos";
 import AltaEventos from "./AltaEventos";
+import MisEventos from "../pages/MisEventos";
+import EditarEventos from "../pages/EditarEventos";
+
 
 const router = createBrowserRouter([
     {
@@ -47,6 +50,24 @@ const router = createBrowserRouter([
         element: (
             <AuthRoute allowedRoles={['ARTIST']}>  
                 <ArtistDashboard />
+            </AuthRoute>
+        ),
+        errorElement: <ErrorPage />
+    },
+    {
+        path: "/MisEventos",
+        element: (
+            <AuthRoute allowedRoles={['ARTIST']}>  
+                <MisEventos />
+            </AuthRoute>
+        ),
+        errorElement: <ErrorPage />
+    },
+    {
+        path: "/EditarEventos/:eventId",
+        element: (
+            <AuthRoute allowedRoles={['ARTIST']}>  
+                <EditarEventos />
             </AuthRoute>
         ),
         errorElement: <ErrorPage />
