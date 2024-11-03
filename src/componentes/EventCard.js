@@ -35,16 +35,17 @@ const EventCard = ({ eventId, image, name, location, dateTime, price }) => {
       // Remove the event ID from liked events
       const updatedLikedEvents = likedEvents.filter(id => id !== eventId);
       localStorage.setItem('likedEvents', JSON.stringify(updatedLikedEvents));
+      // Send delete like to the backend
+      removeLike(eventId);
     }
     localStorage.setItem('likedEvents', JSON.stringify(likedEvents));
   };
 
   // Function to send like to the backend
   const recordLike = (eventId) => {
-    const userId = Number(localStorage.getItem('userId')); // Obtiene el userId del local storage
-    const endpoint = `http://localhost:4002/api/user-interactions/${userId}/events/${eventId}/like`; // Endpoint directo
+    const userId = Number(localStorage.getItem('userId'));
+    const endpoint = `http://localhost:4002/api/user-interactions/${userId}/events/${eventId}/like`;
   
-    // Realizar la solicitud POST al backend
     fetch(endpoint, {
       method: 'POST',
       headers: {
@@ -55,25 +56,50 @@ const EventCard = ({ eventId, image, name, location, dateTime, price }) => {
       if (!response.ok) {
         throw new Error('Network response was not ok');
       }
-      return response.text(); // Cambia a text() para ver la respuesta cruda
+      return response.text();
     })
     .then(data => {
       try {
-        const jsonData = JSON.parse(data); // Intenta analizar el JSON
-        console.log('Like recorded:', jsonData); // Imprimir la respuesta del servidor
+        const jsonData = JSON.parse(data);
+        console.log('Like recorded:', jsonData);
       } catch (error) {
         console.error('Error parsing JSON:', error);
       }
     })
     .catch(error => {
-      console.error('Error recording like:', error); // Imprimir cualquier error
+      console.error('Error recording like:', error);
+    });
+  };
+
+  // Function to remove like from the backend
+  const removeLike = (eventId) => {
+    const userId = Number(localStorage.getItem('userId'));
+    const endpoint = `http://localhost:4002/api/user-interactions/${userId}/events/${eventId}/like`;
+  
+    fetch(endpoint, {
+      method: 'DELETE', // Use DELETE method to remove the like
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      return response.text();
+    })
+    .then(data => {
+      console.log('Like removed:', data);
+    })
+    .catch(error => {
+      console.error('Error removing like:', error);
     });
   };
 
   // Function to send attendance to the backend
   const recordAttendance = () => {
-    const userId = Number(localStorage.getItem('userId')); // Obtiene el userId del local storage
-    const endpoint = `http://localhost:4002/api/user-interactions/${userId}/events/${eventId}/assist`; // Endpoint para asistencia
+    const userId = Number(localStorage.getItem('userId'));
+    const endpoint = `http://localhost:4002/api/user-interactions/${userId}/events/${eventId}/assist`;
   
     fetch(endpoint, {
       method: 'POST',
@@ -85,7 +111,7 @@ const EventCard = ({ eventId, image, name, location, dateTime, price }) => {
       if (!response.ok) {
         throw new Error('Network response was not ok');
       }
-      return response.text(); // Cambia a text() para ver la respuesta cruda
+      return response.text();
     })
     .then(data => {
       console.log('Attendance recorded:', data);

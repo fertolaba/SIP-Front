@@ -46,6 +46,8 @@ export default function Login() {
     try {
       const user = await handleLogin(credentials);
       console.log('Usuario autenticado:', user);
+      localStorage.removeItem('likedEvents');
+
 
    
       localStorage.setItem('userId', user.userId); 
