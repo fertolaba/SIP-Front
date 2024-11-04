@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import '../../ui/login.css';
 import { useNavigate } from 'react-router-dom';
 import fetchWithTimeout from '../error/_fetchWithTimeOut';
 import Popup from './Popup';
-import { TextField, Button, Box, Checkbox, FormControlLabel, Typography, FormControl, InputLabel, Select, MenuItem, FormHelperText, Link, IconButton, InputAdornment } from '@mui/material';
+import { TextField, Button,Box,Checkbox,FormControlLabel,Typography,FormControl,InputLabel,Select,MenuItem,FormHelperText,Link,IconButton,InputAdornment} from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
+import Verificar from './Verificar';
 
 const Registro = () => {
   const [formData, setFormData] = useState({
@@ -13,7 +14,7 @@ const Registro = () => {
     apellido: '',
     edad: '',
     ubicacion: '',
-    intereses: [],
+    generosMusicalesPreferidos: [],
     aceptarTerminos: false,
     email: '',
     confirmEmail: '',
@@ -24,10 +25,67 @@ const Registro = () => {
   const [errors, setErrors] = useState({});
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const navigate = useNavigate();
+  const [generosMusicales, setGenerosMusicales] = useState([]); 
+  const [isVerifyPopupOpen, setIsVerifyPopupOpen] = useState(false);
+  const [localidades, setLocalidades] = useState([]);
+
+  useEffect(() => {
+    const fetchGenerosMusicales = async () => {
+      try {
+        const response = await fetch('http://localhost:4002/api/music-genres');
+        if (!response.ok) {
+          throw new Error('Error al obtener géneros musicales');
+        }
+        const data = await response.json();
+        setGenerosMusicales(data);
+      } catch (error) {
+        console.error('Error al cargar géneros musicales:', error);
+      }
+    };
+
+    const fetchLocalidades = async () => {
+      try {
+        const response = await fetch('http://localhost:4002/api/localidad');
+        if (!response.ok) {
+          throw new Error('Error al obtener localidades');
+        }
+        const data = await response.json();
+        setLocalidades(data);
+      } catch (error) {
+        console.error('Error al cargar localidades:', error);
+      }
+    };
+    fetchLocalidades();
+    fetchGenerosMusicales();
+    handleVerify();
+  }, []);
+
+  const handleVerify = async (email, token) => {
+    try {
+      const response = await fetch(`http://localhost:4002/api/auth/verify?token=${token}&email=${email}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error('Error en la verificación');
+      }
+
+      const data = await response.json();
+      console.log("Verificación exitosa:", data);
+      setIsVerifyPopupOpen(false); 
+      setIsPopupOpen(true); 
+    } catch (error) {
+      console.error('Error al verificar:', error);
+    }
+  };
 
   const handleRegisterRedirect = () => {
     navigate('/login');
   };
+
 
   const handleClickShowPassword = () => {
     setShowPassword(!showPassword);
@@ -35,30 +93,29 @@ const Registro = () => {
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
-
     setFormData({
       ...formData,
       [name]: type === 'checkbox' ? checked : value,
     });
   };
 
-  // Manejo separado para la edad
   const handleAgeChange = (e) => {
     setFormData({
       ...formData,
-      edad: e.target.value, // Se asegura de que el valor de edad sea actualizado correctamente
+      edad: e.target.value,
     });
   };
 
   const handleInteresesChange = (e) => {
+    const { value } = e.target;
     setFormData({
       ...formData,
-      intereses: e.target.value,
+      generosMusicalesPreferidos: value,
     });
   };
 
   const formValido = () => {
-    const { nombreUsuario, nombre, apellido, edad, ubicacion, intereses, email, confirmEmail, password, aceptarTerminos } = formData;
+    const { nombreUsuario, nombre, apellido, edad, generosMusicalesPreferidos, email, confirmEmail, password, aceptarTerminos } = formData;
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     const newErrors = {};
 
@@ -68,10 +125,20 @@ const Registro = () => {
     if (!emailRegex.test(email)) newErrors.email = "Por favor ingresa un email válido.";
     if (email !== confirmEmail) newErrors.confirmEmail = "Los correos electrónicos no coinciden.";
     if (!confirmEmail) newErrors.confirmEmail = "Por favor ingresa un email.";
-    if (password.length < 6) newErrors.password = "La contraseña debe tener al menos 6 caracteres.";
+    if (password.length < 7) {
+      newErrors.password = "La contraseña debe tener al menos 7 caracteres.";
+  } else if (!/[A-Z]/.test(password)) {
+      newErrors.password = "La contraseña debe contener al menos una letra mayúscula.";
+  } else if (!/[a-z]/.test(password)) {
+      newErrors.password = "La contraseña debe contener al menos una letra minúscula.";
+  } else if (!/[0-9]/.test(password)) {
+      newErrors.password = "La contraseña debe contener al menos un número.";
+  }
+  
     if (!edad || edad < 15 || edad > 99) newErrors.edad = 'Debe tener entre 15 y 100 años';
-    if (!ubicacion) newErrors.ubicacion = "Debes seleccionar una ubicación.";
-    if (intereses.length === 0) newErrors.intereses = "Debes seleccionar al menos un interés musical.";
+    if (!formData.localidadId) newErrors.ubicacion = "Debes seleccionar una ubicación.";
+
+    if (generosMusicalesPreferidos.length === 0) newErrors.generosMusicalesPreferidos = "Debes seleccionar al menos un interés musical.";
     if (!aceptarTerminos) newErrors.aceptarTerminos = "Debes aceptar los Términos y Condiciones.";
     if (!rol) newErrors.rol = "Debes seleccionar al menos un rol.";
 
@@ -94,8 +161,8 @@ const Registro = () => {
       edad: parseInt(formData.edad, 10),
       password: formData.password,
       role: rol,
-      intereses: formData.intereses,
-      ubicacion: formData.ubicacion
+      genres: formData.generosMusicalesPreferidos, 
+      localidadId: formData.localidadId
     };
 
     try {
@@ -112,8 +179,7 @@ const Registro = () => {
       }
 
       const data = await response.json();
-      setIsPopupOpen(true);
-
+      setIsVerifyPopupOpen(true);
     } catch (error) {
       console.error('Error al registrar:', error);
     }
@@ -127,7 +193,45 @@ const Registro = () => {
           <Typography variant="h4" gutterBottom>
             Registrarse
           </Typography>
+          
           <form onSubmit={handleSubmit} id='login-form'>
+<FormControl fullWidth margin="normal" error={Boolean(errors.rol)}>
+  <InputLabel
+    id="rol-label"
+    style={{ fontWeight: 'bold', color: '#000' }} 
+  >
+    Rol
+  </InputLabel>
+  <Select
+    className="left"
+    labelId="rol-label"
+    id="rol-select"
+    value={rol}
+    label="Rol"
+    name="rol"
+    onChange={(e) => setRol(e.target.value)}
+    style={{
+      fontWeight: 'bold',           
+      backgroundColor: '#f0f0f0', 
+
+    }}
+  >
+      <MenuItem value="CLIENT">Asistente</MenuItem>
+      <MenuItem value="ARTIST">Artista</MenuItem>
+    </Select>
+    <FormHelperText>{errors.rol}</FormHelperText>
+    {rol === 'CLIENT' && (
+      <FormHelperText style={{ color: '#4caf50' }}>
+        Como cliente, podrá explorar y asistir a eventos disponibles en la plataforma.
+      </FormHelperText>
+    )}
+    {rol === 'ARTIST' && (
+      <FormHelperText style={{ color: '#4caf50' }}>
+        Como artista, tendrá la posibilidad de crear y gestionar sus propios eventos.
+      </FormHelperText>
+    )}
+  </FormControl>
+
             <TextField
               fullWidth
               label="Nombre de usuario"
@@ -191,8 +295,7 @@ const Registro = () => {
               margin="normal"
               error={Boolean(errors.password)}
               helperText={errors.password}
-              slotProps={{
-                     input: {
+              InputProps={{
                 endAdornment: (
                   <InputAdornment position="end">
                     <IconButton
@@ -204,7 +307,6 @@ const Registro = () => {
                     </IconButton>
                   </InputAdornment>
                 ),
-              },
               }}
             />
             <div id='column'>
@@ -214,7 +316,7 @@ const Registro = () => {
                   labelId="edad-label"
                   id="edad-select"
                   value={formData.edad}
-                  onChange={handleAgeChange} // Usamos el handler específico para la edad
+                  onChange={handleAgeChange}
                   name="edad"
                   label="Edad"
                 >
@@ -226,101 +328,84 @@ const Registro = () => {
                 </Select>
                 <FormHelperText>{errors.edad}</FormHelperText>
               </FormControl>
-              <FormControl fullWidth margin="normal" error={Boolean(errors.rol)}>
-                <InputLabel id="rol-label"> Rol </InputLabel>
-                <Select
-                  className='left'
-                  labelId="rol-label"
-                  id="rol-select"
-                  value={rol}
-                  label=" Rol "
-                  name="rol"
-                  onChange={(e) => setRol(e.target.value)} // Cambio directo del valor del rol
-                >
-                  <MenuItem value="CLIENT">Asistente</MenuItem>
-                  <MenuItem value="ARTIST">Artista</MenuItem>
-                </Select>
-                <FormHelperText>{errors.rol}</FormHelperText>
-              </FormControl>
-            </div>
-            <FormControl fullWidth margin="normal" error={Boolean(errors.intereses)}>
+              <FormControl fullWidth margin="normal" error={Boolean(errors.generosMusicalesPreferidos)}>
               <InputLabel id="intereses-label">Intereses musicales</InputLabel>
               <Select
                 labelId="intereses-label"
                 id="intereses-select"
                 multiple
-                value={formData.intereses}
-                label="Intereses musicales"
+                value={formData.generosMusicalesPreferidos}
                 onChange={handleInteresesChange}
-                name="intereses"
                 renderValue={(selected) => selected.join(', ')}
               >
-                <MenuItem value="ROCK">Rock</MenuItem>
-                <MenuItem value="POP">Pop</MenuItem>
-                <MenuItem value="JAZZ">Jazz</MenuItem>
-                <MenuItem value="CLASSICAL">Clásica</MenuItem>
-                <MenuItem value="HIPHOP">HipHop</MenuItem>
-                <MenuItem value="REGGAE">Reggae</MenuItem>
-                <MenuItem value="ELECTRONIC">Electrónica</MenuItem>
-                <MenuItem value="METAL">Metal</MenuItem>
-                <MenuItem value="LATIN">Latina</MenuItem>
+                {generosMusicales.map((genre) => (
+                  <MenuItem key={genre} value={genre}>
+                    {genre}
+                  </MenuItem>
+                ))}
               </Select>
-              <FormHelperText>{errors.intereses}</FormHelperText>
+              <FormHelperText>{errors.generosMusicalesPreferidos}</FormHelperText>
             </FormControl>
+
+            </div>
+
             <FormControl fullWidth margin="normal" error={Boolean(errors.ubicacion)}>
               <InputLabel id="ubicacion-label">Ubicación</InputLabel>
               <Select
                 labelId="ubicacion-label"
                 id="ubicacion-select"
-                value={formData.ubicacion}
+                value={formData.localidadId || ''} 
                 label="Ubicación"
-                onChange={handleChange}
+                onChange={(e) => {
+                  const selectedLocalidadId = e.target.value; 
+                  setFormData({
+                    ...formData,
+                    localidadId: selectedLocalidadId, 
+                  });
+                }}
                 name="ubicacion"
               >
-                <MenuItem value="Belgrano">Belgrano</MenuItem>
-                <MenuItem value="Nunez">Nuñez</MenuItem>
+                {localidades.map((localidad) => (
+                  <MenuItem key={localidad.id} value={localidad.id}> 
+                    {localidad.nombre}
+                  </MenuItem>
+                ))}
               </Select>
               <FormHelperText>{errors.ubicacion}</FormHelperText>
             </FormControl>
             <FormControlLabel
               control={
                 <Checkbox
-                  name="aceptarTerminos"
                   checked={formData.aceptarTerminos}
                   onChange={handleChange}
+                  name="aceptarTerminos"
                 />
               }
-              label="Aceptar los Términos y Condiciones"
-              error={Boolean(errors.aceptarTerminos)}
+              label="Acepto los Términos y Condiciones"
             />
-            {errors.aceptarTerminos && (
-              <Typography color="error" variant="body2">
-                {errors.aceptarTerminos}
-              </Typography>
-            )}
-            <Button
-              className='register'
-              fullWidth
-              variant="contained"
-              type="submit"
-              color="primary"
-              sx={{ mt: 2 }}
-            >
+            {errors.aceptarTerminos && <Typography color="error">{errors.aceptarTerminos}</Typography>}
+            <Button type="submit" variant="contained" color="primary" fullWidth>
               Registrarse
             </Button>
-            <Typography variant="body1" align="center" sx={{ mt: 2 }}>
-              ¿Ya tienes cuenta? <Link component="button" onClick={handleRegisterRedirect}>
-                Iniciar sesión
-              </Link>
+            <Typography variant="body2" align="center" mt={2}>
+              ¿Ya tienes cuenta? <Link href="#" onClick={handleRegisterRedirect}>Inicia sesión</Link>
             </Typography>
+
           </form>
+          <Popup open={isPopupOpen} onClose={() => setIsPopupOpen(false)} message="Registro exitoso!">
+    <Typography variant="h6">Registro exitoso!</Typography>
+</Popup>
+
         </Box>
       </div>
-      <Popup trigger={isPopupOpen} setTrigger={setIsPopupOpen}>
-        <h3>Registro exitoso</h3>
-        <p>Tu cuenta ha sido registrada exitosamente.</p>
-        <Link component="button" onClick={handleRegisterRedirect}>Ir al login </Link>
-      </Popup>
+      <Verificar 
+    trigger={isVerifyPopupOpen} 
+    setTrigger={setIsVerifyPopupOpen} 
+    onVerify={handleVerify} 
+>
+</Verificar>
+
+
     </div>
   );
 };

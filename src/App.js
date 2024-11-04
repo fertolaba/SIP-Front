@@ -10,6 +10,7 @@ import MiPerfil from './pages/MiPerfil';
 import MisEventos from './pages/MisEventos';
 import EditarEventos from './pages/EditarEventos';
 import { lightTheme , darkTheme } from './componentes/utils/Theme';
+import Reestablecer from './componentes/auth/Reestablecer';
 
 
 function App() {
@@ -26,6 +27,7 @@ function App() {
         <Route path="/MiPerfil" element={<MiPerfil/>} />
         <Route path="/MisEventos" element={<MisEventos/>} />
         <Route  path="/EditarEventos/:eventId" element={<EditarEventos/>} />
+        <Route  path="/Reestablecer" element={<Reestablecer/>} />
 
 
 

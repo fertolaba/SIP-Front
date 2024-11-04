@@ -9,6 +9,7 @@ import {BusquedaEventos} from "./BusquedaEventos";
 import AltaEventos from "./AltaEventos";
 import MisEventos from "../pages/MisEventos";
 import EditarEventos from "../pages/EditarEventos";
+import Reestablecer from "./auth/Reestablecer";
 
 
 const router = createBrowserRouter([
@@ -17,6 +18,12 @@ const router = createBrowserRouter([
         element: <Registro />, 
         errorElement: <ErrorPage />
     },
+    {
+        path: "/reestablecer",
+        element: <Reestablecer />, 
+        errorElement: <ErrorPage />
+    },
+
     {
         path: "/BusquedaEventos",
         element:<BusquedaEventos/>,
