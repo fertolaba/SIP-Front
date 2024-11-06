@@ -166,7 +166,7 @@ const Registro = () => {
     };
 
     try {
-      const response = await fetchWithTimeout('http://localhost:4002/api/v1/auth/register', {
+      const response = await fetch('http://localhost:4002/api/v1/auth/register', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
