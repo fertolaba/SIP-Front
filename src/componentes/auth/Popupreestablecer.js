@@ -33,14 +33,14 @@ function Popupreestablecer({ open, onClose, onOpenResetPopup }) {
     };
 
     const handleOpenResetPopup = () => {
-        onClose();  // Cierra este popup actual
-        onOpenResetPopup();  // Abre el popup de reestablecimiento
+        onClose();  
+        onOpenResetPopup();  
     };
 
     return (
         <Dialog open={open} onClose={onClose} maxWidth="xs" fullWidth>
-            <DialogTitle>
-                Ingresar email para enviar token
+            <DialogTitle sx={{ textAlign: 'center' }}>
+                Ingrese el email para enviar el token
                 <IconButton
                     aria-label="close"
                     onClick={onClose}
@@ -54,7 +54,7 @@ function Popupreestablecer({ open, onClose, onOpenResetPopup }) {
                     <CloseIcon />
                 </IconButton>
             </DialogTitle>
-            <DialogContent dividers>
+            <DialogContent dividers sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                 <TextField
                     label="Email"
                     type="email"
@@ -64,7 +64,7 @@ function Popupreestablecer({ open, onClose, onOpenResetPopup }) {
                     margin="normal"
                 />
             </DialogContent>
-            <DialogActions>
+            <DialogActions sx={{ display: 'flex', justifyContent: 'center' }}>
                 <Button onClick={() => handleVerify(email)} color="primary" variant="contained">
                     Enviar
                 </Button>

@@ -32,7 +32,7 @@ function Verificar(props) {
         <>
             <Dialog open={props.trigger} onClose={() => props.setTrigger(false)} maxWidth="xs" fullWidth>
                 <DialogTitle>
-                    Ingresar token de validación
+                    Ingrese token de validación
                     <IconButton
                         aria-label="close"
                         onClick={() => props.setTrigger(false)}

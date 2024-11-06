@@ -5,7 +5,7 @@ import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { renderTimeViewClock } from '@mui/x-date-pickers/timeViewRenderers';
 import Header from '../componentes/Header';
 import Footer from '../componentes/Footer';
-import Popup from "../componentes/auth/Popup";
+import EventoPopup from "../componentes/auth/EventoPopup";
 import { useNavigate } from 'react-router-dom';
 import { useParams } from 'react-router-dom';
 import '../ui/main.css';
@@ -236,11 +236,11 @@ const EditarEventos = ({ genres, localities, eventTypes }) => {
           </form>
         </CardContent>
       </Card>
-      <Popup trigger={isPopupOpen} setTrigger={setIsPopupOpen}>
+      <EventoPopup trigger={isPopupOpen} setTrigger={setIsPopupOpen}>
         <h3>Evento editado </h3>
         <p>Tu evento ha sido editado exitosamente.</p>
         <Link component="button" onClick={handleRegisterRedirect}>Ok </Link>
-      </Popup>
+      </EventoPopup>
       <Footer />
     </>
   );

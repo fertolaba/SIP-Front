@@ -67,7 +67,7 @@ export default function Reestablecer() {
             />
             <TextField
               fullWidth
-              label="Contraseña"
+              label="Nueva contraseña"
               name="password"
               type="password"
               onChange={(e) => setPassword(e.target.value)}

@@ -8,7 +8,7 @@ import Footer from '../componentes/Footer';
 import Popup from "../componentes/auth/Popup";
 import { useNavigate } from 'react-router-dom';
 import '../ui/main.css';
-
+import EventoPopup from "../componentes/auth/EventoPopup";
 
 const AltaEventos = ({ genres, localities, eventTypes }) => {
   const [eventData, setEventData] = useState({
@@ -229,11 +229,11 @@ const AltaEventos = ({ genres, localities, eventTypes }) => {
           </form>
         </CardContent>
       </Card>
-      <Popup trigger={isPopupOpen} setTrigger={setIsPopupOpen}>
+      <EventoPopup trigger={isPopupOpen} setTrigger={setIsPopupOpen}>
         <h3>Evento creado </h3>
         <p>Tu evento ha sido registrado exitosamente.</p>
         <Link component="button" onClick={handleRegisterRedirect}>Ok </Link>
-      </Popup>
+      </EventoPopup>
       <Footer />
     </>
   );
