@@ -64,7 +64,7 @@ const EditarEventos = ({ genres, localities, eventTypes }) => {
             time: new Date(selectedEvent.dateTime),
             genre: selectedEvent.genres[0],
             price: selectedEvent.price,
-            localidadID: selectedEvent.localidadID ? selectedEvent.localidadID.toString() : "1",
+            localidadId: selectedEvent.localidadId ? selectedEvent.localidadId.toString() : "1",
           });
         } else {
           console.error("Evento no encontrado");
@@ -132,7 +132,7 @@ const EditarEventos = ({ genres, localities, eventTypes }) => {
         price: eventData.price || 0,
         organizerId: userId,
         genres: [eventData.genre],
-        localidadID: "1"
+        localidadId: "1"
       };
 
       try {
