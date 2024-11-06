@@ -160,3 +160,95 @@ const EventCard = ({ eventId, image, name, location, dateTime, price }) => {
 };
 
 export default EventCard;
+
+
+/*
+            <Grid container spacing={2}>
+              <Grid item xs={12}>
+                <TextField
+                  fullWidth
+                  label="Nombre del evento"
+                  name="name"
+                  value={eventData.name}
+                  onChange={handleChange}
+                  required
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  fullWidth
+                  label="Descripción del evento"
+                  name="description"
+                  value={eventData.description}
+                  onChange={handleChange}
+                  required
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  fullWidth
+                  label="Ubicación"
+                  name="location"
+                  value={eventData.location}
+                  onChange={handleChange}
+                  required
+                />
+              </Grid>
+              <Grid container item xs={12} spacing={6}>
+                <Grid item xs={6}>
+                  <LocalizationProvider  fullWidth dateAdapter={AdapterDateFns}>
+                    <DatePicker
+                      
+                      label="Fecha"
+                      value={eventData.date}
+                      onChange={handleDateChange}
+                      renderInput={(params) => <TextField {...params} fullWidth required />}
+                    />
+                  </LocalizationProvider>
+                </Grid>
+                <Grid item xs={6}>
+                  <LocalizationProvider dateAdapter={AdapterDateFns}>
+                    <TimePicker
+                      label="Hora"
+                      value={eventData.time}
+                      onChange={handleTimeChange}
+                      viewRenderers={{
+                        hours: renderTimeViewClock,
+                        minutes: renderTimeViewClock,
+                        seconds: renderTimeViewClock,
+                      }}
+                      renderInput={(params) => <TextField {...params} fullWidth required />}
+                    />
+                  </LocalizationProvider>
+                </Grid>
+              </Grid>
+  
+              <Grid item xs={12} sm={6}>
+                <FormControl fullWidth>
+                  <InputLabel>Género musical</InputLabel>
+                  <Select
+                    name="genre"
+                    value={eventData.genre}
+                    onChange={handleChange}
+                    required
+                  >
+                    {musicGenres.map((genre) => (
+                      <MenuItem key={genre} value={genre}>
+                        {genre.replace('_', ' ')}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  fullWidth
+                  label="Precio de la entrada"
+                  name="price"
+                  type="number"
+                  value={eventData.price}
+                  onChange={handleChange}
+                  helperText="Deja en blanco si el evento es gratuito"
+                />
+              </Grid>
+*/

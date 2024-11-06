@@ -25,6 +25,7 @@ const Header = () => {
                             <li id='nav-item'><a id='nav-link' href="/client-dashboard">Eventos</a></li>
                             <li id='nav-item'><a id='nav-link' href="/BusquedaEventos">Mapa</a></li>
                             <li id='nav-item'><a id='nav-link' href="/MiPerfil">Mi Perfil</a></li>
+                            <li id='nav-item'><a id='nav-link' href="/Asistencia">Asistencia</a></li>
                         </>
                     )}
                     {role === 'ARTIST' && (
@@ -34,6 +35,7 @@ const Header = () => {
                             <li id='nav-item'><a id='nav-link' href="/BusquedaEventos">Mapa</a></li>
                             <li id='nav-item'><a id='nav-link' href="/MiPerfil">Mi Perfil</a></li>
                             <li id='nav-item'><a id='nav-link' href="/misEventos">Mis Eventos</a></li>
+                            <li id='nav-item'><a id='nav-link' href="/Asistencia">Asistencia</a></li>
 
                         </>
                     )}

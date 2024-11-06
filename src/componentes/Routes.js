@@ -10,6 +10,8 @@ import AltaEventos from "./AltaEventos";
 import MisEventos from "../pages/MisEventos";
 import EditarEventos from "../pages/EditarEventos";
 import Reestablecer from "./auth/Reestablecer";
+import EventosAsistire from "../pages/EventosAsistire";
+
 
 
 const router = createBrowserRouter([
@@ -75,6 +77,15 @@ const router = createBrowserRouter([
         element: (
             <AuthRoute allowedRoles={['ARTIST']}>  
                 <EditarEventos />
+            </AuthRoute>
+        ),
+        errorElement: <ErrorPage />
+    },
+    {
+        path: "/Asistencia",
+        element: (
+            <AuthRoute>  
+                <EventosAsistire />
             </AuthRoute>
         ),
         errorElement: <ErrorPage />

@@ -161,7 +161,7 @@ const Registro = () => {
       edad: parseInt(formData.edad, 10),
       password: formData.password,
       role: rol,
-      genres: formData.generosMusicalesPreferidos, 
+      generosMusicalesPreferidos: formData.generosMusicalesPreferidos, 
       localidadId: formData.localidadId
     };
 
@@ -171,8 +171,9 @@ const Registro = () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(registerRequest),
+        body: JSON.stringify(registerRequest)
       });
+
 
       if (!response.ok) {
         throw new Error('Error en el registro');
@@ -334,6 +335,7 @@ const Registro = () => {
                 labelId="intereses-label"
                 id="intereses-select"
                 multiple
+                label="Intereses musicales"
                 value={formData.generosMusicalesPreferidos}
                 onChange={handleInteresesChange}
                 renderValue={(selected) => selected.join(', ')}
