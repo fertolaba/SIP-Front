@@ -1,15 +1,13 @@
-import React, { useState } from "react";
-import {Card,  CardContent,Typography,TextField,Button,MenuItem,Select,InputLabel,FormControl,Grid,Link} from "@mui/material";
+import React, { useState, useEffect } from "react";
+import { useParams, useNavigate } from 'react-router-dom';
+import { Card, CardContent, Typography, TextField, Button, MenuItem, Select, InputLabel, FormControl, Grid, Link } from "@mui/material";
 import { LocalizationProvider, DatePicker, TimePicker } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { renderTimeViewClock } from '@mui/x-date-pickers/timeViewRenderers';
 import Header from '../componentes/Header';
 import Footer from '../componentes/Footer';
 import Popup from "../componentes/auth/Popup";
-import { useNavigate } from 'react-router-dom';
-import { useParams } from 'react-router-dom';
 import '../ui/main.css';
-
 
 const EditarEventos = ({ genres, localities, eventTypes }) => {
   const { eventId } = useParams(); // Extrae el eventId de la URL
@@ -21,12 +19,64 @@ const EditarEventos = ({ genres, localities, eventTypes }) => {
     time: null,
     genre: "",
     price: "",
-    locality: "",
+    localidadId: "1",
   });
-
   const userId = localStorage.getItem('userId');
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const navigate = useNavigate();
+
+  const getAddressFromCoordinates = async (lat, lng) => {
+    const url = `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`;
+  
+    try {
+      const response = await fetch(url);
+      const data = await response.json();
+  
+      if (data && data.display_name) {
+        return data.display_name; // Dirección aproximada
+      } else {
+        throw new Error("Error al obtener dirección a partir de coordenadas");
+      }
+    } catch (error) {
+      console.error(error);
+      return ""; // Valor predeterminado en caso de error
+    }
+  };
+  
+
+  // Obtener todos los eventos y filtrar el específico
+  useEffect(() => {
+    const fetchEventData = async () => {
+      try {
+        const response = await fetch('http://localhost:4002/api/events');
+        if (!response.ok) throw new Error('Error al obtener eventos');
+        const events = await response.json();
+    
+        const selectedEvent = events.find(event => event.id === parseInt(eventId));
+        if (selectedEvent) {
+          const address = await getAddressFromCoordinates(selectedEvent.latitude, selectedEvent.longitude);
+    
+          setEventData({
+            name: selectedEvent.name,
+            description: selectedEvent.description,
+            location: address, // Dirección calculada
+            date: new Date(selectedEvent.dateTime),
+            time: new Date(selectedEvent.dateTime),
+            genre: selectedEvent.genres[0],
+            price: selectedEvent.price,
+            localidadID: selectedEvent.localidadID ? selectedEvent.localidadID.toString() : "1",
+          });
+        } else {
+          console.error("Evento no encontrado");
+        }
+      } catch (error) {
+        console.error('Error al cargar datos del evento:', error);
+      }
+    };
+    
+    
+    fetchEventData();
+  }, [eventId]);
 
   const handleRegisterRedirect = () => {
     navigate('/artist-dashboard'); 
@@ -34,16 +84,11 @@ const EditarEventos = ({ genres, localities, eventTypes }) => {
 
   const getLatLongFromAddress = async (address) => {
     const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(address)}&format=json`;
-
     try {
       const response = await fetch(url);
       const data = await response.json();
-
       if (data.length > 0) {
-        return {
-          lat: data[0].lat,
-          lng: data[0].lon
-        };
+        return { lat: data[0].lat, lng: data[0].lon };
       } else {
         throw new Error('Error al obtener coordenadas');
       }
@@ -68,19 +113,15 @@ const EditarEventos = ({ genres, localities, eventTypes }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
     const address = eventData.location;
     const coordinates = await getLatLongFromAddress(address);
-  
+
     if (coordinates) {
-      const date = eventData.date;
-      const time = eventData.time;
-  
-      const dateTime = new Date(date);
-      dateTime.setHours(time.getHours());
-      dateTime.setMinutes(time.getMinutes());
+      const dateTime = new Date(eventData.date);
+      dateTime.setHours(eventData.time.getHours());
+      dateTime.setMinutes(eventData.time.getMinutes());
       dateTime.setHours(dateTime.getHours() - 3); // Ajuste de zona horaria
-  
+
       const registerRequest = {
         name: eventData.name,
         description: eventData.description,
@@ -91,28 +132,23 @@ const EditarEventos = ({ genres, localities, eventTypes }) => {
         price: eventData.price || 0,
         organizerId: userId,
         genres: [eventData.genre],
+        localidadID: "1"
       };
-  
+
       try {
         const response = await fetch(`http://localhost:4002/api/events/${eventId}`, {
           method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-          },
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(registerRequest),
         });
-  
+
         if (!response.ok) {
-          const errorText = await response.text(); // Captura el error del servidor
+          const errorText = await response.text();
           console.error('Error del servidor:', errorText);
           throw new Error('Error al actualizar el evento');
         }
-        console.log('Datos enviados:', JSON.stringify(registerRequest, null, 2));
 
-  
-        const data = await response.json();
-        console.log('Evento actualizado exitosamente:', data);
-        
+        console.log('Datos enviados:', JSON.stringify(registerRequest, null, 2));
         setIsPopupOpen(true);  
       } catch (error) {
         console.log('Datos enviados:', JSON.stringify(registerRequest, null, 2));
@@ -122,7 +158,7 @@ const EditarEventos = ({ genres, localities, eventTypes }) => {
       console.error('No se pudieron obtener las coordenadas');
     }
   };
-  
+
   const musicGenres = [
     "ROCK", "POP", "JAZZ", "FOLKLORE", "TANGO", "CUMBIA", "REGGAETON", "TRAP", 
     "ELECTRONICA", "CUARTETO", "HEAVY_METAL", "PUNK", "BLUES", "INDIE", "SKA", 
@@ -237,7 +273,7 @@ const EditarEventos = ({ genres, localities, eventTypes }) => {
         </CardContent>
       </Card>
       <Popup trigger={isPopupOpen} setTrigger={setIsPopupOpen}>
-        <h3>Evento editado </h3>
+        <h3>Evento editado</h3>
         <p>Tu evento ha sido editado exitosamente.</p>
         <Link component="button" onClick={handleRegisterRedirect}>Ok </Link>
       </Popup>
