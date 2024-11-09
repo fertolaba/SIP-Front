@@ -5,11 +5,11 @@ import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { renderTimeViewClock } from '@mui/x-date-pickers/timeViewRenderers';
 import Header from '../componentes/Header';
 import Footer from '../componentes/Footer';
+import Popup from "../componentes/auth/Popup";
 import { useNavigate } from 'react-router-dom';
 import '../ui/main.css';
 import EventoPopup from "../componentes/auth/EventoPopup";
 import generosServices from "../service/generos.services";
-
 
 const AltaEventos = ({ genres, localities, eventTypes }) => {
   const [eventData, setEventData] = useState({
@@ -51,7 +51,6 @@ const AltaEventos = ({ genres, localities, eventTypes }) => {
     fetchLocalidades();
   }, []);
 
-
   const getLatLongFromAddress = async (address) => {
     const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(address)}&format=json`;
 
@@ -86,10 +85,24 @@ const AltaEventos = ({ genres, localities, eventTypes }) => {
     setEventData({ ...eventData, time: newTime });
   };
 
+  useEffect(() => {
+    setLoading(true);  
+    generosServices.getGeneros()
+      .then(data => {
+        setGeneros(data);
+      })
+      .catch(error => {
+        console.error('Error al obtener los géneros:', error);
+      })
+      .finally(() => {
+        setLoading(false);  
+      });
+  }, []);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
   
-    const address = eventData.localidadId;
+    const address = eventData.location;
     const coordinates = await getLatLongFromAddress(address);
   
     if (coordinates) {
@@ -104,13 +117,14 @@ const AltaEventos = ({ genres, localities, eventTypes }) => {
       const registerRequest = {
         name: eventData.name,
         description: eventData.description,
-        localidadId: eventData.localidadId,
+        location: eventData.location,
         latitude: coordinates.lat,
         longitude: coordinates.lng,
         dateTime: dateTime.toISOString(),
         price: eventData.price,
         organizerId: userId,
         genres: [eventData.genre],
+        localidadId: eventData.localidadId,
       };
   
       try {
@@ -137,23 +151,6 @@ const AltaEventos = ({ genres, localities, eventTypes }) => {
       console.error('No se pudieron obtener las coordenadas');
     }
   };
-
-
-  useEffect(() => {
-    setLoading(true);  
-    generosServices.getGeneros()
-      .then(data => {
-        setGeneros(data);
-      })
-      .catch(error => {
-        console.error('Error al obtener los géneros:', error);
-      })
-      .finally(() => {
-        setLoading(false);  
-      });
-  }, []);
-  
-
 
   return (
     <>
@@ -223,26 +220,8 @@ const AltaEventos = ({ genres, localities, eventTypes }) => {
                   </LocalizationProvider>
                 </Grid>
               </Grid>
-  
-              <Grid item xs={12} sm={6}>
-                <FormControl fullWidth>
-                  <InputLabel>Género musical</InputLabel>
-                  <Select
-                    name="genre"
-                    value={eventData.genre}
-                    onChange={handleChange}
-                    required
-                  >
-                    {generos.map((genre) => (
-                      <MenuItem key={genre} value={genre}>
-                        {genre.replace('_', ' ')}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-              </Grid>
-              
-            <FormControl fullWidth margin="normal" error={Boolean(errors.ubicacion)}>
+
+              <FormControl fullWidth margin="normal" error={Boolean(errors.ubicacion)}>
               <InputLabel id="ubicacion-label">Ubicación</InputLabel>
               <Select
                 labelId="ubicacion-label"
@@ -266,6 +245,24 @@ const AltaEventos = ({ genres, localities, eventTypes }) => {
               </Select>
               <FormHelperText>{errors.ubicacion}</FormHelperText>
             </FormControl>
+  
+              <Grid item xs={12} sm={6}>
+                <FormControl fullWidth>
+                  <InputLabel>Género musical</InputLabel>
+                  <Select
+                    name="genre"
+                    value={eventData.genre}
+                    onChange={handleChange}
+                    required
+                  >
+                    {generos.map((genre) => (
+                      <MenuItem key={genre} value={genre}>
+                        {genre.replace('_', ' ')}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </Grid>
               <Grid item xs={12} sm={6}>
                 <TextField
                   fullWidth
