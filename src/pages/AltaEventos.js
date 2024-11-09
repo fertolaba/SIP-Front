@@ -220,31 +220,33 @@ const AltaEventos = ({ genres, localities, eventTypes }) => {
                   </LocalizationProvider>
                 </Grid>
               </Grid>
+              <Grid item xs={12}>
+  <FormControl fullWidth margin="normal" error={Boolean(errors.ubicacion)}>
+    <InputLabel id="ubicacion-label">Localidad</InputLabel>
+    <Select
+      labelId="ubicacion-label"
+      id="ubicacion-select"
+      value={eventData.localidadId || ''}
+      label="Ubicación"
+      onChange={(e) => {
+        const selectedLocalidadId = e.target.value;
+        setEventData({
+          ...eventData,
+          localidadId: selectedLocalidadId,
+        });
+      }}
+      name="ubicacion"
+    >
+      {localidades.map((localidad) => (
+        <MenuItem key={localidad.id} value={localidad.id}>
+          {localidad.nombre}
+        </MenuItem>
+      ))}
+    </Select>
+    <FormHelperText>{errors.ubicacion}</FormHelperText>
+  </FormControl>
+</Grid>
 
-              <FormControl fullWidth margin="normal" error={Boolean(errors.ubicacion)}>
-              <InputLabel id="ubicacion-label">Ubicación</InputLabel>
-              <Select
-                labelId="ubicacion-label"
-                id="ubicacion-select"
-                value={eventData.localidadId || ''} 
-                label="Ubicación"
-                onChange={(e) => {
-                  const selectedLocalidadId = e.target.value; 
-                  setEventData({
-                    ...eventData,
-                    localidadId: selectedLocalidadId, 
-                  });
-                }}
-                name="ubicacion"
-              >
-                {localidades.map((localidad) => (
-                  <MenuItem key={localidad.id} value={localidad.id}> 
-                    {localidad.nombre}
-                  </MenuItem>
-                ))}
-              </Select>
-              <FormHelperText>{errors.ubicacion}</FormHelperText>
-            </FormControl>
   
               <Grid item xs={12} sm={6}>
                 <FormControl fullWidth>
