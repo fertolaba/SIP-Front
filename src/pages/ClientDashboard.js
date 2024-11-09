@@ -5,6 +5,7 @@ import '../ui/main.css';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import { Select, MenuItem } from "@mui/material";
 import AppsIcon from '@mui/icons-material/Apps';
+import generosServices from '../service/generos.services';
 import Footer from '../componentes/Footer';
 
 const ClientDashboard = () => {
@@ -15,9 +16,23 @@ const ClientDashboard = () => {
   const [genres, setGenres] = useState('');
   const [minPrice, setMinPrice] = useState('');
   const [maxPrice, setMaxPrice] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [selectedGenre, setSelectedGenre] = useState('');
 
-  // Lista de géneros preestablecidos
-  const genreOptions = ['Rock','Jazz', 'Cumbia', 'Electronica', 'Reggae','Tango', 'Rumba'];
+  useEffect(() => {
+    setLoading(true);  
+    generosServices.getGeneros()
+      .then(data => {
+        console.log(data);  
+        setGenres(data);  
+      })
+      .catch(error => {
+        console.error('Error al obtener los géneros:', error);
+      })
+      .finally(() => {
+        setLoading(false);  
+      });
+}, []); 
 
   const addDefaultTime = (date, time) => {
     return date ? `${date}T${time}` : '';
@@ -104,17 +119,21 @@ const ClientDashboard = () => {
           <AppsIcon style={{ fontSize:'medium', verticalAlign: 'middle', marginRight: '5px', color:'white' }} />
           {/* Dropdown con géneros preestablecidos */}
           <Select 
-            value={genres} 
-            onChange={(e) => setGenres(e.target.value)}
-            displayEmpty
-            inputProps={{ 'aria-label': 'Without label' }}
-            sx={{ width: { xs: "100%"}, color:'white',backgroundColor:'transparent', fontSize:"14" }}
-          >
-            <MenuItem value="">Seleccionar Genero</MenuItem>
-            {genreOptions.map((genre, index) => (
-              <MenuItem key={index} value={genre}>{genre}</MenuItem>
-            ))}
-          </Select>
+  value={selectedGenre} 
+  onChange={(e) => setSelectedGenre(e.target.value)}
+  displayEmpty
+  inputProps={{ 'aria-label': 'Sin etiqueta' }}
+  sx={{ width: { xs: "100%"}, color:'white', backgroundColor:'transparent', fontSize:"14" }}
+>
+  <MenuItem value="">Seleccionar Género</MenuItem>
+  {genres.length > 0 ? (
+    genres.map((genre, index) => (
+      <MenuItem key={index} value={genre}>{genre}</MenuItem>  // Ahora pasas la cadena directamente como valor
+    ))
+  ) : (
+    <MenuItem value="" disabled>Cargando géneros...</MenuItem>
+  )}
+</Select>
         </div>
         <div className="divider"></div>
         <div className="search-item">

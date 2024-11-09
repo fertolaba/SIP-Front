@@ -6,6 +6,7 @@ import Popup from './Popup';
 import { TextField, Button,Box,Checkbox,FormControlLabel,Typography,FormControl,InputLabel,Select,MenuItem,FormHelperText,Link,IconButton,InputAdornment} from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import Verificar from './Verificar';
+import { formValido } from './validacion';
 
 const Registro = () => {
   const [formData, setFormData] = useState({
@@ -28,6 +29,7 @@ const Registro = () => {
   const [generosMusicales, setGenerosMusicales] = useState([]); 
   const [isVerifyPopupOpen, setIsVerifyPopupOpen] = useState(false);
   const [localidades, setLocalidades] = useState([]);
+  const [errorMessage, setErrorMessage] = useState('');
 
 
 
@@ -80,6 +82,8 @@ const Registro = () => {
       setIsPopupOpen(true); 
     } catch (error) {
       console.error('Error al verificar:', error);
+      setErrorMessage('Error en la verificación. Por favor, intente nuevamente.'); // Establecer el mensaje de error
+      setIsVerifyPopupOpen(true); // Abrir el popup de verificación
     }
   };
 
@@ -115,42 +119,13 @@ const Registro = () => {
     });
   };
 
-  const formValido = () => {
-    const { nombreUsuario, nombre, apellido, edad, generosMusicalesPreferidos, email, confirmEmail, password, aceptarTerminos } = formData;
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    const newErrors = {};
-
-    if (!nombreUsuario) newErrors.nombreUsuario = "El nombre de usuario es obligatorio.";
-    if (!nombre) newErrors.nombre = "El nombre es obligatorio.";
-    if (!apellido) newErrors.apellido = "El apellido es obligatorio.";
-    if (!emailRegex.test(email)) newErrors.email = "Por favor ingresa un email válido.";
-    if (email !== confirmEmail) newErrors.confirmEmail = "Los correos electrónicos no coinciden.";
-    if (!confirmEmail) newErrors.confirmEmail = "Por favor ingresa un email.";
-    if (password.length < 7) {
-      newErrors.password = "La contraseña debe tener al menos 7 caracteres.";
-  } else if (!/[A-Z]/.test(password)) {
-      newErrors.password = "La contraseña debe contener al menos una letra mayúscula.";
-  } else if (!/[a-z]/.test(password)) {
-      newErrors.password = "La contraseña debe contener al menos una letra minúscula.";
-  } else if (!/[0-9]/.test(password)) {
-      newErrors.password = "La contraseña debe contener al menos un número.";
-  }
-  
-    if (!edad || edad < 15 || edad > 99) newErrors.edad = 'Debe tener entre 15 y 100 años';
-    if (!formData.localidadId) newErrors.ubicacion = "Debes seleccionar una ubicación.";
-
-    if (generosMusicalesPreferidos.length === 0) newErrors.generosMusicalesPreferidos = "Debes seleccionar al menos un interés musical.";
-    if (!aceptarTerminos) newErrors.aceptarTerminos = "Debes aceptar los Términos y Condiciones.";
-    if (!rol) newErrors.rol = "Debes seleccionar al menos un rol.";
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    if (!formValido()) {
+    
+    const { isValid, errors: validationErrors } = formValido(formData, rol);
+    if (!isValid) {
+      setErrors(validationErrors);
       return;
     }
 
@@ -405,6 +380,7 @@ const Registro = () => {
     trigger={isVerifyPopupOpen} 
     setTrigger={setIsVerifyPopupOpen} 
     onVerify={handleVerify} 
+    errorMessage={errorMessage}
 >
 </Verificar>
 

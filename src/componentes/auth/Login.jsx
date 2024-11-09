@@ -75,17 +75,28 @@ export default function Login() {
         },
         body: JSON.stringify(credentials),
       });
-
+  
       if (!response.ok) {
-        throw new Error('Error en el login');
+        const error = await response.json();
+        if (error.message === "Cuenta no activada. Por favor, revisa tu correo para activar tu cuenta.") {
+          setLoginError("Cuenta no activada. Por favor, revisa tu correo para activar tu cuenta.");
+        } else {
+          throw new Error('Error en el login');
+        }
       }
-
-      return await response.json();
+  
+      const user = await response.json();
+      console.log('Usuario autenticado:', user);
+      localStorage.removeItem('likedEvents');
+      localStorage.setItem('userId', user.userId); 
+      localStorage.setItem('token', user.accessToken);
+      localStorage.setItem('role', user.role);
+      handleRedirect(user.role);
     } catch (error) {
-      console.error('Error fetching data:', error);
-      throw error; 
+      setLoginError(error.message || 'Error al iniciar sesión. Por favor, verifica tus credenciales.');
     }
   };
+  
   const handleClosePopup = () => {
     setPopupOpen(true);
   };
@@ -169,10 +180,10 @@ export default function Login() {
                         {loading ? 'Cargando...' : 'Iniciar sesión'}
                     </Button>
                     {loginError && (
-                        <Typography color="error" variant="body2" sx={{ mt: 2 }}>
-                            {loginError}
-                        </Typography>
-                    )}
+    <Typography color="error" variant="body2" sx={{ mt: 2 }}>
+      {loginError}
+    </Typography>
+  )}
                     <Typography variant="body1" align="center" sx={{ mt: 2 }}>
                         ¿No tienes una cuenta?{' '}
                         <Link component="button" onClick={handleRegisterRedirect}>

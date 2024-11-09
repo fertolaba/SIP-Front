@@ -19,7 +19,7 @@ function Verificar(props) {
             props.onVerify(email, token);
             setSuccessPopup(true); 
         } else {
-            alert("Por favor, ingresa tu email y el token de verificación.");
+            alert("Ingrese email y token de verificación.");
         }
     };
 
@@ -70,8 +70,6 @@ function Verificar(props) {
                     </Button>
                 </DialogActions>
             </Dialog>
-
-            {/* Popup de éxito */}
             <Dialog open={successPopup} onClose={handleCloseSuccessPopup} maxWidth="xs" fullWidth>
                 <DialogTitle>Verificación Exitosa</DialogTitle>
                 <DialogContent>
