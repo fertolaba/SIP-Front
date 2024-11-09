@@ -24,6 +24,28 @@ class UsuariosService{
           console.error('Error fetching data:', error);
         }
       };
+
+      updateUser = async (id, userData) => {
+        const url = `${this._apiUrl}/${id}`;
+        try {
+            const response = await fetchWithTimeout(url, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(userData),  
+            });
+
+            if (!response.ok) {
+                throw new Error('Error updating user data');
+            }
+
+            return await response.json();
+        } catch (error) {
+            console.error('Error updating user data:', error);
+            throw error;  
+        }
+    };
 }
 
 const usuarioService = new UsuariosService();

@@ -28,8 +28,7 @@ export default function MiPerfil() {
           apellido: data.lastName, 
           email: data.email,
           edad: data.edad,
-
-          localidad: data.localidad.name, 
+          localidad: data.localidad ? data.localidad.nombre : '', 
           genero: data.generosMusicalesPreferidos.join(', '), 
         });
       } catch (error) {
@@ -39,11 +38,12 @@ export default function MiPerfil() {
         setLoading(false); 
       }
     };
-
+  
     if (userId) {
       fetchUserData(); 
     }
   }, [userId]);
+  
 
   return (
     <>

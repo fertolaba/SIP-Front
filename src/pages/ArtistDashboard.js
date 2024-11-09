@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import EventCard from '../componentes/EventCard'; 
+import EventCard from '../componentes/EventCard';
 import Header from '../componentes/Header';
 import Footer from '../componentes/Footer';
 import '../ui/main.css';
@@ -19,52 +19,74 @@ const ArtistDashboard = () => {
   const [minPrice, setMinPrice] = useState('');
   const [maxPrice, setMaxPrice] = useState('');
   const [loading, setLoading] = useState(false);
+  const [localidadId, setLocalidadId] = useState('');
+  const [localidades, setLocalidades] = useState([]);
 
+  // Cargar eventos al cargar el componente
   useEffect(() => {
-    setLoading(true); 
+    setLoading(true);
     eventosServices.getEventos() 
       .then(data => setEvents(data)) 
       .catch(error => console.error('Error fetching events:', error))
       .finally(() => setLoading(false)); 
   }, []);
 
+  // Cargar géneros disponibles
   useEffect(() => {
     setLoading(true);  
     generosServices.getGeneros()
       .then(data => {
-        console.log(data);  
-        setGenres(data);  
+        setGenres(data);
       })
       .catch(error => {
         console.error('Error al obtener los géneros:', error);
       })
-      .finally(() => {
-        setLoading(false);  
-      });
-}, []); 
+      .finally(() => setLoading(false));  
+  }, []);
 
+  // Cargar localidades disponibles
+  useEffect(() => {
+    const fetchLocalidades = async () => {
+      try {
+        const response = await fetch('http://localhost:4002/api/localidad');
+        if (!response.ok) {
+          throw new Error('Error al obtener localidades');
+        }
+        const data = await response.json();
+        setLocalidades(data); // Guardamos las localidades en el estado
+      } catch (error) {
+        console.error('Error al cargar localidades:', error);
+      }
+    };
+    fetchLocalidades();
+  }, []);
 
+  // Agregar tiempo por defecto a la fecha
   const addDefaultTime = (date, time) => {
     return date ? `${date}T${time}` : '';
   };
   
+  // Función para obtener eventos filtrados
   const fetchEvents = () => {
     const params = new URLSearchParams();
+    
     if (name) params.append('name', name);
-
     if (startDate) params.append('startDate', addDefaultTime(startDate, '00:00:00'));
     if (endDate) params.append('endDate', addDefaultTime(endDate, '23:59:59'));
-
+    if (localidadId) params.append('localidadId', localidadId);
     if (selectedGenre) params.append('genres', selectedGenre);
     if (minPrice) params.append('minPrice', minPrice);
     if (maxPrice) params.append('maxPrice', maxPrice);
-
+  
+    console.log("Parametros enviados:", params.toString()); 
+  
     fetch(`http://localhost:4002/api/events/filters?${params.toString()}`)
       .then(response => response.json())
       .then(data => setEvents(data))
       .catch(error => console.error('Error fetching events:', error));
   };
 
+  // Cargar todos los eventos sin filtros
   const loadAllEvents = () => {
     fetch('http://localhost:4002/api/events')
       .then(response => response.json())
@@ -72,12 +94,14 @@ const ArtistDashboard = () => {
       .catch(error => console.error('Error fetching events:', error));
   };
 
+  // Limpiar filtros
   const clearFilters = () => {
     setName('');
     setStartDate('');
     setEndDate('');
-    setSelectedGenre('');  // Limpiamos el género seleccionado
+    setSelectedGenre('');
     setMinPrice('');
+    setLocalidadId('');
     setMaxPrice('');
     loadAllEvents();  // Recargar todos los eventos sin filtros
   };
@@ -88,6 +112,7 @@ const ArtistDashboard = () => {
       <div className="client-home-img"></div>
 
       <div className="search-bar" id='customFont'>
+        {/* Filtro por nombre */}
         <div className="search-item">
           <input 
             type="text" 
@@ -97,48 +122,73 @@ const ArtistDashboard = () => {
           />
         </div>
         <div className="divider"></div>
+
+        {/* Filtro por fecha de inicio */}
         <div className="search-item">
           <CalendarTodayIcon style={{ fontSize:'small', verticalAlign: 'middle', marginRight: '5px', color:'white' }} />
           <input 
             type="date" 
-            placeholder="Fecha inicio" 
             value={startDate}
             onChange={(e) => setStartDate(e.target.value)}
           />
         </div>
         <div className="divider"></div>
+
+        {/* Filtro por fecha de fin */}
         <div className="search-item">
           <CalendarTodayIcon style={{ fontSize:'small', verticalAlign: 'middle', marginRight: '5px', color:'white' }} />
           <input 
             type="date" 
-            placeholder="Fecha fin"
             value={endDate}
             onChange={(e) => setEndDate(e.target.value)}
           />
         </div>
         <div className="divider"></div>
+
+        {/* Filtro por género */}
         <div className="search-item">
           <AppsIcon style={{ fontSize:'medium', verticalAlign: 'middle', marginRight: '5px', color:'white' }} />
-          {/* Dropdown con géneros preestablecidos */}
           <Select 
-  value={selectedGenre} 
-  onChange={(e) => setSelectedGenre(e.target.value)}
-  displayEmpty
-  inputProps={{ 'aria-label': 'Sin etiqueta' }}
-  sx={{ width: { xs: "100%"}, color:'white', backgroundColor:'transparent', fontSize:"14" }}
->
-  <MenuItem value="">Seleccionar Género</MenuItem>
-  {genres.length > 0 ? (
-    genres.map((genre, index) => (
-      <MenuItem key={index} value={genre}>{genre}</MenuItem>  // Ahora pasas la cadena directamente como valor
-    ))
-  ) : (
-    <MenuItem value="" disabled>Cargando géneros...</MenuItem>
-  )}
-</Select>
-
+            value={selectedGenre} 
+            onChange={(e) => setSelectedGenre(e.target.value)}
+            displayEmpty
+            inputProps={{ 'aria-label': 'Sin etiqueta' }}
+            sx={{ width: { xs: "100%"}, color:'white', backgroundColor:'transparent', fontSize:"14" }}
+          >
+            <MenuItem value="">Seleccionar Género</MenuItem>
+            {genres.length > 0 ? (
+              genres.map((genre, index) => (
+                <MenuItem key={index} value={genre}>{genre}</MenuItem>
+              ))
+            ) : (
+              <MenuItem value="" disabled>Cargando géneros...</MenuItem>
+            )}
+          </Select>
         </div>
         <div className="divider"></div>
+
+        {/* Filtro por localidad */}
+        <div className="search-item">
+          <Select 
+            value={localidadId} 
+            onChange={(e) => setLocalidadId(e.target.value)}
+            displayEmpty
+            inputProps={{ 'aria-label': 'Sin etiqueta' }}
+            sx={{ width: { xs: "100%" }, color:'white', backgroundColor:'transparent', fontSize:"14" }}
+          >
+            <MenuItem value="">Seleccionar Localidad</MenuItem>
+            {localidades.length > 0 ? (
+              localidades.map((localidad) => (
+                <MenuItem key={localidad.id} value={localidad.id}>{localidad.nombre}</MenuItem>
+              ))
+            ) : (
+              <MenuItem value="" disabled>Cargando localidades...</MenuItem>
+            )}
+          </Select>
+        </div>
+        <div className="divider"></div>
+
+        {/* Filtro por precio mínimo */}
         <div className="search-item">
           <input 
             type="number" 
@@ -150,6 +200,8 @@ const ArtistDashboard = () => {
           />
         </div>
         <div className="divider"></div>
+
+        {/* Filtro por precio máximo */}
         <div className="search-item">
           <input 
             type="number" 
@@ -160,6 +212,8 @@ const ArtistDashboard = () => {
             max="100000"
           />
         </div>
+
+        {/* Botones para aplicar y limpiar filtros */}
         <button className="search-btn" onClick={fetchEvents}>
           Buscar
         </button>
@@ -171,6 +225,7 @@ const ArtistDashboard = () => {
       <div className="line-below"></div>
 
       <div id='client-main'>
+        {/* Renderiza las tarjetas de eventos */}
         {events.map(event => (
           <EventCard 
             key={event.id} 
