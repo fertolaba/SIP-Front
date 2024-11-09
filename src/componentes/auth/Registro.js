@@ -29,6 +29,8 @@ const Registro = () => {
   const [isVerifyPopupOpen, setIsVerifyPopupOpen] = useState(false);
   const [localidades, setLocalidades] = useState([]);
 
+
+
   useEffect(() => {
     const fetchGenerosMusicales = async () => {
       try {
@@ -57,7 +59,6 @@ const Registro = () => {
     };
     fetchLocalidades();
     fetchGenerosMusicales();
-    handleVerify();
   }, []);
 
   const handleVerify = async (email, token) => {

@@ -1,14 +1,15 @@
-import React, { useState } from "react";
-import {Card,  CardContent,Typography,TextField,Button,MenuItem,Select,InputLabel,FormControl,Grid,Link} from "@mui/material";
+import React, { useState , useEffect} from "react";
+import {Card,  CardContent,Typography,TextField,Button,MenuItem,Select,InputLabel,FormControl,Grid,Link, FormHelperText} from "@mui/material";
 import { LocalizationProvider, DatePicker, TimePicker } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { renderTimeViewClock } from '@mui/x-date-pickers/timeViewRenderers';
 import Header from '../componentes/Header';
 import Footer from '../componentes/Footer';
-import Popup from "../componentes/auth/Popup";
 import { useNavigate } from 'react-router-dom';
 import '../ui/main.css';
 import EventoPopup from "../componentes/auth/EventoPopup";
+import generosServices from "../service/generos.services";
+
 
 const AltaEventos = ({ genres, localities, eventTypes }) => {
   const [eventData, setEventData] = useState({
@@ -25,10 +26,31 @@ const AltaEventos = ({ genres, localities, eventTypes }) => {
   const userId = localStorage.getItem('userId');
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
+  const [generos, setGeneros] = useState([]);
+  const [localidades, setLocalidades] = useState([]);
+  const [errors, setErrors] = useState({});
 
   const handleRegisterRedirect = () => {
     navigate('/artist-dashboard'); 
   };
+
+  useEffect(() => {
+    const fetchLocalidades = async () => {
+      try {
+        const response = await fetch('http://localhost:4002/api/localidad');
+        if (!response.ok) {
+          throw new Error('Error al obtener localidades');
+        }
+        const data = await response.json();
+        setLocalidades(data);
+      } catch (error) {
+        console.error('Error al cargar localidades:', error);
+      }
+    };
+    fetchLocalidades();
+  }, []);
+
 
   const getLatLongFromAddress = async (address) => {
     const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(address)}&format=json`;
@@ -67,7 +89,7 @@ const AltaEventos = ({ genres, localities, eventTypes }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
   
-    const address = eventData.location;
+    const address = eventData.localidadId;
     const coordinates = await getLatLongFromAddress(address);
   
     if (coordinates) {
@@ -82,7 +104,7 @@ const AltaEventos = ({ genres, localities, eventTypes }) => {
       const registerRequest = {
         name: eventData.name,
         description: eventData.description,
-        location: eventData.location,
+        localidadId: eventData.localidadId,
         latitude: coordinates.lat,
         longitude: coordinates.lng,
         dateTime: dateTime.toISOString(),
@@ -115,13 +137,23 @@ const AltaEventos = ({ genres, localities, eventTypes }) => {
       console.error('No se pudieron obtener las coordenadas');
     }
   };
+
+
+  useEffect(() => {
+    setLoading(true);  
+    generosServices.getGeneros()
+      .then(data => {
+        setGeneros(data);
+      })
+      .catch(error => {
+        console.error('Error al obtener los géneros:', error);
+      })
+      .finally(() => {
+        setLoading(false);  
+      });
+  }, []);
   
-  const musicGenres = [
-    "ROCK", "POP", "JAZZ", "FOLKLORE", "TANGO", "CUMBIA", "REGGAETON", "TRAP", 
-    "ELECTRONICA", "CUARTETO", "HEAVY_METAL", "PUNK", "BLUES", "INDIE", "SKA", 
-    "SALSA", "LATIN_JAZZ", "BOSSA_NOVA", "RUMBA", "HIP_HOP", "RB", "REGGAE", 
-    "FUSION", "FOLKLORE_MODERNO", "ALTERNATIVE", "PUNK_ROCK", "CLASICO", "GRUNGE"
-  ];
+
 
   return (
     <>
@@ -201,7 +233,7 @@ const AltaEventos = ({ genres, localities, eventTypes }) => {
                     onChange={handleChange}
                     required
                   >
-                    {musicGenres.map((genre) => (
+                    {generos.map((genre) => (
                       <MenuItem key={genre} value={genre}>
                         {genre.replace('_', ' ')}
                       </MenuItem>
@@ -209,6 +241,31 @@ const AltaEventos = ({ genres, localities, eventTypes }) => {
                   </Select>
                 </FormControl>
               </Grid>
+              
+            <FormControl fullWidth margin="normal" error={Boolean(errors.ubicacion)}>
+              <InputLabel id="ubicacion-label">Ubicación</InputLabel>
+              <Select
+                labelId="ubicacion-label"
+                id="ubicacion-select"
+                value={eventData.localidadId || ''} 
+                label="Ubicación"
+                onChange={(e) => {
+                  const selectedLocalidadId = e.target.value; 
+                  setEventData({
+                    ...eventData,
+                    localidadId: selectedLocalidadId, 
+                  });
+                }}
+                name="ubicacion"
+              >
+                {localidades.map((localidad) => (
+                  <MenuItem key={localidad.id} value={localidad.id}> 
+                    {localidad.nombre}
+                  </MenuItem>
+                ))}
+              </Select>
+              <FormHelperText>{errors.ubicacion}</FormHelperText>
+            </FormControl>
               <Grid item xs={12} sm={6}>
                 <TextField
                   fullWidth
