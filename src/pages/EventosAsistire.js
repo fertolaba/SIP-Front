@@ -30,34 +30,38 @@ const EventosAsistire = () => {
   };
 
   return (
-    <div id='client-home'>
+    <>
       <Header />
-      <div className="client-home-img"></div>
-    
-        <Typography variant="h5" gutterBottom id="customFont" textAlign={"center"} marginTop={2} >
-          Eventos a los que asistiras
-        </Typography>
-      <div id='client-main'>
-        {events.length > 0 ? (
-          events.map((event) => (
-            <EventCardArtist
-              key={event.id}
-              eventId={event.id}
-              name={event.name}
-              description={event.description}
-              dateTime={event.dateTime}
-              price={event.price}
-              latitude={event.latitude}
-              longitude={event.longitude}
-            />
-          ))
-        ) : (
-          <p>No tienes eventos proximos.</p>
-        )};
-        </div>
-      <div className="line-below"></div>
+      <div id='client-home'>
+        
+        <div className="client-home-img"></div>
+      
+          <Typography variant="h5" gutterBottom id="customFont" textAlign={"center"} marginTop={2} >
+            Eventos a los que asistiras
+          </Typography>
+        <div id='client-main'>
+          {events.length > 0 ? (
+            events.map((event) => (
+              <EventCardArtist
+                key={event.id}
+                eventId={event.id}
+                name={event.name}
+                description={event.description}
+                dateTime={event.dateTime}
+                price={event.price}
+                latitude={event.latitude}
+                longitude={event.longitude}
+              />
+            ))
+          ) : (
+            <p>No tienes eventos proximos.</p>
+          )};
+          </div>
+        <div className="line-below"></div>
+        
+      </div>
       <Footer />
-    </div>
+    </>
   );
 };
 

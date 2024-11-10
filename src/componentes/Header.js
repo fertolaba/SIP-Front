@@ -1,5 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import LogoutIcon from '@mui/icons-material/Logout';
 
 
 const Header = () => {
@@ -42,9 +43,11 @@ const Header = () => {
                     
                 </ul>
             </div>
-            <div id='profile'>
-                <a id='nav-link' href="/" onClick={handleLogout}>Cerrar Sesión</a>
-            </div>
+
+            <a id='nav-link' href="/" onClick={handleLogout}>
+        <LogoutIcon  sx={{ fontSize: 30 }}/> {/* Aquí se coloca el icono */}
+    </a>
+
         </header>
     );
 };

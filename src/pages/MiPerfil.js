@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { Box, TextField, Typography, Button, Paper, Divider, LinearProgress, MenuItem, FormControl, Select, InputLabel, FormHelperText } from '@mui/material';
+import { Box, TextField, Typography, Button, Paper, Divider, LinearProgress, MenuItem, FormControl, Select, InputLabel, FormHelperText , Link} from '@mui/material';
 import Header from '../componentes/Header';
 import Footer from '../componentes/Footer';
 import usuariosServices from '../service/usuarios.services';
 import generosServices from '../service/generos.services';
+import PopupEditar from './PopupEditar';
 
 export default function MiPerfil() {
   const userId = localStorage.getItem('userId');
@@ -24,6 +25,7 @@ export default function MiPerfil() {
   const [isUpdated, setIsUpdated] = useState(false);
   const [generos, setGeneros] = useState([]);
   const [errors, setErrors] = useState({});
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
 
   useEffect(() => {
     const fetchGeneros = async () => {
@@ -120,6 +122,7 @@ export default function MiPerfil() {
     try {
       await usuariosServices.updateUser(userId, updatedUserData);
       setIsUpdated(true);
+      setIsPopupOpen(true);  
     } catch (error) {
       console.error('Error al actualizar los datos del usuario:', error);
       if (error.response) {
@@ -146,17 +149,17 @@ export default function MiPerfil() {
           ) : (
             <>
               <TextField
-                label="Nombre"
-                name="nombreCompleto"
-                value={userData.nombreCompleto}
+                label="Nombre de Usuario"
+                name="username"
+                value={userData.username}
                 fullWidth
                 margin="normal"
                 onChange={handleInputChange}
               />
               <TextField
-                label="Nombre de Usuario"
-                name="username"
-                value={userData.username}
+                label="Nombre"
+                name="nombreCompleto"
+                value={userData.nombreCompleto}
                 fullWidth
                 margin="normal"
                 onChange={handleInputChange}
@@ -176,6 +179,7 @@ export default function MiPerfil() {
                 fullWidth
                 margin="normal"
                 onChange={handleInputChange}
+                InputProps={{ readOnly: true }}
               />
               <TextField
                 label="Edad"
@@ -245,6 +249,12 @@ export default function MiPerfil() {
           </Box>
         </Paper>
       </Box>
+
+      <PopupEditar trigger={isPopupOpen} setTrigger={setIsPopupOpen}>
+        <h3>Evento creado </h3>
+        <p>Tu evento ha sido registrado exitosamente.</p>
+        <Link component="button" >Ok </Link>
+      </PopupEditar>
       <Footer />
     </>
   );
