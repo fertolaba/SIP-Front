@@ -9,15 +9,17 @@ import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 import { useNavigate } from "react-router-dom";
 
+
 function Verificar(props) {
     const [email, setEmail] = useState('');
     const [token, setToken] = useState('');
     const [successPopup, setSuccessPopup] = useState(false);
     const navigate = useNavigate();
+
     const handleVerify = () => {
         if (email && token) { 
             props.onVerify(email, token);
-            setSuccessPopup(true); 
+            setSuccessPopup(true); // Si la verificación es exitosa, muestra el popup de éxito
         } else {
             alert("Ingrese email y token de verificación.");
         }
@@ -25,7 +27,7 @@ function Verificar(props) {
 
     const handleCloseSuccessPopup = () => {
         setSuccessPopup(false);
-        navigate('/login'); 
+        navigate('/login'); // Redirige a login si la verificación fue exitosa
     };
 
     return (
@@ -70,17 +72,7 @@ function Verificar(props) {
                     </Button>
                 </DialogActions>
             </Dialog>
-            <Dialog open={successPopup} onClose={handleCloseSuccessPopup} maxWidth="xs" fullWidth>
-                <DialogTitle>Verificación Exitosa</DialogTitle>
-                <DialogContent>
-                    <p>Tu verificación fue exitosa. ¡Gracias!</p>
-                </DialogContent>
-                <DialogActions>
-          <Button onClick={handleCloseSuccessPopup} color="primary" variant="contained">
-            Ir al login
-          </Button>
-        </DialogActions>
-            </Dialog>
+
         </>
     );
 }

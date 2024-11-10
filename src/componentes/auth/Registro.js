@@ -7,6 +7,8 @@ import { TextField, Button,Box,Checkbox,FormControlLabel,Typography,FormControl,
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import Verificar from './Verificar';
 import { formValido } from './validacion';
+import PopupError from './PopupError';
+import VerificacionExitosa from './VerificacionExitosa';
 
 const Registro = () => {
   const [formData, setFormData] = useState({
@@ -28,7 +30,9 @@ const Registro = () => {
   const navigate = useNavigate();
   const [generosMusicales, setGenerosMusicales] = useState([]); 
   const [isVerifyPopupOpen, setIsVerifyPopupOpen] = useState(false);
+  const [isSuccessPopupOpen, setIsSuccessPopupOpen] = useState(false);
   const [localidades, setLocalidades] = useState([]);
+  const [isErrorPopupOpen, setIsErrorPopupOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
 
 
@@ -79,11 +83,13 @@ const Registro = () => {
       const data = await response.json();
       console.log("Verificación exitosa:", data);
       setIsVerifyPopupOpen(false); 
-      setIsPopupOpen(true); 
+      setIsSuccessPopupOpen(true); 
     } catch (error) {
       console.error('Error al verificar:', error);
-      setErrorMessage('Error en la verificación. Por favor, intente nuevamente.'); // Establecer el mensaje de error
-      setIsVerifyPopupOpen(true); // Abrir el popup de verificación
+      setErrorMessage('Error en la verificación. Por favor, intente nuevamente.');
+      setIsVerifyPopupOpen(true); 
+      setIsErrorPopupOpen(true);
+
     }
   };
 
@@ -366,23 +372,38 @@ const Registro = () => {
               Registrarse
             </Button>
             <Typography variant="body2" align="center" mt={2}>
-              ¿Ya tienes cuenta? <Link href="#" onClick={handleRegisterRedirect}>Inicia sesión</Link>
+              ¿Ya tienes una cuenta? <Link href="#" onClick={handleRegisterRedirect}>Inicia sesión</Link>
+            </Typography>
+            <Typography variant="body2" align="center" mt={2}>
+              ¿No has validado tu cuenta? <Link href="#" onClick={() => setIsVerifyPopupOpen(true)}>Validar cuenta</Link>
             </Typography>
 
           </form>
-          <Popup open={isPopupOpen} onClose={() => setIsPopupOpen(false)} message="Registro exitoso!">
-    <Typography variant="h6">Registro exitoso!</Typography>
-</Popup>
+          <Popup open={isPopupOpen} onClose={() => setIsPopupOpen(false)} message="Registro exitoso!" />
+
+<Verificar 
+            trigger={isVerifyPopupOpen} 
+            setTrigger={setIsVerifyPopupOpen} 
+            onVerify={handleVerify} 
+            errorMessage={errorMessage}
+          />
+
+          {/* Verificación exitosa */}
+          <VerificacionExitosa 
+            trigger={isSuccessPopupOpen} 
+            setTrigger={setIsSuccessPopupOpen} 
+            onRedirect={handleRegisterRedirect} 
+          />
+
+<PopupError 
+        trigger={isErrorPopupOpen} 
+        setTrigger={setIsErrorPopupOpen} 
+        onRedirect={handleRegisterRedirect} 
+      />
 
         </Box>
       </div>
-      <Verificar 
-    trigger={isVerifyPopupOpen} 
-    setTrigger={setIsVerifyPopupOpen} 
-    onVerify={handleVerify} 
-    errorMessage={errorMessage}
->
-</Verificar>
+
 
 
     </div>
