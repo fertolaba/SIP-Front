@@ -199,7 +199,7 @@ const Registro = () => {
     <FormHelperText>{errors.rol}</FormHelperText>
     {rol === 'CLIENT' && (
       <FormHelperText style={{ color: '#4caf50' }}>
-        Como cliente, podrá explorar y asistir a eventos disponibles en la plataforma.
+        Como asistente, podrá explorar y asistir a eventos disponibles en la plataforma.
       </FormHelperText>
     )}
     {rol === 'ARTIST' && (
