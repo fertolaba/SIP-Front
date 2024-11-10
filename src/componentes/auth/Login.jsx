@@ -5,6 +5,7 @@ import fetchWithTimeout from "../error/_fetchWithTimeOut";
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import '../../ui/login.css';
 import Popupreestablecer from "./Popupreestablecer";
+import usuariosServices from "../../service/usuarios.services";
 
 export default function Login() {
   const [loading, setLoading] = React.useState(false);
@@ -25,75 +26,44 @@ export default function Login() {
     setShowPassword(!showPassword);
   };
 
+
+
   const handleSubmit = async (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-  
-    if (!validateInputs()) return;
-
-    const credentials = {
-      email: data.get('email'),
-      password: data.get('password'),
-    };
-
-    setLoading(true);
-    setLoginError(''); 
-
-    try {
-      const user = await handleLogin(credentials);
-      console.log('Usuario autenticado:', user);
-      localStorage.removeItem('likedEvents');
-      localStorage.setItem('userId', user.userId); 
-      localStorage.setItem('token', user.accessToken);
-      localStorage.setItem('role', user.role);
-      handleRedirect(user.role);
-    } catch (error) {
-      setLoginError('Error al iniciar sesión. Por favor, verifica tus credenciales.');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const validateInputs = () => {
     const newErrors = {};
     if (!email || !/\S+@\S+\.\S+/.test(email)) {
       newErrors.email = "Ingrese un correo válido.";
     }
     if (!password || password.length < 6) {
-      newErrors.password = "Ingrese una contraseña válida.";
+      newErrors.password = "Ingrese una contraseña válida.";  //no funciona
     }
     setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
-  const handleLogin = async (credentials) => {
+  
+    if (Object.keys(newErrors).length > 0) {
+      return;
+    }
+  
+    const credentials = {
+      email: data.get('email'),
+      password: data.get('password'),
+    };
+  
+    setLoading(true);
+    setLoginError('');
+  
     try {
-      const response = await fetchWithTimeout('http://localhost:4002/api/v1/auth/authenticate', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(credentials),
-      });
-  
-      if (!response.ok) {
-        const error = await response.json();
-        if (error.message === "Cuenta no activada. Por favor, revisa tu correo para activar tu cuenta.") {
-          setLoginError("Cuenta no activada. Por favor, revisa tu correo para activar tu cuenta.");
-        } else {
-          throw new Error('Error en el login');
-        }
-      }
-  
-      const user = await response.json();
+      const user = await usuariosServices.authenticateUser(credentials);
       console.log('Usuario autenticado:', user);
       localStorage.removeItem('likedEvents');
-      localStorage.setItem('userId', user.userId); 
+      localStorage.setItem('userId', user.userId);
       localStorage.setItem('token', user.accessToken);
       localStorage.setItem('role', user.role);
       handleRedirect(user.role);
     } catch (error) {
       setLoginError(error.message || 'Error al iniciar sesión. Por favor, verifica tus credenciales.');
+    } finally {
+      setLoading(false);
     }
   };
   

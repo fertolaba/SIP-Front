@@ -46,7 +46,7 @@ const ClientDashboard = () => {
   };
 
   useEffect(() => {
-    loadAllEvents();  // Cargar todos los eventos cuando se monta el componente
+    loadAllEvents();  
   }, []); 
 
   const fetchEvents = () => {
@@ -73,7 +73,7 @@ const ClientDashboard = () => {
     setGenres('');
     setMinPrice('');
     setMaxPrice('');
-    loadAllEvents();  // Recargar todos los eventos sin filtros
+    loadAllEvents();  
   };
 
   return (
@@ -117,7 +117,6 @@ const ClientDashboard = () => {
         <div className="divider"></div>
         <div className="search-item">
           <AppsIcon style={{ fontSize:'medium', verticalAlign: 'middle', marginRight: '5px', color:'white' }} />
-          {/* Dropdown con géneros preestablecidos */}
           <Select 
   value={selectedGenre} 
   onChange={(e) => setSelectedGenre(e.target.value)}
@@ -128,7 +127,7 @@ const ClientDashboard = () => {
   <MenuItem value="">Seleccionar Género</MenuItem>
   {genres.length > 0 ? (
     genres.map((genre, index) => (
-      <MenuItem key={index} value={genre}>{genre}</MenuItem>  // Ahora pasas la cadena directamente como valor
+      <MenuItem key={index} value={genre}>{genre}</MenuItem> 
     ))
   ) : (
     <MenuItem value="" disabled>Cargando géneros...</MenuItem>

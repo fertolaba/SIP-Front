@@ -46,6 +46,32 @@ class UsuariosService{
             throw error;  
         }
     };
+
+    authenticateUser = async (credentials) => {
+      const url = `http://localhost:4002/api/v1/auth/authenticate`;
+      try {
+        const response = await fetchWithTimeout(url, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(credentials),
+        });
+  
+        if (!response.ok) {
+          const error = await response.json();
+          if (error.message === "Cuenta no activada. Por favor, revisa tu correo para activar tu cuenta.") {
+            throw new Error("Cuenta no activada. Por favor, revisa tu correo para activar tu cuenta.");
+          }
+          throw new Error('Error en el login');
+        }
+  
+        return await response.json();
+      } catch (error) {
+        console.error('Error en la autenticación:', error);
+        throw error;
+      }
+    };
 }
 
 const usuarioService = new UsuariosService();

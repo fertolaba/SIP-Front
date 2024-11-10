@@ -5,7 +5,6 @@ import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { renderTimeViewClock } from '@mui/x-date-pickers/timeViewRenderers';
 import Header from '../componentes/Header';
 import Footer from '../componentes/Footer';
-import Popup from "../componentes/auth/Popup";
 import { useNavigate } from 'react-router-dom';
 import '../ui/main.css';
 import EventoPopup from "../componentes/auth/EventoPopup";

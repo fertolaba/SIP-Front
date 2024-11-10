@@ -21,7 +21,7 @@ function BusquedaEventos() {
   const [mapCenter, setMapCenter] = useState({ lat: -34.6131500, lng: -58.3772300 });
   const [errorMessage, setErrorMessage] = useState(""); 
 
-  // Obtener eventos del backend
+
   const fetchEvents = async () => {
     try {
       const response = await axios.get("http://localhost:4002/api/events");
@@ -43,7 +43,7 @@ function BusquedaEventos() {
     fetchEvents();
   }, []);
 
-  // Geocodificación directa: convertir dirección a coordenadas
+
   const handleGeocodeAddress = async () => {
     if (!address) {
       setErrorMessage("Por favor ingresa una dirección válida.");
@@ -70,7 +70,7 @@ function BusquedaEventos() {
     }
   };
 
-  // Obtener la ubicación actual del usuario
+
   const handleGetUserLocation = () => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
@@ -90,7 +90,7 @@ function BusquedaEventos() {
     }
   };
 
-  // Actualizar eventos filtrados por proximidad
+
   const updateFilteredEvents = async () => {
     if (userLocation) {
       try {
@@ -120,7 +120,7 @@ function BusquedaEventos() {
     }
   }, [userLocation, distanceFilter]);
 
-  // Geocodificación inversa para obtener direcciones
+
   const geocodeLatLng = (lat, lng, callback) => {
     if (isLoaded) {
       const geocoder = new window.google.maps.Geocoder();
