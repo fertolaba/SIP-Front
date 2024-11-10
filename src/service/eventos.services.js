@@ -25,6 +25,34 @@ class EventosService{
     
         return []
       };
+
+      async getUserEvents(userId) {
+        try {
+          const response = await fetchWithTimeout(`${this._apiUrl}/artist/${userId}`);
+          if (!response.ok) {
+            throw new Error('Error fetching user events');
+          }
+          return await response.json();
+        } catch (error) {
+          console.error('Error fetching user events:', error);
+          return [];
+        }
+      }
+    
+      async deleteEvent(eventId) {
+        try {
+          const response = await fetchWithTimeout(`${this._apiUrl}/${eventId}`, {
+            method: 'DELETE',
+          });
+          if (!response.ok) {
+            throw new Error('Error deleting event');
+          }
+          return true;
+        } catch (error) {
+          console.error('Error deleting event:', error);
+          return false;
+        }
+      }
 }
 
 const eventoService = new EventosService();

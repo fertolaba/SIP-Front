@@ -22,8 +22,8 @@ const ArtistDashboard = () => {
   const [localidadId, setLocalidadId] = useState('');
   const [localidades, setLocalidades] = useState([]);
 
-  // Cargar eventos al cargar el componente
-  useEffect(() => {
+
+  useEffect(() => {  //eventos del home
     setLoading(true);
     eventosServices.getEventos() 
       .then(data => setEvents(data)) 
@@ -31,7 +31,6 @@ const ArtistDashboard = () => {
       .finally(() => setLoading(false)); 
   }, []);
 
-  // Cargar géneros disponibles
   useEffect(() => {
     setLoading(true);  
     generosServices.getGeneros()
@@ -87,7 +86,7 @@ const ArtistDashboard = () => {
   };
 
   // Cargar todos los eventos sin filtros
-  const loadAllEvents = () => {
+  const loadAllEvents = () => {          //eventos del select
     fetch('http://localhost:4002/api/events')
       .then(response => response.json())
       .then(data => setEvents(data))

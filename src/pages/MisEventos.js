@@ -1,52 +1,41 @@
 import React, { useState, useEffect } from 'react';
 import EventCardArtist from '../componentes/EventCardArtist';
-import {Card,  CardContent,Typography,TextField,Button,MenuItem,Select,InputLabel,FormControl,Grid,Link} from "@mui/material";
+import { Typography } from "@mui/material";
 import Header from '../componentes/Header';
 import Footer from '../componentes/Footer';
+import eventosServices from '../service/eventos.services';
 import '../ui/main.css';
-
 
 const MisEventos = () => {
   const [events, setEvents] = useState([]);
-  const [pasEvents,setPasEvents]=useState([]);
+  const [pasEvents, setPasEvents] = useState([]);
 
   useEffect(() => {
     fetchUserEvents();
   }, []);
 
-  const fetchUserEvents = () => {
+  const fetchUserEvents = async () => {
     const userId = Number(localStorage.getItem('userId'));
-    fetch(`http://localhost:4002/api/events/artist/${userId}`)
-      .then((response) => response.json())
-      .then(data => {
-        const currentDate = new Date();
-        const upcomingEvents = data.filter(event => new Date(event.dateTime) >= currentDate);
-        const pastEvents = data.filter(event => new Date(event.dateTime) < currentDate);
-        
-        setEvents(upcomingEvents);
-        setPasEvents(pastEvents);
-      })
-      .catch((error) => console.error('Error fetching user events:', error));
-  };
-  
+    const data = await eventosServices.getUserEvents(userId);
 
-  const handleDelete = (eventId) => {
-    fetch(`http://localhost:4002/api/events/${eventId}`, {
-      method: 'DELETE',
-    })
-      .then((response) => {
-        if (response.ok) {
-          setEvents(events.filter(event => event.id !== eventId));
-        } else {
-          console.error('Error deleting event');
-        }
-      })
-      .catch((error) => console.error('Error deleting event:', error));
+    const currentDate = new Date();
+    const upcomingEvents = data.filter(event => new Date(event.dateTime) >= currentDate);
+    const pastEvents = data.filter(event => new Date(event.dateTime) < currentDate);
+    
+    setEvents(upcomingEvents);
+    setPasEvents(pastEvents);
+  };
+
+  const handleDelete = async (eventId) => {
+    const success = await eventosServices.deleteEvent(eventId);
+    if (success) {
+      setEvents(events.filter(event => event.id !== eventId));
+    } else {
+      console.error('Error deleting event');
+    }
   };
 
   const handleEdit = (eventId) => {
-    // Redirige a una página o muestra un formulario de edición
-    // Ejemplo para redirigir a una página de edición con el ID del evento
     window.location.href = `/EditarEventos/${eventId}`;
   };
 
@@ -55,9 +44,9 @@ const MisEventos = () => {
       <Header />
       <div className="client-home-img"></div>
     
-        <Typography variant="h5" gutterBottom id="customFont" textAlign={"center"} marginTop={2} >
-          Eventos activos
-        </Typography>
+      <Typography variant="h5" gutterBottom id="customFont" textAlign={"center"} marginTop={2}>
+        Eventos activos
+      </Typography>
       <div id='client-main'>
         {events.length > 0 ? (
           events.map((event) => (
@@ -76,13 +65,14 @@ const MisEventos = () => {
             />
           ))
         ) : (
-          <p>No tienes eventos proximos.</p>
-        )};
-        </div>
-        <div className="line-below"></div>
+          <p>No tienes eventos próximos.</p>
+        )}
+      </div>
 
-      <Typography variant="h5" gutterBottom id="customFont" textAlign={"center"} marginTop={2} >
-          Eventos pasados
+      <div className="line-below"></div>
+      
+      <Typography variant="h5" gutterBottom id="customFont" textAlign={"center"} marginTop={2}>
+        Eventos pasados
       </Typography>
       <div id='client-main'>
         {pasEvents.length > 0 ? (
