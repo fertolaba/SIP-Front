@@ -21,6 +21,7 @@ const ArtistDashboard = () => {
   const [loading, setLoading] = useState(false);
   const [localidadId, setLocalidadId] = useState('');
   const [localidades, setLocalidades] = useState([]);
+  const [selectedLocalidad, setselectedLocalidad] = useState('');
 
 
   useEffect(() => {  //eventos del home
@@ -72,20 +73,21 @@ const ArtistDashboard = () => {
     if (name) params.append('name', name);
     if (startDate) params.append('startDate', addDefaultTime(startDate, '00:00:00'));
     if (endDate) params.append('endDate', addDefaultTime(endDate, '23:59:59'));
-    if (localidadId) params.append('localidadId', localidadId);
+    if (selectedLocalidad) params.append('localidadId', selectedLocalidad);  // Asegúrate de que esto esté correcto
     if (selectedGenre) params.append('genres', selectedGenre);
     if (minPrice) params.append('minPrice', minPrice);
     if (maxPrice) params.append('maxPrice', maxPrice);
   
-    console.log("Parametros enviados:", params.toString()); 
+    console.log("Parametros enviados:", params.toString()); // Verifica los parámetros en la consola
   
     fetch(`http://localhost:4002/api/events/filters?${params.toString()}`)
       .then(response => response.json())
       .then(data => setEvents(data))
       .catch(error => console.error('Error fetching events:', error));
   };
+  
 
-  // Cargar todos los eventos sin filtros
+
   const loadAllEvents = () => {          //eventos del select
     fetch('http://localhost:4002/api/events')
       .then(response => response.json())
@@ -100,7 +102,7 @@ const ArtistDashboard = () => {
     setEndDate('');
     setSelectedGenre('');
     setMinPrice('');
-    setLocalidadId('');
+    setSelectedGenre('');
     setMaxPrice('');
     loadAllEvents();  // Recargar todos los eventos sin filtros
   };
@@ -169,8 +171,8 @@ const ArtistDashboard = () => {
         {/* Filtro por localidad */}
         <div className="search-item">
           <Select 
-            value={localidadId} 
-            onChange={(e) => setLocalidadId(e.target.value)}
+            value={selectedLocalidad} 
+            onChange={(e) => setselectedLocalidad(e.target.value)}
             displayEmpty
             inputProps={{ 'aria-label': 'Sin etiqueta' }}
             sx={{ width: { xs: "100%" }, color:'white', backgroundColor:'transparent', fontSize:"14" }}

@@ -55,8 +55,7 @@ const ClientDashboard = () => {
 
     if (startDate) params.append('startDate', addDefaultTime(startDate, '00:00:00'));
     if (endDate) params.append('endDate', addDefaultTime(endDate, '23:59:59'));
-
-    if (genres) params.append('genres', genres);
+    if (selectedGenre) params.append('genres', selectedGenre);
     if (minPrice) params.append('minPrice', minPrice);
     if (maxPrice) params.append('maxPrice', maxPrice);
 
@@ -74,6 +73,7 @@ const ClientDashboard = () => {
     setMinPrice('');
     setMaxPrice('');
     loadAllEvents();  
+    setSelectedGenre('');
   };
 
   return (
@@ -118,21 +118,21 @@ const ClientDashboard = () => {
         <div className="search-item">
           <AppsIcon style={{ fontSize:'medium', verticalAlign: 'middle', marginRight: '5px', color:'white' }} />
           <Select 
-  value={selectedGenre} 
-  onChange={(e) => setSelectedGenre(e.target.value)}
-  displayEmpty
-  inputProps={{ 'aria-label': 'Sin etiqueta' }}
-  sx={{ width: { xs: "100%"}, color:'white', backgroundColor:'transparent', fontSize:"14" }}
->
-  <MenuItem value="">Seleccionar Género</MenuItem>
-  {genres.length > 0 ? (
-    genres.map((genre, index) => (
-      <MenuItem key={index} value={genre}>{genre}</MenuItem> 
-    ))
-  ) : (
-    <MenuItem value="" disabled>Cargando géneros...</MenuItem>
-  )}
-</Select>
+            value={selectedGenre} 
+            onChange={(e) => setSelectedGenre(e.target.value)}
+            displayEmpty
+            inputProps={{ 'aria-label': 'Sin etiqueta' }}
+            sx={{ width: { xs: "100%"}, color:'white', backgroundColor:'transparent', fontSize:"14" }}
+          >
+            <MenuItem value="">Seleccionar Género</MenuItem>
+            {genres.length > 0 ? (
+              genres.map((genre, index) => (
+                <MenuItem key={index} value={genre}>{genre}</MenuItem>
+              ))
+            ) : (
+              <MenuItem value="" disabled>Cargando géneros...</MenuItem>
+            )}
+          </Select>
         </div>
         <div className="divider"></div>
         <div className="search-item">
