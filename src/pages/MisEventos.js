@@ -1,101 +1,90 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import EventCardArtist from '../componentes/EventCardArtist';
-import { Typography } from "@mui/material";
+import { Typography, CircularProgress } from "@mui/material";
 import Header from '../componentes/Header';
 import Footer from '../componentes/Footer';
 import eventosServices from '../service/eventos.services';
 import '../ui/main.css';
 
 const MisEventos = () => {
-  const [events, setEvents] = useState([]);
-  const [pasEvents, setPasEvents] = useState([]);
+  const [events, setEvents] = useState({ upcoming: [], past: [] });
+  const [loading, setLoading] = useState(true);
+
+  const fetchUserEvents = useCallback(async () => {
+    try {
+      const userId = Number(localStorage.getItem('userId'));
+      const data = await eventosServices.getUserEvents(userId);
+      const currentDate = new Date();
+
+      setEvents({
+        upcoming: data.filter(event => new Date(event.dateTime) >= currentDate),
+        past: data.filter(event => new Date(event.dateTime) < currentDate),
+      });
+    } catch (error) {
+      console.error('Error fetching events:', error);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
   useEffect(() => {
     fetchUserEvents();
-  }, []);
-
-  const fetchUserEvents = async () => {
-    const userId = Number(localStorage.getItem('userId'));
-    const data = await eventosServices.getUserEvents(userId);
-
-    const currentDate = new Date();
-    const upcomingEvents = data.filter(event => new Date(event.dateTime) >= currentDate);
-    const pastEvents = data.filter(event => new Date(event.dateTime) < currentDate);
-    
-    setEvents(upcomingEvents);
-    setPasEvents(pastEvents);
-  };
+  }, [fetchUserEvents]);
 
   const handleDelete = async (eventId) => {
     const success = await eventosServices.deleteEvent(eventId);
     if (success) {
-      setEvents(events.filter(event => event.id !== eventId));
+      setEvents(prevEvents => ({
+        ...prevEvents,
+        upcoming: prevEvents.upcoming.filter(event => event.id !== eventId)
+      }));
     } else {
       console.error('Error deleting event');
     }
   };
 
-  const handleEdit = (eventId) => {
-    window.location.href = `/EditarEventos/${eventId}`;
-  };
+  const renderEventList = (eventList, showEditDeleteButtons = false) => (
+    eventList.length > 0 ? (
+      eventList.map((event) => (
+        <EventCardArtist
+          key={event.id}
+          {...event}
+          onDelete={() => handleDelete(event.id)}
+          onEdit={() => window.location.href = `/EditarEventos/${event.id}`}
+          showEditDeleteButtons={showEditDeleteButtons}
+        />
+      ))
+    ) : (
+      <Typography variant="body1">No tienes eventos.</Typography>
+    )
+  );
 
   return (
+    <>
+    <Header />
     <div id='client-home'>
-      <Header />
+      
       <div className="client-home-img"></div>
-    
-      <Typography variant="h5" gutterBottom id="customFont" textAlign={"center"} marginTop={2}>
+
+      <Typography variant="h5" gutterBottom id="customFont" textAlign="center" marginTop={2}>
         Eventos activos
       </Typography>
       <div id='client-main'>
-        {events.length > 0 ? (
-          events.map((event) => (
-            <EventCardArtist
-              key={event.id}
-              eventId={event.id}
-              name={event.name}
-              description={event.description}
-              dateTime={event.dateTime}
-              price={event.price}
-              latitude={event.latitude}
-              longitude={event.longitude}
-              onDelete={() => handleDelete(event.id)}
-              onEdit={() => handleEdit(event.id)}
-              showEditDeleteButtons
-            />
-          ))
-        ) : (
-          <p>No tienes eventos próximos.</p>
-        )}
+        {loading ? <CircularProgress /> : renderEventList(events.upcoming, true)}
       </div>
 
       <div className="line-below"></div>
-      
-      <Typography variant="h5" gutterBottom id="customFont" textAlign={"center"} marginTop={2}>
+
+      <Typography variant="h5" gutterBottom id="customFont" textAlign="center" marginTop={2}>
         Eventos pasados
       </Typography>
       <div id='client-main'>
-        {pasEvents.length > 0 ? (
-          pasEvents.map((event) => (
-            <EventCardArtist
-              key={event.id}
-              eventId={event.id}
-              name={event.name}
-              description={event.description}
-              dateTime={event.dateTime}
-              price={event.price}
-              latitude={event.latitude}
-              longitude={event.longitude}
-            />
-          ))
-        ) : (
-          <p>No tienes eventos pasados.</p>
-        )}
+        {loading ? <CircularProgress /> : renderEventList(events.past)}
       </div>
 
-      <div className="line-below"></div>
       <Footer />
     </div>
+    </>
   );
 };
 

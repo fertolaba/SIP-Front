@@ -23,7 +23,6 @@ const ArtistDashboard = () => {
   const [localidades, setLocalidades] = useState([]);
   const [selectedLocalidad, setselectedLocalidad] = useState('');
 
-
   useEffect(() => {  //eventos del home
     setLoading(true);
     eventosServices.getEventos() 
@@ -108,8 +107,10 @@ const ArtistDashboard = () => {
   };
 
   return (
+    <>
+    <Header />
     <div id='client-home'>
-      <Header />
+      
       <div className="client-home-img"></div>
 
       <div className="search-bar" id='customFont'>
@@ -243,6 +244,8 @@ const ArtistDashboard = () => {
 
       <Footer />
     </div>
+
+    </>
   );
 };
 

@@ -51,19 +51,24 @@ function BusquedaEventos() {
     }
 
     if (isLoaded) {
-      const geocodeAddressAsync = (address) => {
-        return new Promise((resolve, reject) => {
-          const geocoder = new window.google.maps.Geocoder();
-          geocoder.geocode({ address }, (results, status) => {
-            if (status === "OK") {
-              resolve(results[0].geometry.location);
-            } else {
-              reject("No se pudo geocodificar la dirección.");
-            }
+      const geocoder = new window.google.maps.Geocoder();
+      geocoder.geocode({ address }, (results, status) => {
+        if (status === "OK") {
+          const { lat, lng } = results[0].geometry.location;
+          setUserLocation({
+            lat: lat(),
+            lng: lng(),
           });
-        });
-      };
-    }; };
+          setMapCenter({ lat: lat(), lng: lng() });
+          setErrorMessage("");
+        } else {
+          setErrorMessage("No se pudo geocodificar la dirección. Intenta con otra.");
+        }
+      });
+    } else {
+      setErrorMessage("Google Maps API no está cargada correctamente.");
+    }
+  };
 
 
   const handleGetUserLocation = () => {
@@ -149,8 +154,10 @@ function BusquedaEventos() {
   }, [filteredEvents]);
 
   return (
+    <>
+    <Header/>
     <div style={{ display: "flex", flexDirection: "column", backgroundColor: "#f5f5f5" }}>
-      <Header/>
+      
       <Box id='eventSearch-container' sx={{ padding: "10px", backgroundColor: "#f5f5f5", display: "flex", alignItems: "center", justifyContent: "flex-end", gap: "15px", zIndex: 10 }}>
         <TextField
           label="Ingresa una dirección"
@@ -227,6 +234,7 @@ function BusquedaEventos() {
       </div>
       <Footer />
     </div>
+    </>
   );
 }
 
