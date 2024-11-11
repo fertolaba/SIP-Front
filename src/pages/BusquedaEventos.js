@@ -51,24 +51,19 @@ function BusquedaEventos() {
     }
 
     if (isLoaded) {
-      const geocoder = new window.google.maps.Geocoder();
-      geocoder.geocode({ address }, (results, status) => {
-        if (status === "OK") {
-          const { lat, lng } = results[0].geometry.location;
-          setUserLocation({
-            lat: lat(),
-            lng: lng(),
+      const geocodeAddressAsync = (address) => {
+        return new Promise((resolve, reject) => {
+          const geocoder = new window.google.maps.Geocoder();
+          geocoder.geocode({ address }, (results, status) => {
+            if (status === "OK") {
+              resolve(results[0].geometry.location);
+            } else {
+              reject("No se pudo geocodificar la dirección.");
+            }
           });
-          setMapCenter({ lat: lat(), lng: lng() });
-          setErrorMessage("");
-        } else {
-          setErrorMessage("No se pudo geocodificar la dirección. Intenta con otra.");
-        }
-      });
-    } else {
-      setErrorMessage("Google Maps API no está cargada correctamente.");
-    }
-  };
+        });
+      };
+    }; };
 
 
   const handleGetUserLocation = () => {

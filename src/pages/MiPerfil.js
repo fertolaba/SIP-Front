@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback  } from 'react';
 import { Box, TextField, Typography, Button, Paper, Divider, LinearProgress, MenuItem, FormControl, Select, InputLabel, FormHelperText , Link} from '@mui/material';
 import Header from '../componentes/Header';
 import Footer from '../componentes/Footer';
@@ -8,17 +8,9 @@ import PopupEditar from './PopupEditar';
 
 export default function MiPerfil() {
   const userId = localStorage.getItem('userId');
-  
   const [userData, setUserData] = useState({
-    nombreCompleto: '',
-    apellido: '',
-    username: '',
-    email: '',
-    edad: '',
-    localidad: '',
-    genero: [], // Inicializamos como array para soportar selección múltiple
+    nombreCompleto: '', apellido: '', username: '', email: '', edad: '', localidad: '', genero: [],
   });
-
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [localidades, setLocalidades] = useState([]);
@@ -27,110 +19,59 @@ export default function MiPerfil() {
   const [errors, setErrors] = useState({});
   const [isPopupOpen, setIsPopupOpen] = useState(false);
 
-  useEffect(() => {
-    const fetchGeneros = async () => {
-      try {
-        const generos = await generosServices.getGeneros();
-        setGeneros(generos);
-      } catch (error) {
-        console.error("Error fetching genres:", error);
-      }
-    };
-
-    fetchGeneros();
-  }, []);
-
-  useEffect(() => {
-    const fetchLocalidades = async () => {
-      try {
-        const response = await fetch('http://localhost:4002/api/localidad');
-        if (!response.ok) {
-          throw new Error('Error al obtener localidades');
-        }
-        const data = await response.json();
-        setLocalidades(data);
-      } catch (error) {
-        console.error('Error al cargar localidades:', error);
-      }
-    };
-    fetchLocalidades();
-  }, []);
-
-  const handleInteresesChange = (e) => {
-    const { value } = e.target;
-    setUserData({
-      ...userData,
-      genero: typeof value === 'string' ? value.split(',') : value, // Almacenamos como array
-    });
-  };
-
-  useEffect(() => {
-    const fetchUserData = async () => {
-      setLoading(true);
-      try {
-        const data = await usuariosServices.getUserById(userId);
-        setUserData({
-          nombreCompleto: data.name,
-          apellido: data.lastName,
-          email: data.email,
-          username: data.username,
-          edad: data.edad,
-          localidad: data.localidad ? data.localidad.id : '',
-          genero: data.generosMusicalesPreferidos || [], 
-        });
-      } catch (error) {
-        console.error('Error fetching user data:', error);
-        setError('Error al cargar los datos del usuario');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    if (userId) {
-      fetchUserData();
+  const fetchData = useCallback(async () => {
+    setLoading(true);
+    try {
+      const [generosData, localidadesData, userData] = await Promise.all([
+        generosServices.getGeneros(),
+        (await fetch('http://localhost:4002/api/localidad')).json(),
+        usuariosServices.getUserById(userId)
+      ]);
+      setGeneros(generosData);
+      setLocalidades(localidadesData);
+      setUserData({
+        nombreCompleto: userData.name,
+        apellido: userData.lastName,
+        email: userData.email,
+        username: userData.username,
+        edad: userData.edad,
+        localidad: userData.localidad?.id || '',
+        genero: userData.generosMusicalesPreferidos || []
+      });
+    } catch (error) {
+      console.error('Error fetching data:', error);
+      setError('Error al cargar los datos.');
+    } finally {
+      setLoading(false);
     }
   }, [userId]);
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setUserData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
-  };
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
 
-  const handleLocalidadChange = (event) => {
-    setUserData((prevData) => ({
-      ...prevData,
-      localidad: event.target.value,
-    }));
-  };
+  const handleInputChange = useCallback((e) => {
+    const { name, value } = e.target;
+    setUserData((prev) => ({ ...prev, [name]: value }));
+  }, []);
 
   const handleUpdateUser = async () => {
     setLoading(true);
-    const updatedUserData = {
-      ...userData,
-      localidad: userData.localidad,
-      genres: userData.genero || [],
-      lastName: userData.apellido,
-      name: userData.nombreCompleto
-      
-    };
-    console.log('Datos que se enviarán para actualizar:', updatedUserData);
-    
-
     try {
-      await usuariosServices.updateUser(userId, updatedUserData);
-      setIsUpdated(true);
-      setIsPopupOpen(true);  
+      await usuariosServices.updateUser(userId, {
+        ...userData,
+        localidad: userData.localidad,
+        genres: userData.genero,
+        lastName: userData.apellido,
+        name: userData.nombreCompleto
+      });
+      setIsPopupOpen(true);
     } catch (error) {
-      console.error('Error al actualizar los datos del usuario:', error);
-      if (error.response) {
-        console.error('Detalles del error:', await error.response.text());
-      }
+      console.error('Error updating user:', error);
       setError('Error al actualizar los datos del usuario');
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   return (
@@ -195,7 +136,7 @@ export default function MiPerfil() {
                 <Select
                   labelId="localidad-label"
                   value={userData.localidad}
-                  onChange={handleLocalidadChange}
+                  onChange={(e) => setUserData({ ...userData, localidad: e.target.value })}
                   label="Localidad"
                 >
                   {localidades.map((localidad) => (
@@ -214,12 +155,10 @@ export default function MiPerfil() {
                   multiple
                   label="Intereses musicales"
                   value={userData.genero}
-                  onChange={handleInteresesChange}
+                  onChange={(e) => setUserData({ ...userData, genero: e.target.value })}
                 >
                   {generos.map((genre) => (
-                    <MenuItem key={genre} value={genre}>
-                      {genre}
-                    </MenuItem>
+                    <MenuItem key={genre} value={genre}>{genre}</MenuItem>
                   ))}
                 </Select>
                 <FormHelperText>{errors.genero}</FormHelperText>

@@ -7,6 +7,7 @@ import { Select, MenuItem } from "@mui/material";
 import AppsIcon from '@mui/icons-material/Apps';
 import generosServices from '../service/generos.services';
 import Footer from '../componentes/Footer';
+import eventosServices from '../service/eventos.services';
 
 const ClientDashboard = () => {
   const [events, setEvents] = useState([]);
@@ -52,7 +53,6 @@ const ClientDashboard = () => {
   const fetchEvents = () => {
     const params = new URLSearchParams();
     if (name) params.append('name', name);
-
     if (startDate) params.append('startDate', addDefaultTime(startDate, '00:00:00'));
     if (endDate) params.append('endDate', addDefaultTime(endDate, '23:59:59'));
     if (selectedGenre) params.append('genres', selectedGenre);
