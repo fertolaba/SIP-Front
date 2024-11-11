@@ -150,10 +150,10 @@ export default function Login() {
                         {loading ? 'Cargando...' : 'Iniciar sesión'}
                     </Button>
                     {loginError && (
-    <Typography color="error" variant="body2" sx={{ mt: 2 }}>
-      {loginError}
-    </Typography>
-  )}
+                      <Typography color="error" variant="body2" sx={{ mt: 2 }}>
+                        {loginError}
+                      </Typography>
+                    )}
                     <Typography variant="body1" align="center" sx={{ mt: 2 }}>
                         ¿No tienes una cuenta?{' '}
                         <Link component="button" onClick={handleRegisterRedirect}>
@@ -161,7 +161,7 @@ export default function Login() {
                         </Link>
                     </Typography>
                     <Typography variant="body1" align="center" sx={{ mt: 2 }}>
-                        <Link component="button1" onClick={handleClosePopup}>
+                        <Link component="button" onClick={handleClosePopup}>
                             ¿Olvidaste tu contraseña?
                         </Link>
                     </Typography>
@@ -172,7 +172,7 @@ export default function Login() {
           open={isPopupOpen} 
           onClose={() => setPopupOpen(false)} 
           onVerify={handleVerifyEmail} 
-          onOpenResetPopup={handleOpenResetPopup} // Pasa la nueva función como prop
+          onOpenResetPopup={handleOpenResetPopup} 
         />
     </div>
   );
