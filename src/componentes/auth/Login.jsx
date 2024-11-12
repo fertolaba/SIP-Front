@@ -9,6 +9,8 @@ import usuariosServices from "../../service/usuarios.services";
 import Verificar from "./Verificar";
 import VerificacionExitosa from "./VerificacionExitosa";
 import PopupError from "./PopupError";
+import PopupEmailError from "./PopupEmailError";
+import PopupTokenEnviado from "./PopupTokenEnviado";
 
 export default function Login() {
   const [loading, setLoading] = React.useState(false);
@@ -22,6 +24,9 @@ export default function Login() {
   const [errorMessage, setErrorMessage] = useState('');
   const [isSuccessPopupOpen, setIsSuccessPopupOpen] = useState(false);
   const [isErrorPopupOpen, setIsErrorPopupOpen] = useState(false);
+  const [isErrorEmailPopupOpen, setIsErrorEmailPopupOpen] = useState(false);
+  
+  
 
   const navigate = useNavigate();
 
@@ -43,7 +48,7 @@ export default function Login() {
       newErrors.email = "Ingrese un correo válido.";
     }
     if (!password || password.length < 6) {
-      newErrors.password = "Ingrese una contraseña válida.";  //no funciona
+      newErrors.password = "Ingrese una contraseña válida.";  
     }
     setErrors(newErrors);
   
@@ -197,10 +202,11 @@ export default function Login() {
                       ¿No has validado tu cuenta? <Link href="#" onClick={() => setIsVerifyPopupOpen(true)}>Validar cuenta</Link>
                     </Typography>
                     <Typography variant="body1" align="center" sx={{ mt: 2 }}>
-                        <Link component="button" onClick={handleClosePopup}>
-                            ¿Olvidaste tu contraseña?
-                        </Link>
+                      <Link component="button" onClick={(e) => { e.preventDefault(); handleClosePopup(); }}>
+                        ¿Olvidaste tu contraseña?
+                      </Link>
                     </Typography>
+
 
                 </form>
             </Box>

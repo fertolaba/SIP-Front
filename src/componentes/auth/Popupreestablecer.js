@@ -7,9 +7,13 @@ import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
+import PopupEmailError from './PopupEmailError';
+import PopupTokenEnviado from './PopupTokenEnviado';
 
 function Popupreestablecer({ open, onClose, onOpenResetPopup }) {
     const [email, setEmail] = useState('');
+    const [isErrorEmailPopupOpen, setIsErrorEmailPopupOpen] = useState(false);
+    const [isTokenEnviado, setIsTokenEnviado] = useState(false); 
 
     const handleVerify = async (email) => {
         try {
@@ -19,16 +23,17 @@ function Popupreestablecer({ open, onClose, onOpenResetPopup }) {
                     'Content-Type': 'application/json',
                 },
             });
-
+    
             if (!response.ok) {
                 throw new Error('Error en la verificación');
             }
-
+    
             const data = await response.json();
             console.log("Verificación exitosa:", data);
-
+            setIsTokenEnviado(true); 
         } catch (error) {
             console.error('Error al verificar:', error);
+            setIsErrorEmailPopupOpen(true); 
         }
     };
 
@@ -72,6 +77,17 @@ function Popupreestablecer({ open, onClose, onOpenResetPopup }) {
                     Tengo mi código
                 </Button>
             </DialogActions>
+            
+            <PopupEmailError 
+                open={isErrorEmailPopupOpen} 
+                onClose={() => setIsErrorEmailPopupOpen(false)} 
+                message="El correo electrónico no es válido o no está registrado." 
+            />
+            <PopupTokenEnviado 
+                trigger={isTokenEnviado} 
+                setTrigger={setIsTokenEnviado} 
+                message="El token ha sido enviado exitosamente." 
+            />
         </Dialog>
     );
 }

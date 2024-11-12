@@ -26,13 +26,13 @@ class UsuariosService{
     };
 
     updateUser = async (id, userData) => {
-      console.log("Actualizando usuario con id:", id);  // Verifica que el id no sea null
+      console.log("Actualizando usuario con id:", id);  
       const url = `${this._apiUrl}/${id}`;
       
-      // Asegúrate de que 'localidad' se llame 'localidadId' en lugar de 'localidad'
+      
       const updatedUserData = {
         ...userData,
-        localidadId: userData.localidad,  // Renombramos 'localidad' a 'localidadId'
+        localidadId: userData.localidad,  
       };
       try {
         const response = await fetchWithTimeout(url, {
@@ -40,7 +40,7 @@ class UsuariosService{
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify(updatedUserData),  // Usamos el nuevo formato
+          body: JSON.stringify(updatedUserData), 
         });
   
         if (!response.ok) {

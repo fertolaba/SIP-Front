@@ -16,7 +16,7 @@ const PopupError = ({ trigger, setTrigger, onRedirect }) => {
       <Dialog open={trigger} onClose={() => setTrigger(false)}>
         <DialogTitle>Problema de validacion</DialogTitle>
         <DialogContent>
-          <p>Token incorrecto</p>
+          <p>Verifique los datos</p>
         </DialogContent>
         <DialogActions>
 
