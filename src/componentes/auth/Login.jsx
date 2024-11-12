@@ -6,6 +6,9 @@ import { Visibility, VisibilityOff } from '@mui/icons-material';
 import '../../ui/login.css';
 import Popupreestablecer from "./Popupreestablecer";
 import usuariosServices from "../../service/usuarios.services";
+import Verificar from "./Verificar";
+import VerificacionExitosa from "./VerificacionExitosa";
+import PopupError from "./PopupError";
 
 export default function Login() {
   const [loading, setLoading] = React.useState(false);
@@ -15,6 +18,10 @@ export default function Login() {
   const [isPopupOpen, setPopupOpen] = useState(false); 
   const [email, setEmail] = React.useState('');
   const [password, setPassword] = React.useState('');
+  const [isVerifyPopupOpen, setIsVerifyPopupOpen] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+  const [isSuccessPopupOpen, setIsSuccessPopupOpen] = useState(false);
+  const [isErrorPopupOpen, setIsErrorPopupOpen] = useState(false);
 
   const navigate = useNavigate();
 
@@ -64,6 +71,32 @@ export default function Login() {
       setLoginError(error.message || 'Error al iniciar sesión. Por favor, verifica tus credenciales.');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleVerify = async (email, token) => {
+    try {
+      const response = await fetch(`http://localhost:4002/api/auth/verify?token=${token}&email=${email}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error('Error en la verificación');
+      }
+
+      const data = await response.json();
+      console.log("Verificación exitosa:", data);
+      setIsVerifyPopupOpen(false); 
+      setIsSuccessPopupOpen(true); 
+    } catch (error) {
+      console.error('Error al verificar:', error);
+      setErrorMessage('Error en la verificación. Por favor, intente nuevamente.');
+      setIsVerifyPopupOpen(true); 
+      setIsErrorPopupOpen(true);
+
     }
   };
   
@@ -161,10 +194,14 @@ export default function Login() {
                         </Link>
                     </Typography>
                     <Typography variant="body1" align="center" sx={{ mt: 2 }}>
+                      ¿No has validado tu cuenta? <Link href="#" onClick={() => setIsVerifyPopupOpen(true)}>Validar cuenta</Link>
+                    </Typography>
+                    <Typography variant="body1" align="center" sx={{ mt: 2 }}>
                         <Link component="button" onClick={handleClosePopup}>
                             ¿Olvidaste tu contraseña?
                         </Link>
                     </Typography>
+
                 </form>
             </Box>
         </div>
@@ -174,6 +211,24 @@ export default function Login() {
           onVerify={handleVerifyEmail} 
           onOpenResetPopup={handleOpenResetPopup} 
         />
+                  <Verificar 
+            trigger={isVerifyPopupOpen} 
+            setTrigger={setIsVerifyPopupOpen} 
+            onVerify={handleVerify} 
+            errorMessage={errorMessage}
+          />
+
+<VerificacionExitosa 
+            trigger={isSuccessPopupOpen} 
+            setTrigger={setIsSuccessPopupOpen} 
+            onRedirect={handleRegisterRedirect} 
+          />
+
+          <PopupError 
+            trigger={isErrorPopupOpen} 
+            setTrigger={setIsErrorPopupOpen} 
+            onRedirect={handleRegisterRedirect} 
+          />
     </div>
   );
 }

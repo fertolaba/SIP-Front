@@ -122,14 +122,24 @@ export default function MiPerfil() {
                 onChange={handleInputChange}
                 InputProps={{ readOnly: true }}
               />
-              <TextField
-                label="Edad"
-                name="edad"
-                value={userData.edad}
-                fullWidth
-                margin="normal"
-                onChange={handleInputChange}
-              />
+              <FormControl fullWidth margin="normal" error={Boolean(errors.edad)}>
+                <InputLabel id="edad-label">Edad</InputLabel>
+                <Select
+                  labelId="edad-label"
+                  id="edad-select"
+                  value={userData.edad}
+                  onChange={handleInputChange}
+                  name="edad"
+                  label="Edad"
+                >
+                  {Array.from({ length: 46 }, (_, i) => 15 + i).map((age) => (
+                    <MenuItem key={age} value={age}>
+                      {age}
+                    </MenuItem>
+                  ))}
+                </Select>
+                <FormHelperText>{errors.edad}</FormHelperText>
+              </FormControl>
               
               <FormControl fullWidth margin="normal">
                 <InputLabel id="localidad-label">Localidad</InputLabel>
@@ -171,22 +181,6 @@ export default function MiPerfil() {
           )}
         </Paper>
 
-        <Paper elevation={3} sx={{ p: 4, maxWidth: 600, width: '100%' }}>
-          <Typography variant="h6" gutterBottom>
-            Estadísticas
-          </Typography>
-          <Divider sx={{ mb: 2 }} />
-
-          <Box sx={{ mb: 2 }}>
-            <Typography variant="subtitle1">Interacción</Typography>
-            <LinearProgress variant="determinate" value={70} color="primary" />
-          </Box>
-
-          <Box sx={{ mb: 2 }}>
-            <Typography variant="subtitle1">Asistencia</Typography>
-            <LinearProgress variant="determinate" value={50} color="error" />
-          </Box>
-        </Paper>
       </Box>
 
       <PopupEditar trigger={isPopupOpen} setTrigger={setIsPopupOpen}>

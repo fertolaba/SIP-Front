@@ -374,32 +374,30 @@ const Registro = () => {
             <Typography variant="body2" align="center" mt={2}>
               ¿Ya tienes una cuenta? <Link href="#" onClick={handleRegisterRedirect}>Inicia sesión</Link>
             </Typography>
-            <Typography variant="body2" align="center" mt={2}>
-              ¿No has validado tu cuenta? <Link href="#" onClick={() => setIsVerifyPopupOpen(true)}>Validar cuenta</Link>
-            </Typography>
+
 
           </form>
           <Popup open={isPopupOpen} onClose={() => setIsPopupOpen(false)} message="Registro exitoso!" />
 
-<Verificar 
+          <Verificar 
             trigger={isVerifyPopupOpen} 
             setTrigger={setIsVerifyPopupOpen} 
             onVerify={handleVerify} 
             errorMessage={errorMessage}
           />
 
-          {/* Verificación exitosa */}
+
           <VerificacionExitosa 
             trigger={isSuccessPopupOpen} 
             setTrigger={setIsSuccessPopupOpen} 
             onRedirect={handleRegisterRedirect} 
           />
 
-<PopupError 
-        trigger={isErrorPopupOpen} 
-        setTrigger={setIsErrorPopupOpen} 
-        onRedirect={handleRegisterRedirect} 
-      />
+          <PopupError 
+            trigger={isErrorPopupOpen} 
+            setTrigger={setIsErrorPopupOpen} 
+            onRedirect={handleRegisterRedirect} 
+          />
 
         </Box>
       </div>

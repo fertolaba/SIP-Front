@@ -84,6 +84,37 @@ const AltaEventos = ({ genres, localities, eventTypes }) => {
     setEventData({ ...eventData, time: newTime });
   };
 
+  const validateFields = async () => {
+    const newErrors = {};
+
+    if (!eventData.name) newErrors.name = "El nombre del evento es obligatorio.";
+    if (!eventData.description) newErrors.description = "La descripción del evento es obligatoria.";
+    if (!eventData.localidadId) {
+      newErrors.localidadId = "La ubicación es obligatoria.";
+      console.log("Localidad obtenida:", eventData.localidadId);
+    } else {
+      const coordinates = await getLatLongFromAddress(eventData.location);
+      console.log("Coordenadas obtenidas:", coordinates);
+      if (!coordinates) {
+        newErrors.location = "Ingrese una ubicación válida.";
+      } else {
+        setEventData({
+          ...eventData,
+          coordinates: coordinates, // Se guardan las coordenadas válidas si son obtenidas
+        });
+      }
+    }
+  
+    if (!eventData.date) newErrors.date = "La fecha es obligatoria.";
+    if (!eventData.time) newErrors.time = "La hora es obligatoria.";
+    if (!eventData.genre) newErrors.genre = "Debes seleccionar un género musical.";
+  
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0; 
+  };
+  
+  
+
   useEffect(() => {
     setLoading(true);  
     generosServices.getGeneros()
@@ -100,6 +131,13 @@ const AltaEventos = ({ genres, localities, eventTypes }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    const isValid = await validateFields();
+    
+    if (!isValid) {
+      console.error("Errores de validación:", errors);
+      return;
+    }
   
     const address = eventData.location;
     const coordinates = await getLatLongFromAddress(address);
@@ -182,15 +220,19 @@ const AltaEventos = ({ genres, localities, eventTypes }) => {
                 />
               </Grid>
               <Grid item xs={12}>
-                <TextField
-                  fullWidth
-                  label="Ubicación"
-                  name="location"
-                  value={eventData.location}
-                  onChange={handleChange}
-                  required
-                />
+                <FormControl fullWidth margin="normal" error={Boolean(errors.location)}>
+                  <TextField
+                    label="Ubicación"
+                    name="location"
+                    value={eventData.location}
+                    onChange={handleChange}
+                    required
+                  />
+                  <FormHelperText>{errors.location}</FormHelperText> 
+                </FormControl>
               </Grid>
+
+
               <Grid container item xs={12} spacing={6}>
                 <Grid item xs={6}>
                   <LocalizationProvider  fullWidth dateAdapter={AdapterDateFns}>

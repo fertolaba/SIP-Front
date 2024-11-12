@@ -64,21 +64,33 @@ class UsuariosService{
           },
           body: JSON.stringify(credentials),
         });
-  
+    
         if (!response.ok) {
           const error = await response.json();
-          if (error.message === "Cuenta no activada. Por favor, revisa tu correo para activar tu cuenta.") {
-            throw new Error("Cuenta no activada. Por favor, revisa tu correo para activar tu cuenta.");
+          console.log('Respuesta de error:', error);  
+       
+          if (error.message && error.message === "La contraseña es incorrecta.") {
+            throw new Error("La contraseña es incorrecta. Por favor, verifica tu contraseña.");
           }
-          throw new Error('Error en el login');
+
+          if (error.message && error.message === "No existe un usuario registrado con el email proporcionado.") {
+            throw new Error("No existe un usuario registrado con el email proporcionado. Por favor, revisa el email.");
+          }
+          if (error.message && error.message === "El email no ha sido verificado.") {
+            throw new Error("El email no ha sido verificado. Por favor, revisa tu correo para verificarlo.");
+          }
+    
+          throw new Error('Error en el login. Respuesta inesperada del servidor.');
         }
-  
+    
         return await response.json();
       } catch (error) {
         console.error('Error en la autenticación:', error);
         throw error;
       }
     };
+    
+    
 }
 
 const usuarioService = new UsuariosService();

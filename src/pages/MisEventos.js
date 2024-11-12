@@ -81,6 +81,7 @@ const MisEventos = () => {
       <div id='client-main'>
         {loading ? <CircularProgress /> : renderEventList(events.past)}
       </div>
+      <div className="line-below"></div>
 
       <Footer />
     </div>
