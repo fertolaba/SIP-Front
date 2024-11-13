@@ -6,6 +6,7 @@ import { renderTimeViewClock } from '@mui/x-date-pickers/timeViewRenderers';
 import Header from '../componentes/Header';
 import Footer from '../componentes/Footer';
 import { useNavigate } from 'react-router-dom';
+import { styled } from '@mui/material/styles';
 import '../ui/main.css';
 import EventoPopup from "../componentes/auth/EventoPopup";
 import generosServices from "../service/generos.services";
@@ -21,6 +22,23 @@ const AltaEventos = ({ genres, localities, eventTypes }) => {
     price: "",
     locality: "",
   });
+
+  const HelperText = styled(FormHelperText)`
+  color: #d32f2f;
+    font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+    font-weight: 400;
+    font-size: 0.75rem;
+    line-height: 1.66;
+    letter-spacing: 0.03333em;
+    text-align: left;
+    margin-top: 3px;
+    margin-right: 0;
+    margin-bottom: 0;
+    margin-left: 0;
+    margin-left: 14px;
+    margin-right: 14px;
+}
+`;
 
   const userId = localStorage.getItem('userId');
   const [isPopupOpen, setIsPopupOpen] = useState(false);
@@ -72,16 +90,29 @@ const AltaEventos = ({ genres, localities, eventTypes }) => {
   };
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
+    const { name, value} = e.target;
     setEventData({ ...eventData, [name]: value });
+    const isValid = validateFields();
+    
+    if (!isValid) {
+      console.error("Errores de validación:", errors);
+      return;
+    }
   };
 
   const handleDateChange = (newDate) => {
     setEventData({ ...eventData, date: newDate });
+
   };
 
   const handleTimeChange = (newTime) => {
     setEventData({ ...eventData, time: newTime });
+    const isValid =  validateFields();
+    
+    if (!isValid) {
+      console.error("Errores de validación:", errors);
+      return;
+    }
   };
 
   const validateFields = async () => {
@@ -92,7 +123,8 @@ const AltaEventos = ({ genres, localities, eventTypes }) => {
     if (!eventData.localidadId) {
       newErrors.localidadId = "La ubicación es obligatoria.";
       console.log("Localidad obtenida:", eventData.localidadId);
-    } else {
+    }
+  
       const coordinates = await getLatLongFromAddress(eventData.location);
       console.log("Coordenadas obtenidas:", coordinates);
       if (!coordinates) {
@@ -103,7 +135,6 @@ const AltaEventos = ({ genres, localities, eventTypes }) => {
           coordinates: coordinates, // Se guardan las coordenadas válidas si son obtenidas
         });
       }
-    }
   
     if (!eventData.date) newErrors.date = "La fecha es obligatoria.";
     if (!eventData.time) newErrors.time = "La hora es obligatoria.";
@@ -206,7 +237,8 @@ const AltaEventos = ({ genres, localities, eventTypes }) => {
                   name="name"
                   value={eventData.name}
                   onChange={handleChange}
-                  required
+                  error={Boolean(errors.name)}
+                  helperText={errors.name}
                 />
               </Grid>
               <Grid item xs={12}>
@@ -216,26 +248,27 @@ const AltaEventos = ({ genres, localities, eventTypes }) => {
                   name="description"
                   value={eventData.description}
                   onChange={handleChange}
-                  required
+                  error={Boolean(errors.description)}
+                  helperText={errors.description}
                 />
               </Grid>
               <Grid item xs={12}>
-                <FormControl fullWidth margin="normal" error={Boolean(errors.location)}>
+                <FormControl fullWidth margin="normal">
                   <TextField
                     label="Ubicación"
                     name="location"
                     value={eventData.location}
                     onChange={handleChange}
-                    required
+                    error={Boolean(errors.location)}
+                    helperText={errors.location}
                   />
-                  <FormHelperText>{errors.location}</FormHelperText> 
                 </FormControl>
               </Grid>
 
 
               <Grid container item xs={12} spacing={6}>
                 <Grid item xs={6}>
-                  <LocalizationProvider  fullWidth dateAdapter={AdapterDateFns}>
+                  <LocalizationProvider  fullWidth dateAdapter={AdapterDateFns} error={Boolean(errors.date)}>
                     <DatePicker
                       
                       label="Fecha"
@@ -243,10 +276,11 @@ const AltaEventos = ({ genres, localities, eventTypes }) => {
                       onChange={handleDateChange}
                       renderInput={(params) => <TextField {...params} fullWidth required />}
                     />
+                  <HelperText>{errors.date}</HelperText>
                   </LocalizationProvider>
                 </Grid>
                 <Grid item xs={6}>
-                  <LocalizationProvider dateAdapter={AdapterDateFns}>
+                  <LocalizationProvider dateAdapter={AdapterDateFns} error={Boolean(errors.time)}>
                     <TimePicker
                       label="Hora"
                       value={eventData.time}
@@ -258,11 +292,12 @@ const AltaEventos = ({ genres, localities, eventTypes }) => {
                       }}
                       renderInput={(params) => <TextField {...params} fullWidth required />}
                     />
+                  <HelperText>{errors.time}</HelperText>
                   </LocalizationProvider>
                 </Grid>
               </Grid>
             <Grid item xs={12}>
-              <FormControl fullWidth margin="normal" error={Boolean(errors.ubicacion)}>
+              <FormControl fullWidth margin="normal" error={Boolean(errors.localidadId)}>
                 <InputLabel id="ubicacion-label">Localidad</InputLabel>
                 <Select
                   labelId="ubicacion-label"
@@ -284,19 +319,18 @@ const AltaEventos = ({ genres, localities, eventTypes }) => {
                     </MenuItem>
                   ))}
                 </Select>
-                <FormHelperText>{errors.ubicacion}</FormHelperText>
+                <FormHelperText>{errors.localidadId}</FormHelperText>
               </FormControl>
           </Grid>
 
   
               <Grid item xs={12} sm={6}>
-                <FormControl fullWidth>
+                <FormControl fullWidth error={Boolean(errors.genre)}>
                   <InputLabel>Género musical</InputLabel>
                   <Select
                     name="genre"
                     value={eventData.genre}
                     onChange={handleChange}
-                    required
                   >
                     {generos.map((genre) => (
                       <MenuItem key={genre} value={genre}>
@@ -304,6 +338,7 @@ const AltaEventos = ({ genres, localities, eventTypes }) => {
                       </MenuItem>
                     ))}
                   </Select>
+                <FormHelperText>{errors.genre}</FormHelperText>
                 </FormControl>
               </Grid>
               <Grid item xs={12} sm={6}>
