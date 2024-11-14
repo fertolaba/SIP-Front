@@ -8,6 +8,9 @@ import AppsIcon from '@mui/icons-material/Apps';
 import { Select, MenuItem } from "@mui/material";
 import eventosServices from '../service/eventos.services';
 import generosServices from '../service/generos.services';
+import { Carousel } from 'react-responsive-carousel';
+import BannerCarousel from '../componentes/BannerCarrousel';
+import 'react-responsive-carousel/lib/styles/carousel.min.css'; // Estilos del carrusel
 
 const ArtistDashboard = () => {
   const [events, setEvents] = useState([]);
@@ -111,7 +114,7 @@ const ArtistDashboard = () => {
     <Header />
     <div id='client-home'>
       
-      <div className="client-home-img"></div>
+      {/* <div className="client-home-img"></div> */}
 
       <div className="search-bar" id='customFont'>
         {/* Filtro por nombre */}
@@ -223,6 +226,8 @@ const ArtistDashboard = () => {
           Limpiar filtros
         </button>
       </div>
+
+      <BannerCarousel />
 
       <div className="line-below"></div>
 

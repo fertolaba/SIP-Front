@@ -271,6 +271,47 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   opacity: 0;
 }
 
+/*                      CARROUSEL                      */
+.carousel-container {
+  width: 90%; /* O establece una anchura específica */
+  height: auto; /* Ajusta según el tamaño deseado */
+  margin: 20px auto;
+  overflow: hidden;
+  position: relative;
+  border-radius: 50px;
+}
+
+.carousel-slide {
+  display: flex;
+  transition: transform 0.5s ease-in-out;
+}
+
+.carousel-image {
+  width: 100%; /* O porcentaje si tienes múltiples imágenes visibles a la vez */
+  height: auto;
+  object-fit: cover;
+}
+
+.carousel-button {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(0, 0, 0, 0.5); /* Fondo semi-transparente */
+  color: white;
+  border: none;
+  padding: 10px;
+  cursor: pointer;
+  z-index: 1;
+}
+
+.carousel-button-left {
+  left: 10px;
+}
+
+.carousel-button-right {
+  right: 10px;
+}
+
 
 /*              FOOTER                 */
 

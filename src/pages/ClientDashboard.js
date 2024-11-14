@@ -8,6 +8,9 @@ import AppsIcon from '@mui/icons-material/Apps';
 import generosServices from '../service/generos.services';
 import Footer from '../componentes/Footer';
 import eventosServices from '../service/eventos.services';
+import { Carousel } from 'react-responsive-carousel';
+import BannerCarousel from '../componentes/BannerCarrousel';
+import 'react-responsive-carousel/lib/styles/carousel.min.css'; // Estilos del carrusel
 
 const ClientDashboard = () => {
   const [events, setEvents] = useState([]);
@@ -81,7 +84,7 @@ const ClientDashboard = () => {
     <Header/>
     <div id='client-home'>
       
-      <div className="client-home-img"></div>
+      {/* <div className="client-home-img"></div> */}
 
       <div className="search-bar" id='customFont'>
         <div className="search-item">
@@ -163,6 +166,8 @@ const ClientDashboard = () => {
           Limpiar filtros
         </button>
       </div>
+
+      <BannerCarousel />
 
       <div className="line-below"></div>
 

@@ -117,20 +117,20 @@ const EditarEventos = ({ genres, localities, eventTypes }) => {
         const response = await fetch('http://localhost:4002/api/events');
         if (!response.ok) throw new Error('Error al obtener eventos');
         const events = await response.json();
-    
+        
         const selectedEvent = events.find(event => event.id === parseInt(eventId));
         if (selectedEvent) {
           const address = await getAddressFromCoordinates(selectedEvent.latitude, selectedEvent.longitude);
-    
+          console.log("Event Data localidadId:", selectedEvent.localidadId); // Verifica el localidadId
           setEventData({
             name: selectedEvent.name,
             description: selectedEvent.description,
-            location: address, // Dirección calculada
+            location: address,
             date: new Date(selectedEvent.dateTime),
             time: new Date(selectedEvent.dateTime),
             genre: selectedEvent.genres[0],
             price: selectedEvent.price,
-            localidadId: selectedEvent.localidadId,
+            localidadId: selectedEvent.localidadId // asignar correctamente el localidadId aquí
           });
         } else {
           console.error("Evento no encontrado");
@@ -139,8 +139,7 @@ const EditarEventos = ({ genres, localities, eventTypes }) => {
         console.error('Error al cargar datos del evento:', error);
       }
     };
-    
-    
+  
     fetchEventData();
   }, [eventId]);
 
@@ -313,29 +312,20 @@ const EditarEventos = ({ genres, localities, eventTypes }) => {
               </Grid>
               <Grid item xs={12}>
               <FormControl fullWidth margin="normal" error={Boolean(errors.localidadId)}>
-                <InputLabel id="ubicacion-label">Localidad</InputLabel>
-                <Select
-                  labelId="ubicacion-label"
-                  id="ubicacion-select"
-                  value={eventData.localidadId}
-                  label="Localidad"
-                  onChange={(e) => {
-                    const selectedLocalidadId = e.target.value;
-                    setEventData({
-                      ...eventData,
-                      localidadId: selectedLocalidadId,
-                    });
-                  }}
-                  name="Localidad"
-                >
-                  {localidades.map((localidad) => (
-                    <MenuItem key={localidad.id} value={localidad.id}>
-                      {localidad.nombre}
-                    </MenuItem>
-                  ))}
-                </Select>
-                <FormHelperText>{errors.localidadId}</FormHelperText>
-              </FormControl>
+              <InputLabel>Localidad</InputLabel>
+              <Select
+                name="localidadId"
+                value={eventData.localidadId}
+                onChange={(e) => setEventData({ ...eventData, localidadId: e.target.value })}
+              >
+                {localidades.map((localidad) => (
+                  <MenuItem key={localidad.id} value={localidad.id}>
+                    {localidad.nombre}
+                  </MenuItem>
+                ))}
+              </Select>
+              <FormHelperText>{errors.localidadId}</FormHelperText>
+            </FormControl>
           </Grid>          
               <Grid item xs={12} sm={6}>
                 <FormControl fullWidth error={Boolean(errors.genre)}>

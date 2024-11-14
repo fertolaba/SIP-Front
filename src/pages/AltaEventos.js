@@ -92,12 +92,6 @@ const AltaEventos = ({ genres, localities, eventTypes }) => {
   const handleChange = (e) => {
     const { name, value} = e.target;
     setEventData({ ...eventData, [name]: value });
-    const isValid = validateFields();
-    
-    if (!isValid) {
-      console.error("Errores de validación:", errors);
-      return;
-    }
   };
 
   const handleDateChange = (newDate) => {
@@ -107,12 +101,6 @@ const AltaEventos = ({ genres, localities, eventTypes }) => {
 
   const handleTimeChange = (newTime) => {
     setEventData({ ...eventData, time: newTime });
-    const isValid =  validateFields();
-    
-    if (!isValid) {
-      console.error("Errores de validación:", errors);
-      return;
-    }
   };
 
   const validateFields = async () => {

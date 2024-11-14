@@ -9,7 +9,7 @@ export const formValido = (formData, rol) => {
     if (!emailRegex.test(email)) newErrors.email = "Por favor ingresa un email válido.";
     if (email !== confirmEmail) newErrors.confirmEmail = "Los correos electrónicos no coinciden.";
     if (!confirmEmail) newErrors.confirmEmail = "Por favor ingresa un email.";
-    if (password.length <= 8) {
+    if (password.length < 8) {
       newErrors.password = "La contraseña debe tener al menos 8 caracteres.";
     } else if (!/[A-Z]/.test(password)) {
       newErrors.password = "La contraseña debe contener al menos una letra mayúscula.";
