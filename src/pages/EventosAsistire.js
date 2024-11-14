@@ -36,7 +36,7 @@ const EventosAsistire = () => {
         
         <div className="client-home-img"></div>
       
-          <Typography variant="h5" gutterBottom id="customFont" textAlign={"center"} marginTop={2} >
+          <Typography variant="h5" gutterBottom id="customFont" textAlign={"center"} marginTop={2} fontWeight={'fontWeightBold'} >
             Eventos a los que asistiras
           </Typography>
         <div id='client-main'>

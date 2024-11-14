@@ -7,6 +7,20 @@
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
+    margin: 20px auto;
+    width: 90%;
+    padding: 1%;
+}
+
+#client-recommendations {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin: 20px auto;
+  border-radius: 50px;
+  background-color: #A64900;
+  width: 90%;
+  padding: 1%;
 }
 
 /*---------------CARDS EVENTS -----------*/

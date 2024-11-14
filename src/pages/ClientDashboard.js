@@ -3,9 +3,10 @@ import EventCard from '../componentes/EventCard';
 import Header from '../componentes/Header';
 import '../ui/main.css';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
-import { Select, MenuItem } from "@mui/material";
+import { Select, MenuItem, Typography} from "@mui/material";
 import AppsIcon from '@mui/icons-material/Apps';
 import generosServices from '../service/generos.services';
+import recommendationsServices from '../service/recommendations.services';
 import Footer from '../componentes/Footer';
 import eventosServices from '../service/eventos.services';
 import { Carousel } from 'react-responsive-carousel';
@@ -14,6 +15,7 @@ import 'react-responsive-carousel/lib/styles/carousel.min.css'; // Estilos del c
 
 const ClientDashboard = () => {
   const [events, setEvents] = useState([]);
+  const [recommendations, setRecommendations] = useState([]);
   const [name, setName] = useState('');
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
@@ -37,6 +39,16 @@ const ClientDashboard = () => {
         setLoading(false);  
       });
 }, []); 
+
+useEffect(() => {  //recomendaciones
+  setLoading(true);
+  const userId = Number(localStorage.getItem('userId'));
+  recommendationsServices.getRecommendations(userId) 
+    .then(data => setRecommendations(data)) 
+    .catch(error => console.error('Error fetching recommendations:', error))
+    .finally(() => setLoading(false)); 
+}, []);
+
 
   const addDefaultTime = (date, time) => {
     return date ? `${date}T${time}` : '';
@@ -169,7 +181,40 @@ const ClientDashboard = () => {
 
       <BannerCarousel />
 
+      {recommendations.length > 0 && (
+        <>
+          <div className="line-below"></div>
+          <Typography 
+            variant="h4" 
+            gutterBottom 
+            id="customFont" 
+            textAlign={"center"} 
+            marginTop={2} 
+            fontWeight={'fontWeightBold'}
+          >
+            Eventos para vos
+          </Typography>
+          <div id='client-recommendations'>
+            {recommendations.map(eventReco => (
+              <EventCard 
+                key={eventReco.id} 
+                name={eventReco.name} 
+                description={eventReco.description} 
+                price={eventReco.price} 
+                dateTime={eventReco.dateTime} 
+                latitude={eventReco.latitude}
+                longitude={eventReco.longitude}
+              />
+            ))}
+          </div>
+        </>
+      )}
+
       <div className="line-below"></div>
+
+      <Typography variant="h4" gutterBottom id="customFont" textAlign={"center"} marginTop={2} fontWeight={'fontWeightBold'} >
+            Todos los eventos
+      </Typography>
 
       <div id='client-main'>
         {events.map(event => (

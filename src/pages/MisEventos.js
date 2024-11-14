@@ -66,7 +66,7 @@ const MisEventos = () => {
       
       <div className="client-home-img"></div>
 
-      <Typography variant="h5" gutterBottom id="customFont" textAlign="center" marginTop={2}>
+      <Typography variant="h5" gutterBottom id="customFont" textAlign="center" marginTop={2} fontWeight={'fontWeightBold'}>
         Eventos activos
       </Typography>
       <div id='client-main'>
@@ -75,7 +75,7 @@ const MisEventos = () => {
 
       <div className="line-below"></div>
 
-      <Typography variant="h5" gutterBottom id="customFont" textAlign="center" marginTop={2}>
+      <Typography variant="h5" gutterBottom id="customFont" textAlign="center" marginTop={2} fontWeight={'fontWeightBold'}>
         Eventos pasados
       </Typography>
       <div id='client-main'>

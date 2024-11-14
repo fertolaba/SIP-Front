@@ -5,15 +5,17 @@ import Footer from '../componentes/Footer';
 import '../ui/main.css';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import AppsIcon from '@mui/icons-material/Apps';
-import { Select, MenuItem } from "@mui/material";
+import { Select, MenuItem,Typography } from "@mui/material";
 import eventosServices from '../service/eventos.services';
 import generosServices from '../service/generos.services';
+import recommendationsServices from '../service/recommendations.services';
 import { Carousel } from 'react-responsive-carousel';
 import BannerCarousel from '../componentes/BannerCarrousel';
 import 'react-responsive-carousel/lib/styles/carousel.min.css'; // Estilos del carrusel
 
 const ArtistDashboard = () => {
   const [events, setEvents] = useState([]);
+  const [recommendations, setRecommendations] = useState([]);
   const [name, setName] = useState('');
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
@@ -44,6 +46,15 @@ const ArtistDashboard = () => {
         console.error('Error al obtener los géneros:', error);
       })
       .finally(() => setLoading(false));  
+  }, []);
+
+  useEffect(() => {  //recomendaciones
+    setLoading(true);
+    const userId = Number(localStorage.getItem('userId'));
+    recommendationsServices.getRecommendations(userId) 
+      .then(data => setRecommendations(data)) 
+      .catch(error => console.error('Error fetching recommendations:', error))
+      .finally(() => setLoading(false)); 
   }, []);
 
   // Cargar localidades disponibles
@@ -229,8 +240,39 @@ const ArtistDashboard = () => {
 
       <BannerCarousel />
 
-      <div className="line-below"></div>
+      {recommendations.length > 0 && (
+        <>
+          <div className="line-below"></div>
+          <Typography 
+            variant="h4" 
+            gutterBottom 
+            id="customFont" 
+            textAlign={"center"} 
+            marginTop={2} 
+            fontWeight={'fontWeightBold'}
+          >
+            Eventos para vos
+          </Typography>
+          <div id='client-recommendations'>
+            {recommendations.map(eventReco => (
+              <EventCard 
+                key={eventReco.id} 
+                name={eventReco.name} 
+                description={eventReco.description} 
+                price={eventReco.price} 
+                dateTime={eventReco.dateTime} 
+                latitude={eventReco.latitude}
+                longitude={eventReco.longitude}
+              />
+            ))}
+          </div>
+        </>
+      )}
 
+      <div className="line-below"></div>
+      <Typography variant="h4" gutterBottom id="customFont" textAlign={"center"} marginTop={2} fontWeight={'fontWeightBold'} >
+            Todos los eventos
+      </Typography>
       <div id='client-main'>
         {/* Renderiza las tarjetas de eventos */}
         {events.map(event => (
