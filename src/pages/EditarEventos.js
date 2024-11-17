@@ -22,7 +22,7 @@ const EditarEventos = ({ genres, localities, eventTypes }) => {
     time: null,
     genre: "",
     price: "",
-    localidadId: "",
+    localidad: "",
   });
 
   const HelperText = styled(FormHelperText)`
@@ -85,9 +85,9 @@ const EditarEventos = ({ genres, localities, eventTypes }) => {
 
     if (!eventData.name) newErrors.name = "El nombre del evento es obligatorio.";
     if (!eventData.description) newErrors.description = "La descripción del evento es obligatoria.";
-    if (!eventData.localidadId) {
-      newErrors.localidadId = "La ubicación es obligatoria.";
-      console.log("Localidad obtenida:", eventData.localidadId);
+    if (!eventData.localidad) {
+      newErrors.localidad = "La ubicación es obligatoria.";
+      console.log("Localidad obtenida:", eventData.localidad);
     }
   
       const coordinates = await getLatLongFromAddress(eventData.location);
@@ -121,7 +121,7 @@ const EditarEventos = ({ genres, localities, eventTypes }) => {
         const selectedEvent = events.find(event => event.id === parseInt(eventId));
         if (selectedEvent) {
           const address = await getAddressFromCoordinates(selectedEvent.latitude, selectedEvent.longitude);
-          console.log("Event Data localidadId:", selectedEvent.localidadId); // Verifica el localidadId
+          console.log("Event Data localidadId:", selectedEvent.localidad); // Verifica el localidadId
           setEventData({
             name: selectedEvent.name,
             description: selectedEvent.description,
@@ -130,7 +130,7 @@ const EditarEventos = ({ genres, localities, eventTypes }) => {
             time: new Date(selectedEvent.dateTime),
             genre: selectedEvent.genres[0],
             price: selectedEvent.price,
-            localidadId: selectedEvent.localidadId // asignar correctamente el localidadId aquí
+            localidad: selectedEvent.localidad?.id || '', // asignar correctamente el localidadId aquí
           });
         } else {
           console.error("Evento no encontrado");
@@ -203,7 +203,7 @@ const EditarEventos = ({ genres, localities, eventTypes }) => {
         price: eventData.price || 0,
         organizerId: userId,
         genres: [eventData.genre],
-        localidadId: eventData.localidadId
+        localidadId: eventData.localidad
       };
 
       try {
@@ -311,12 +311,12 @@ const EditarEventos = ({ genres, localities, eventTypes }) => {
                 </Grid>
               </Grid>
               <Grid item xs={12}>
-              <FormControl fullWidth margin="normal" error={Boolean(errors.localidadId)}>
+              <FormControl fullWidth margin="normal" error={Boolean(errors.localidad)}>
               <InputLabel>Localidad</InputLabel>
               <Select
                 name="localidadId"
-                value={eventData.localidadId}
-                onChange={(e) => setEventData({ ...eventData, localidadId: e.target.value })}
+                value={eventData.localidad}
+                onChange={(e) => setEventData({ ...eventData, localidad: e.target.value })}
               >
                 {localidades.map((localidad) => (
                   <MenuItem key={localidad.id} value={localidad.id}>
@@ -324,7 +324,7 @@ const EditarEventos = ({ genres, localities, eventTypes }) => {
                   </MenuItem>
                 ))}
               </Select>
-              <FormHelperText>{errors.localidadId}</FormHelperText>
+              <FormHelperText>{errors.localidad}</FormHelperText>
             </FormControl>
           </Grid>          
               <Grid item xs={12} sm={6}>
