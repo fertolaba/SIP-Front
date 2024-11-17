@@ -1,4 +1,4 @@
-import './App.css';
+import './ui/App.css';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Login from './componentes/auth/Login'; 
 import Register from './componentes/auth/Registro';

@@ -7,7 +7,7 @@ import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
-import PopupEmailError from './PopupEmailError';
+import PopupEmailError from '../popups/PopupEmailError';
 import PopupTokenEnviado from './PopupTokenEnviado';
 
 function Popupreestablecer({ open, onClose, onOpenResetPopup }) {

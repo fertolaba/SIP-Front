@@ -4,7 +4,7 @@ import Header from '../componentes/Header';
 import Footer from '../componentes/Footer';
 import usuariosServices from '../service/usuarios.services';
 import generosServices from '../service/generos.services';
-import PopupEditar from './PopupEditar';
+import PopupEditar from '../componentes/popups/PopupEditar';
 
 export default function MiPerfil() {
   const userId = localStorage.getItem('userId');

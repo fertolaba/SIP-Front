@@ -45,7 +45,7 @@ const Header = () => {
             </div>
 
             <a id='nav-link' href="/" onClick={handleLogout}>
-        <LogoutIcon  sx={{ fontSize: 30 }}/> {/* Aquí se coloca el icono */}
+        <LogoutIcon  sx={{ fontSize: 30 }}/> 
     </a>
 
         </header>

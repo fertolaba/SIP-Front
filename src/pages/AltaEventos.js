@@ -8,7 +8,7 @@ import Footer from '../componentes/Footer';
 import { useNavigate } from 'react-router-dom';
 import { styled } from '@mui/material/styles';
 import '../ui/main.css';
-import EventoPopup from "../componentes/auth/EventoPopup";
+import EventoPopup from "../componentes/popups/EventoPopup";
 import generosServices from "../service/generos.services";
 
 const AltaEventos = ({ genres, localities, eventTypes }) => {

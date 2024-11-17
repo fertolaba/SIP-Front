@@ -7,7 +7,7 @@ import { renderTimeViewClock } from '@mui/x-date-pickers/timeViewRenderers';
 import { styled } from '@mui/material/styles';
 import Header from '../componentes/Header';
 import Footer from '../componentes/Footer';
-import Popup from "../componentes/auth/Popup";
+import Popup from "../componentes/popups/Popup";
 import '../ui/main.css';
 
 const EditarEventos = ({ genres, localities, eventTypes }) => {

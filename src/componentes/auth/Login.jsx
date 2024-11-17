@@ -4,13 +4,13 @@ import { useNavigate } from "react-router-dom";
 import fetchWithTimeout from "../error/_fetchWithTimeOut";
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import '../../ui/login.css';
-import Popupreestablecer from "./Popupreestablecer";
+import Popupreestablecer from "../popups/Popupreestablecer";
 import usuariosServices from "../../service/usuarios.services";
-import Verificar from "./Verificar";
-import VerificacionExitosa from "./VerificacionExitosa";
-import PopupError from "./PopupError";
-import PopupEmailError from "./PopupEmailError";
-import PopupTokenEnviado from "./PopupTokenEnviado";
+import Verificar from "../popups/Verificar";
+import VerificacionExitosa from "../popups/VerificacionExitosa";
+import PopupError from "../popups/PopupError";
+import PopupTokenEnviado from "../popups/PopupTokenEnviado";
+import PopupEmailError from "../popups/PopupEmailError";
 
 export default function Login() {
   const [loading, setLoading] = React.useState(false);
@@ -26,8 +26,6 @@ export default function Login() {
   const [isErrorPopupOpen, setIsErrorPopupOpen] = useState(false);
   const [isErrorEmailPopupOpen, setIsErrorEmailPopupOpen] = useState(false);
   
-  
-
   const navigate = useNavigate();
 
   const handleRegisterRedirect = () => {
@@ -37,8 +35,6 @@ export default function Login() {
   const handleClickShowPassword = () => {
     setShowPassword(!showPassword);
   };
-
-
 
   const handleSubmit = async (event) => {
     event.preventDefault();

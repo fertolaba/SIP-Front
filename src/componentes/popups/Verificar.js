@@ -19,7 +19,7 @@ function Verificar(props) {
     const handleVerify = () => {
         if (email && token) { 
             props.onVerify(email, token);
-            setSuccessPopup(true); // Si la verificación es exitosa, muestra el popup de éxito
+            setSuccessPopup(true); 
         } else {
             alert("Ingrese email y token de verificación.");
         }
@@ -27,7 +27,7 @@ function Verificar(props) {
 
     const handleCloseSuccessPopup = () => {
         setSuccessPopup(false);
-        navigate('/login'); // Redirige a login si la verificación fue exitosa
+        navigate('/login'); 
     };
 
     return (

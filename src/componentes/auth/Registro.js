@@ -2,13 +2,13 @@ import React, { useState, useEffect } from 'react';
 import '../../ui/login.css';
 import { useNavigate } from 'react-router-dom';
 import fetchWithTimeout from '../error/_fetchWithTimeOut';
-import Popup from './Popup';
+import Popup from "../popups/Popup";
 import { TextField, Button,Box,Checkbox,FormControlLabel,Typography,FormControl,InputLabel,Select,MenuItem,FormHelperText,Link,IconButton,InputAdornment} from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
-import Verificar from './Verificar';
+import Verificar from '../popups/Verificar';
 import { formValido } from './validacion';
-import PopupError from './PopupError';
-import VerificacionExitosa from './VerificacionExitosa';
+import PopupError from '../popups/PopupError';
+import VerificacionExitosa from '../popups/VerificacionExitosa';
 
 const Registro = () => {
   const [formData, setFormData] = useState({
