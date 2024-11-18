@@ -256,7 +256,7 @@ const ArtistDashboard = () => {
           <div id='client-recommendations'>
             {recommendations.map(eventReco => (
               <EventCard 
-                key={eventReco.id} 
+                eventId={eventReco.id} 
                 name={eventReco.name} 
                 description={eventReco.description} 
                 price={eventReco.price} 
@@ -277,7 +277,7 @@ const ArtistDashboard = () => {
         {/* Renderiza las tarjetas de eventos */}
         {events.map(event => (
           <EventCard 
-            key={event.id} 
+            eventId={event.id} 
             name={event.name} 
             description={event.description} 
             price={event.price} 
