@@ -58,6 +58,15 @@ export default function MiPerfil() {
   const handleUpdateUser = async () => {
     setLoading(true);
     try {
+      // Log de los datos que se enviarán al backend
+      console.log("Datos enviados al backend:", JSON.stringify({
+        ...userData,
+        localidad: userData.localidad,
+        genres: userData.genero,
+        lastName: userData.apellido,
+        name: userData.nombreCompleto
+      }, null, 2));
+  
       await usuariosServices.updateUser(userId, {
         ...userData,
         localidad: userData.localidad,
@@ -66,6 +75,7 @@ export default function MiPerfil() {
         name: userData.nombreCompleto
       });
       setIsPopupOpen(true);
+      
     } catch (error) {
       console.error('Error updating user:', error);
       setError('Error al actualizar los datos del usuario');
@@ -73,6 +83,7 @@ export default function MiPerfil() {
       setLoading(false);
     }
   };
+  
 
   return (
     <>

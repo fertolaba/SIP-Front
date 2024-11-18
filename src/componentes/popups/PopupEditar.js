@@ -14,9 +14,9 @@ const PopupEditar = ({ trigger, setTrigger, onRedirect }) => {
 
     return (
       <Dialog open={trigger} onClose={() => setTrigger(false)}>
-        <DialogTitle>Evento creado</DialogTitle>
+        <DialogTitle>Perfil actualizado</DialogTitle>
         <DialogContent>
-          <p>Tu evento ha sido registrado exitosamente.</p>
+          <p>Tu perfil ha sido actualizado exitosamente.</p>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose} color="primary">
