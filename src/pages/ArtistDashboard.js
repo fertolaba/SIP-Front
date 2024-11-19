@@ -301,17 +301,26 @@ const ArtistDashboard = () => {
       </Typography>
       <div id='client-main'>
         {/* Renderiza las tarjetas de eventos */}
-        {events.map(event => (
-          <EventCard 
-            eventId={event.id} 
-            name={event.name} 
-            description={event.description} 
-            price={event.price} 
-            dateTime={event.dateTime} 
-            latitude={event.latitude}
-            longitude={event.longitude}
-          />
-        ))}
+          {events.length > 0 ? (
+      // Renderizar las tarjetas de eventos si hay eventos
+      events.map(event => (
+        <EventCard 
+          key={event.id} // Agregar un key único para cada evento
+          eventId={event.id} 
+          name={event.name} 
+          description={event.description} 
+          price={event.price} 
+          dateTime={event.dateTime} 
+          latitude={event.latitude}
+          longitude={event.longitude}
+        />
+      ))
+      ) : (
+      // Mostrar mensaje si no hay eventos
+      <Typography variant="h6" textAlign="center" marginTop={3}>
+        No se encontraron eventos
+      </Typography>
+    )}
       </div>
       <div className="line-below"></div>
 
