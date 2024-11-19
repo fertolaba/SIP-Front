@@ -303,7 +303,9 @@ const ArtistDashboard = () => {
         {/* Renderiza las tarjetas de eventos */}
           {events.length > 0 ? (
       // Renderizar las tarjetas de eventos si hay eventos
-      events.map(event => (
+      events
+      .filter(event => !recommendations.some(reco => reco.id === event.id))
+      .map(event => (
         <EventCard 
           key={event.id} // Agregar un key único para cada evento
           eventId={event.id} 
