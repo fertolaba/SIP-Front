@@ -82,22 +82,48 @@ const ArtistDashboard = () => {
   // Función para obtener eventos filtrados
   const fetchEvents = () => {
     const params = new URLSearchParams();
-    
     if (name) params.append('name', name);
     if (startDate) params.append('startDate', addDefaultTime(startDate, '00:00:00'));
     if (endDate) params.append('endDate', addDefaultTime(endDate, '23:59:59'));
-    if (selectedLocalidad) params.append('localidadId', selectedLocalidad);  // Asegúrate de que esto esté correcto
     if (selectedGenre) params.append('genres', selectedGenre);
     if (minPrice) params.append('minPrice', minPrice);
     if (maxPrice) params.append('maxPrice', maxPrice);
-  
-    console.log("Parametros enviados:", params.toString()); // Verifica los parámetros en la consola
-  
+    if (selectedLocalidad) params.append('localidadId', selectedLocalidad);
+
     fetch(`http://localhost:4002/api/events/filters?${params.toString()}`)
       .then(response => response.json())
-      .then(data => setEvents(data))
-      .catch(error => console.error('Error fetching events:', error));
-  };
+      .then(data => {
+        setEvents(data);
+
+        // Call to record the search query in the backend
+        const userId = Number(localStorage.getItem('userId'));
+        const recordParams = {
+            genres: selectedGenre ? [selectedGenre] : null,
+            minPrice: minPrice || null,
+            maxPrice: maxPrice || null,
+            startDateTime: startDate ? addDefaultTime(startDate, '00:00:00') : null,
+            endDateTime: endDate ? addDefaultTime(endDate, '23:59:59') : null,
+            localidadId: selectedLocalidad || null
+        };
+
+        fetch(`http://localhost:4002/api/user-interactions/${userId}/search`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(recordParams),
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Error recording search query');
+            }
+            return response.json();
+        })
+        .then(data => console.log('Search query recorded successfully:', data))
+        .catch(error => console.error('Error recording search query:', error));
+    })
+    .catch(error => console.error('Error fetching events:', error));
+};
   
 
 

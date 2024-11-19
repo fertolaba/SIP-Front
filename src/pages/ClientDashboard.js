@@ -19,52 +19,67 @@ const ClientDashboard = () => {
   const [name, setName] = useState('');
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
-  const [genres, setGenres] = useState('');
+  const [genres, setGenres] = useState([]);
+  const [selectedGenre, setSelectedGenre] = useState('');
   const [minPrice, setMinPrice] = useState('');
   const [maxPrice, setMaxPrice] = useState('');
   const [loading, setLoading] = useState(false);
-  const [selectedGenre, setSelectedGenre] = useState('');
+  const [localidadId, setLocalidadId] = useState('');
+  const [localidades, setLocalidades] = useState([]);
+  const [selectedLocalidad, setselectedLocalidad] = useState('');
+
+  useEffect(() => {  //eventos del home
+    setLoading(true);
+    eventosServices.getEventos() 
+      .then(data => setEvents(data)) 
+      .catch(error => console.error('Error fetching events:', error))
+      .finally(() => setLoading(false)); 
+  }, []);
 
   useEffect(() => {
     setLoading(true);  
     generosServices.getGeneros()
       .then(data => {
-        console.log(data);  
-        setGenres(data);  
+        setGenres(data);
       })
       .catch(error => {
         console.error('Error al obtener los géneros:', error);
       })
-      .finally(() => {
-        setLoading(false);  
-      });
-}, []); 
+      .finally(() => setLoading(false));  
+  }, []);
 
-useEffect(() => {  //recomendaciones
-  setLoading(true);
-  const userId = Number(localStorage.getItem('userId'));
-  recommendationsServices.getRecommendations(userId) 
-    .then(data => setRecommendations(data)) 
-    .catch(error => console.error('Error fetching recommendations:', error))
-    .finally(() => setLoading(false)); 
-}, []);
+  useEffect(() => {  //recomendaciones
+    setLoading(true);
+    const userId = Number(localStorage.getItem('userId'));
+    recommendationsServices.getRecommendations(userId) 
+      .then(data => setRecommendations(data)) 
+      .catch(error => console.error('Error fetching recommendations:', error))
+      .finally(() => setLoading(false)); 
+  }, []);
 
+  // Cargar localidades disponibles
+  useEffect(() => {
+    const fetchLocalidades = async () => {
+      try {
+        const response = await fetch('http://localhost:4002/api/localidad');
+        if (!response.ok) {
+          throw new Error('Error al obtener localidades');
+        }
+        const data = await response.json();
+        setLocalidades(data); // Guardamos las localidades en el estado
+      } catch (error) {
+        console.error('Error al cargar localidades:', error);
+      }
+    };
+    fetchLocalidades();
+  }, []);
 
+  // Agregar tiempo por defecto a la fecha
   const addDefaultTime = (date, time) => {
     return date ? `${date}T${time}` : '';
   };
-
-  const loadAllEvents = () => {
-    fetch('http://localhost:4002/api/events')
-      .then(response => response.json())
-      .then(data => setEvents(data))
-      .catch(error => console.error('Error fetching events:', error));
-  };
-
-  useEffect(() => {
-    loadAllEvents();  
-  }, []); 
-
+  
+  // Función para obtener eventos filtrados
   const fetchEvents = () => {
     const params = new URLSearchParams();
     if (name) params.append('name', name);
@@ -73,32 +88,74 @@ useEffect(() => {  //recomendaciones
     if (selectedGenre) params.append('genres', selectedGenre);
     if (minPrice) params.append('minPrice', minPrice);
     if (maxPrice) params.append('maxPrice', maxPrice);
+    if (selectedLocalidad) params.append('localidadId', selectedLocalidad);
 
     fetch(`http://localhost:4002/api/events/filters?${params.toString()}`)
+      .then(response => response.json())
+      .then(data => {
+        setEvents(data);
+
+        // Call to record the search query in the backend
+        const userId = Number(localStorage.getItem('userId'));
+        const recordParams = {
+            genres: selectedGenre ? [selectedGenre] : null,
+            minPrice: minPrice || null,
+            maxPrice: maxPrice || null,
+            startDateTime: startDate ? addDefaultTime(startDate, '00:00:00') : null,
+            endDateTime: endDate ? addDefaultTime(endDate, '23:59:59') : null,
+            localidadId: selectedLocalidad || null
+        };
+
+        fetch(`http://localhost:4002/api/user-interactions/${userId}/search`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(recordParams),
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Error recording search query');
+            }
+            return response.json();
+        })
+        .then(data => console.log('Search query recorded successfully:', data))
+        .catch(error => console.error('Error recording search query:', error));
+    })
+    .catch(error => console.error('Error fetching events:', error));
+};
+  
+
+
+  const loadAllEvents = () => {          //eventos del select
+    fetch('http://localhost:4002/api/events')
       .then(response => response.json())
       .then(data => setEvents(data))
       .catch(error => console.error('Error fetching events:', error));
   };
 
+  // Limpiar filtros
   const clearFilters = () => {
     setName('');
     setStartDate('');
     setEndDate('');
-    setGenres('');
-    setMinPrice('');
-    setMaxPrice('');
-    loadAllEvents();  
     setSelectedGenre('');
+    setMinPrice('');
+    setSelectedGenre('');
+    setMaxPrice('');
+    setselectedLocalidad('')
+    loadAllEvents();  // Recargar todos los eventos sin filtros
   };
 
   return (
     <>
-    <Header/>
+    <Header />
     <div id='client-home'>
       
       {/* <div className="client-home-img"></div> */}
 
       <div className="search-bar" id='customFont'>
+        {/* Filtro por nombre */}
         <div className="search-item">
           <input 
             type="text" 
@@ -108,28 +165,30 @@ useEffect(() => {  //recomendaciones
           />
         </div>
         <div className="divider"></div>
+
+        {/* Filtro por fecha de inicio */}
         <div className="search-item">
-
-
           <CalendarTodayIcon style={{ fontSize:'small', verticalAlign: 'middle', marginRight: '5px', color:'white' }} />
           <input 
             type="date" 
-            placeholder="Fecha inicio" 
             value={startDate}
             onChange={(e) => setStartDate(e.target.value)}
           />
         </div>
         <div className="divider"></div>
+
+        {/* Filtro por fecha de fin */}
         <div className="search-item">
           <CalendarTodayIcon style={{ fontSize:'small', verticalAlign: 'middle', marginRight: '5px', color:'white' }} />
           <input 
             type="date" 
-            placeholder="Fecha fin"
             value={endDate}
             onChange={(e) => setEndDate(e.target.value)}
           />
         </div>
         <div className="divider"></div>
+
+        {/* Filtro por género */}
         <div className="search-item">
           <AppsIcon style={{ fontSize:'medium', verticalAlign: 'middle', marginRight: '5px', color:'white' }} />
           <Select 
@@ -150,6 +209,29 @@ useEffect(() => {  //recomendaciones
           </Select>
         </div>
         <div className="divider"></div>
+
+        {/* Filtro por localidad */}
+        <div className="search-item">
+          <Select 
+            value={selectedLocalidad} 
+            onChange={(e) => setselectedLocalidad(e.target.value)}
+            displayEmpty
+            inputProps={{ 'aria-label': 'Sin etiqueta' }}
+            sx={{ width: { xs: "100%" }, color:'white', backgroundColor:'transparent', fontSize:"14" }}
+          >
+            <MenuItem value="">Seleccionar Localidad</MenuItem>
+            {localidades.length > 0 ? (
+              localidades.map((localidad) => (
+                <MenuItem key={localidad.id} value={localidad.id}>{localidad.nombre}</MenuItem>
+              ))
+            ) : (
+              <MenuItem value="" disabled>Cargando localidades...</MenuItem>
+            )}
+          </Select>
+        </div>
+        <div className="divider"></div>
+
+        {/* Filtro por precio mínimo */}
         <div className="search-item">
           <input 
             type="number" 
@@ -161,6 +243,8 @@ useEffect(() => {  //recomendaciones
           />
         </div>
         <div className="divider"></div>
+
+        {/* Filtro por precio máximo */}
         <div className="search-item">
           <input 
             type="number" 
@@ -171,6 +255,8 @@ useEffect(() => {  //recomendaciones
             max="100000"
           />
         </div>
+
+        {/* Botones para aplicar y limpiar filtros */}
         <button className="search-btn" onClick={fetchEvents}>
           Buscar
         </button>
@@ -197,7 +283,7 @@ useEffect(() => {  //recomendaciones
           <div id='client-recommendations'>
             {recommendations.map(eventReco => (
               <EventCard 
-                key={eventReco.id} 
+                eventId={eventReco.id} 
                 name={eventReco.name} 
                 description={eventReco.description} 
                 price={eventReco.price} 
@@ -211,16 +297,14 @@ useEffect(() => {  //recomendaciones
       )}
 
       <div className="line-below"></div>
-
       <Typography variant="h4" gutterBottom id="customFont" textAlign={"center"} marginTop={2} fontWeight={'fontWeightBold'} >
             Todos los eventos
       </Typography>
-
       <div id='client-main'>
+        {/* Renderiza las tarjetas de eventos */}
         {events.map(event => (
           <EventCard 
-            key={event.id} 
-            eventId = {event.id}
+            eventId={event.id} 
             name={event.name} 
             description={event.description} 
             price={event.price} 
@@ -232,8 +316,9 @@ useEffect(() => {  //recomendaciones
       </div>
       <div className="line-below"></div>
 
+      <Footer />
     </div>
-    <Footer />
+
     </>
   );
 };
