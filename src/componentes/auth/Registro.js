@@ -9,6 +9,7 @@ import Verificar from '../popups/Verificar';
 import { formValido } from './validacion';
 import PopupError from '../popups/PopupError';
 import PopupValidacion from '../popups/PopupValidacion';
+import PopupRegistro from '../popups/PopupRegistro';
 
 
 
@@ -36,6 +37,8 @@ const Registro = () => {
   const [localidades, setLocalidades] = useState([]);
   const [isErrorPopupOpen, setIsErrorPopupOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const [isSendingToken, setIsSendingToken] = useState(false);
+
 
 
 
@@ -71,6 +74,7 @@ const Registro = () => {
 
   const handleVerify = async (email, token) => {
     try {
+      setIsSendingToken(true);
       const response = await fetch(`http://localhost:4002/api/auth/verify?token=${token}&email=${email}`, {
         method: 'POST',
         headers: {
@@ -155,6 +159,7 @@ const Registro = () => {
     };
   
     try {
+      setIsSendingToken(true);
       const response = await fetch('http://localhost:4002/api/v1/auth/register', {
         method: 'POST',
         headers: {
@@ -176,18 +181,19 @@ const Registro = () => {
         }
         return;
       }
-  
-      // Registro exitoso
+
       const data = await response.json();
       sessionStorage.setItem('showVerifyPopup', 'true');
 
     setTimeout(() => {
+      setIsSendingToken(false);
       navigate('/login');
     }, 2000); 
     } catch (error) {
       console.error('Error al registrar:', error);
       setErrorMessage('Ocurrió un problema. Por favor, intenta nuevamente.');
-      setIsErrorPopupOpen(true); // Mostramos popup de error
+      setIsErrorPopupOpen(true); 
+      setIsSendingToken(false);
     }
   };
 
@@ -394,6 +400,9 @@ const Registro = () => {
             <Button type="submit" variant="contained" color="primary" fullWidth>
               Registrarse
             </Button>
+
+
+
             <Typography variant="body2" align="center" mt={2}>
               ¿Ya tienes una cuenta? <Link href="#" onClick={handleRegisterRedirect}>Inicia sesión</Link>
             </Typography>
@@ -407,6 +416,12 @@ const Registro = () => {
             setTrigger={setIsVerifyPopupOpen} 
             onVerify={handleVerify} 
             errorMessage={errorMessage}
+          />
+          
+          <PopupRegistro 
+            trigger={isSendingToken} 
+            setTrigger={setIsSendingToken} 
+            onRedirect={handleRegisterRedirect} 
           />
 
 
