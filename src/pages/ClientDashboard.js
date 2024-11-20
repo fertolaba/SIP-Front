@@ -97,21 +97,20 @@ const ClientDashboard = () => {
 
         // Call to record the search query in the backend
         const userId = Number(localStorage.getItem('userId'));
-        const recordParams = {
-            genres: selectedGenre ? [selectedGenre] : null,
-            minPrice: minPrice || null,
-            maxPrice: maxPrice || null,
-            startDateTime: startDate ? addDefaultTime(startDate, '00:00:00') : null,
-            endDateTime: endDate ? addDefaultTime(endDate, '23:59:59') : null,
-            localidadId: selectedLocalidad || null
-        };
+        const params = new URLSearchParams();
+        if (name) params.append('name', name);
+        if (startDate) params.append('startDate', addDefaultTime(startDate, '00:00:00'));
+        if (endDate) params.append('endDate', addDefaultTime(endDate, '23:59:59'));
+        if (selectedGenre) params.append('genres', selectedGenre);
+        if (minPrice) params.append('minPrice', minPrice);
+        if (maxPrice) params.append('maxPrice', maxPrice);
+        if (selectedLocalidad) params.append('localidadId', selectedLocalidad);
 
-        fetch(`http://localhost:4002/api/user-interactions/${userId}/search`, {
+        fetch(`http://localhost:4002/api/user-interactions/${userId}/search?${params.toString()}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(recordParams),
+            }
         })
         .then(response => {
             if (!response.ok) {
