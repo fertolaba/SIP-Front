@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { TextField, Button, Box, Checkbox, FormControlLabel, Typography, Link, IconButton, InputAdornment } from '@mui/material';
 import { useNavigate } from "react-router-dom";
 import fetchWithTimeout from "../error/_fetchWithTimeOut";
@@ -11,6 +11,7 @@ import VerificacionExitosa from "../popups/VerificacionExitosa";
 import PopupError from "../popups/PopupError";
 import PopupTokenEnviado from "../popups/PopupTokenEnviado";
 import PopupEmailError from "../popups/PopupEmailError";
+import PopupValidacion from "../popups/PopupValidacion";
 
 export default function Login() {
   const [loading, setLoading] = React.useState(false);
@@ -24,9 +25,19 @@ export default function Login() {
   const [errorMessage, setErrorMessage] = useState('');
   const [isSuccessPopupOpen, setIsSuccessPopupOpen] = useState(false);
   const [isErrorPopupOpen, setIsErrorPopupOpen] = useState(false);
+  
   const [isErrorEmailPopupOpen, setIsErrorEmailPopupOpen] = useState(false);
   
   const navigate = useNavigate();
+
+  useEffect(() => {
+    // Este código se ejecuta cuando el componente se monta
+    const shouldShowPopup = sessionStorage.getItem('showVerifyPopup');
+    if (shouldShowPopup === 'true') {
+      setIsVerifyPopupOpen(true);
+      sessionStorage.removeItem('showVerifyPopup'); // Limpia el estado
+    }
+  }, []);
 
   const handleRegisterRedirect = () => {
     navigate('/registro'); 
@@ -59,6 +70,9 @@ export default function Login() {
   
     setLoading(true);
     setLoginError('');
+
+
+
   
     try {
       const user = await usuariosServices.authenticateUser(credentials);
@@ -220,7 +234,7 @@ export default function Login() {
             errorMessage={errorMessage}
           />
 
-<VerificacionExitosa 
+<PopupValidacion 
             trigger={isSuccessPopupOpen} 
             setTrigger={setIsSuccessPopupOpen} 
             onRedirect={handleRegisterRedirect} 
@@ -232,5 +246,7 @@ export default function Login() {
             onRedirect={handleRegisterRedirect} 
           />
     </div>
+
+    
   );
 }

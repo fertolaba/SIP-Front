@@ -8,7 +8,9 @@ import { Visibility, VisibilityOff } from '@mui/icons-material';
 import Verificar from '../popups/Verificar';
 import { formValido } from './validacion';
 import PopupError from '../popups/PopupError';
-import VerificacionExitosa from '../popups/VerificacionExitosa';
+import PopupValidacion from '../popups/PopupValidacion';
+
+
 
 const Registro = () => {
   const [formData, setFormData] = useState({
@@ -162,7 +164,11 @@ const Registro = () => {
       }
 
       const data = await response.json();
-      setIsVerifyPopupOpen(true);
+      sessionStorage.setItem('showVerifyPopup', 'true');
+
+    setTimeout(() => {
+      navigate('/login');
+    }, 2000); 
     } catch (error) {
       console.error('Error al registrar:', error);
     }
@@ -178,42 +184,42 @@ const Registro = () => {
           </Typography>
           
           <form onSubmit={handleSubmit} id='login-form'>
-<FormControl fullWidth margin="normal" error={Boolean(errors.rol)}>
-  <InputLabel
-    id="rol-label"
-    style={{ fontWeight: 'bold', color: '#000' }} 
-  >
-    Rol
-  </InputLabel>
-  <Select
-    className="left"
-    labelId="rol-label"
-    id="rol-select"
-    value={rol}
-    label="Rol"
-    name="rol"
-    onChange={(e) => setRol(e.target.value)}
-    style={{
-      fontWeight: 'bold',           
-      backgroundColor: '#f0f0f0', 
+          <FormControl fullWidth margin="normal" error={Boolean(errors.rol)}>
+            <InputLabel
+              id="rol-label"
+              style={{ fontWeight: 'bold', color: '#000' }} 
+            >
+              Rol
+            </InputLabel>
+          <Select
+            className="left"
+            labelId="rol-label"
+            id="rol-select"
+            value={rol}
+            label="Rol"
+            name="rol"
+            onChange={(e) => setRol(e.target.value)}
+            style={{
+              fontWeight: 'bold',           
+              backgroundColor: '#f0f0f0', 
 
-    }}
-  >
-      <MenuItem value="CLIENT">Asistente</MenuItem>
-      <MenuItem value="ARTIST">Artista</MenuItem>
-    </Select>
-    <FormHelperText>{errors.rol}</FormHelperText>
-    {rol === 'CLIENT' && (
-      <FormHelperText style={{ color: '#4caf50' }}>
-        Como asistente, podrá explorar y asistir a eventos disponibles en la plataforma.
-      </FormHelperText>
-    )}
-    {rol === 'ARTIST' && (
-      <FormHelperText style={{ color: '#4caf50' }}>
-        Como artista, tendrá la posibilidad de crear y gestionar sus propios eventos.
-      </FormHelperText>
-    )}
-  </FormControl>
+            }}
+          >
+          <MenuItem value="CLIENT">Asistente</MenuItem>
+          <MenuItem value="ARTIST">Artista</MenuItem>
+          </Select>
+            <FormHelperText>{errors.rol}</FormHelperText>
+            {rol === 'CLIENT' && (
+              <FormHelperText style={{ color: '#4caf50' }}>
+                Como asistente, podrá explorar y asistir a eventos disponibles en la plataforma.
+              </FormHelperText>
+            )}
+            {rol === 'ARTIST' && (
+              <FormHelperText style={{ color: '#4caf50' }}>
+                Como artista, tendrá la posibilidad de crear y gestionar sus propios eventos.
+              </FormHelperText>
+            )}
+          </FormControl>
 
             <TextField
               fullWidth
@@ -387,7 +393,7 @@ const Registro = () => {
           />
 
 
-          <VerificacionExitosa 
+          <PopupValidacion 
             trigger={isSuccessPopupOpen} 
             setTrigger={setIsSuccessPopupOpen} 
             onRedirect={handleRegisterRedirect} 
