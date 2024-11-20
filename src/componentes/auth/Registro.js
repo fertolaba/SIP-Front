@@ -130,13 +130,18 @@ const Registro = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+  
+    // Reiniciamos errores antes de cada validación/envío
+    setErrors({});
+  
+    // Validación local
     const { isValid, errors: validationErrors } = formValido(formData, rol);
     if (!isValid) {
-      setErrors(validationErrors);
+      setErrors(validationErrors); // Actualizamos solo errores locales
       return;
     }
-
+  
+    // Si pasa las validaciones locales, intentamos enviar al backend
     const registerRequest = {
       email: formData.email,
       username: formData.nombreUsuario,
@@ -145,24 +150,34 @@ const Registro = () => {
       edad: parseInt(formData.edad, 10),
       password: formData.password,
       role: rol,
-      generosMusicalesPreferidos: formData.generosMusicalesPreferidos, 
-      localidadId: formData.localidadId
+      generosMusicalesPreferidos: formData.generosMusicalesPreferidos,
+      localidadId: formData.localidadId,
     };
-
+  
     try {
       const response = await fetch('http://localhost:4002/api/v1/auth/register', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(registerRequest)
+        body: JSON.stringify(registerRequest),
       });
-
-
+  
       if (!response.ok) {
-        throw new Error('Error en el registro');
+        // Procesamos los errores del backend
+        const errorData = await response.json();
+        if (errorData.message.includes('El nombre de usuario ya está registrado.')) {
+          setErrors((prevErrors) => ({
+            ...prevErrors,
+            nombreUsuario: 'El nombre de usuario ya está en uso. Por favor, elige otro.',
+          }));
+        } else {
+          throw new Error('Error en el registro');
+        }
+        return;
       }
-
+  
+      // Registro exitoso
       const data = await response.json();
       sessionStorage.setItem('showVerifyPopup', 'true');
 
@@ -171,6 +186,8 @@ const Registro = () => {
     }, 2000); 
     } catch (error) {
       console.error('Error al registrar:', error);
+      setErrorMessage('Ocurrió un problema. Por favor, intenta nuevamente.');
+      setIsErrorPopupOpen(true); // Mostramos popup de error
     }
   };
 
@@ -221,16 +238,16 @@ const Registro = () => {
             )}
           </FormControl>
 
-            <TextField
-              fullWidth
-              label="Nombre de usuario"
-              name="nombreUsuario"
-              value={formData.nombreUsuario}
-              onChange={handleChange}
-              margin="normal"
-              error={Boolean(errors.nombreUsuario)}
-              helperText={errors.nombreUsuario}
-            />
+                <TextField
+                fullWidth
+                label="Nombre de usuario"
+                name="nombreUsuario"
+                value={formData.nombreUsuario}
+                onChange={handleChange}
+                margin="normal"
+                error={Boolean(errors.nombreUsuario)}
+                helperText={errors.nombreUsuario || 'Ingrese un nombre único para su usuario.'}
+              />
             <div id='column'>
               <TextField
                 fullWidth
