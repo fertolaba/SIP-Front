@@ -9,7 +9,6 @@ import AltaEventos from './pages/AltaEventos'
 import MiPerfil from './pages/MiPerfil';
 import MisEventos from './pages/MisEventos';
 import EditarEventos from './pages/EditarEventos';
-import { lightTheme , darkTheme } from './componentes/utils/Theme';
 import Reestablecer from './componentes/auth/Reestablecer';
 import EventosAsistire from './pages/EventosAsistire';
 

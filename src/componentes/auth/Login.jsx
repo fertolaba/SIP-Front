@@ -23,7 +23,7 @@ export default function Login() {
   const [password, setPassword] = React.useState('');
   const [isVerifyPopupOpen, setIsVerifyPopupOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
-  const [isSuccessPopupOpen, setIsSuccessPopupOpen] = useState(true);
+  const [isSuccessPopupOpen, setIsSuccessPopupOpen] = useState(false);
   const [isErrorPopupOpen, setIsErrorPopupOpen] = useState(false);
   
   const [isErrorEmailPopupOpen, setIsErrorEmailPopupOpen] = useState(false);
