@@ -11,7 +11,7 @@ import Popup from "../componentes/popups/Popup";
 import '../ui/main.css';
 
 const EditarEventos = ({ genres, localities, eventTypes }) => {
-  const { eventId } = useParams(); // Extrae el eventId de la URL
+  const { eventId } = useParams(); 
   const [localidades, setLocalidades] = useState([]);
   const [errors, setErrors] = useState({});
   const [eventData, setEventData] = useState({
@@ -70,13 +70,13 @@ const EditarEventos = ({ genres, localities, eventTypes }) => {
       const data = await response.json();
   
       if (data && data.display_name) {
-        return data.display_name; // Dirección aproximada
+        return data.display_name; 
       } else {
         throw new Error("Error al obtener dirección a partir de coordenadas");
       }
     } catch (error) {
       console.error(error);
-      return ""; // Valor predeterminado en caso de error
+      return ""; 
     }
   };
 
@@ -97,7 +97,7 @@ const EditarEventos = ({ genres, localities, eventTypes }) => {
       } else {
         setEventData({
           ...eventData,
-          coordinates: coordinates, // Se guardan las coordenadas válidas si son obtenidas
+          coordinates: coordinates, 
         });
       }
   
@@ -110,7 +110,6 @@ const EditarEventos = ({ genres, localities, eventTypes }) => {
   };
   
 
-  // Obtener todos los eventos y filtrar el específico
   useEffect(() => {
     const fetchEventData = async () => {
       try {
@@ -121,7 +120,7 @@ const EditarEventos = ({ genres, localities, eventTypes }) => {
         const selectedEvent = events.find(event => event.id === parseInt(eventId));
         if (selectedEvent) {
           const address = await getAddressFromCoordinates(selectedEvent.latitude, selectedEvent.longitude);
-          console.log("Event Data localidadId:", selectedEvent.localidad); // Verifica el localidadId
+          console.log("Event Data localidadId:", selectedEvent.localidad); 
           setEventData({
             name: selectedEvent.name,
             description: selectedEvent.description,
@@ -130,7 +129,7 @@ const EditarEventos = ({ genres, localities, eventTypes }) => {
             time: new Date(selectedEvent.dateTime),
             genre: selectedEvent.genres[0],
             price: selectedEvent.price,
-            localidad: selectedEvent.localidad?.id || '', // asignar correctamente el localidadId aquí
+            localidad: selectedEvent.localidad?.id || '',
           });
         } else {
           console.error("Evento no encontrado");
@@ -191,7 +190,7 @@ const EditarEventos = ({ genres, localities, eventTypes }) => {
       const dateTime = new Date(eventData.date);
       dateTime.setHours(eventData.time.getHours());
       dateTime.setMinutes(eventData.time.getMinutes());
-      dateTime.setHours(dateTime.getHours() - 3); // Ajuste de zona horaria
+      dateTime.setHours(dateTime.getHours() - 3); 
 
       const registerRequest = {
         name: eventData.name,

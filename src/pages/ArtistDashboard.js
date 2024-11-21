@@ -95,7 +95,7 @@ const ArtistDashboard = () => {
       .then(data => {
         setEvents(data);
 
-        // Call to record the search query in the backend
+
         const userId = Number(localStorage.getItem('userId'));
         const params = new URLSearchParams();
         if (name) params.append('name', name);
@@ -133,7 +133,7 @@ const ArtistDashboard = () => {
       .catch(error => console.error('Error fetching events:', error));
   };
 
-  // Limpiar filtros
+
   const clearFilters = () => {
     setName('');
     setStartDate('');
@@ -142,7 +142,7 @@ const ArtistDashboard = () => {
     setMinPrice('');
     setSelectedGenre('');
     setMaxPrice('');
-    loadAllEvents();  // Recargar todos los eventos sin filtros
+    loadAllEvents();  
   };
 
   return (
@@ -301,12 +301,12 @@ const ArtistDashboard = () => {
       <div id='client-main'>
         {/* Renderiza las tarjetas de eventos */}
           {events.length > 0 ? (
-      // Renderizar las tarjetas de eventos si hay eventos
+
       events
       .filter(event => !recommendations.some(reco => reco.id === event.id))
       .map(event => (
         <EventCard 
-          key={event.id} // Agregar un key único para cada evento
+          key={event.id}
           eventId={event.id} 
           name={event.name} 
           description={event.description} 
@@ -317,7 +317,7 @@ const ArtistDashboard = () => {
         />
       ))
       ) : (
-      // Mostrar mensaje si no hay eventos
+
       <Typography variant="h6" textAlign="center" marginTop={3}>
         No se encontraron eventos
       </Typography>
