@@ -55,6 +55,23 @@ export default function MiPerfil() {
     setUserData((prev) => ({ ...prev, [name]: value }));
   }, []);
 
+  const validateFields = async () => {
+    const newErrors = {};
+    if (!userData.useername) newErrors.username = "El nombre de usuario es obligatorio.";
+    if (!userData.nombreCompleto) newErrors.nombreCompleto = "El nombre es obligatorio.";
+    if (!userData.apellido) newErrors.apellido = "El apellido es obligatorio.";
+    if (!userData.email) newErrors.email = "El email es obligatorio.";
+    if (!userData.edad) newErrors.edad = "Debes seleccionar una edad.";
+    if (!userData.localidad) {
+      newErrors.localidad = "La ubicación es obligatoria.";
+      console.log("Localidad obtenida:", userData.localidad);
+    }
+    if (!userData.genero) newErrors.genre = "Debes seleccionar un género musical.";
+  
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0; 
+  };
+
   const handleUpdateUser = async () => {
     setLoading(true);
     try {
@@ -107,6 +124,8 @@ export default function MiPerfil() {
                 fullWidth
                 margin="normal"
                 onChange={handleInputChange}
+                error={Boolean(errors.username)}
+                helperText={errors.username}
               />
               <TextField
                 label="Nombre"
@@ -115,6 +134,8 @@ export default function MiPerfil() {
                 fullWidth
                 margin="normal"
                 onChange={handleInputChange}
+                error={Boolean(errors.nombreCompleto)}
+                helperText={errors.nombreCompleto}
               />
               <TextField
                 label="Apellido"
@@ -123,6 +144,8 @@ export default function MiPerfil() {
                 fullWidth
                 margin="normal"
                 onChange={handleInputChange}
+                error={Boolean(errors.apellido)}
+                helperText={errors.apellido}
               />
               <TextField
                 label="Email"
@@ -132,6 +155,8 @@ export default function MiPerfil() {
                 margin="normal"
                 onChange={handleInputChange}
                 InputProps={{ readOnly: true }}
+                error={Boolean(errors.email)}
+                helperText={errors.email}
               />
               <FormControl fullWidth margin="normal" error={Boolean(errors.edad)}>
                 <InputLabel id="edad-label">Edad</InputLabel>

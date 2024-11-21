@@ -74,7 +74,6 @@ const Registro = () => {
 
   const handleVerify = async (email, token) => {
     try {
-      setIsSendingToken(true);
       const response = await fetch(`http://localhost:4002/api/auth/verify?token=${token}&email=${email}`, {
         method: 'POST',
         headers: {
@@ -84,6 +83,8 @@ const Registro = () => {
 
       if (!response.ok) {
         throw new Error('Error en la verificación');
+      }else{
+        setIsSendingToken(true);
       }
 
       const data = await response.json();
@@ -159,7 +160,6 @@ const Registro = () => {
     };
   
     try {
-      setIsSendingToken(true);
       const response = await fetch('http://localhost:4002/api/v1/auth/register', {
         method: 'POST',
         headers: {
@@ -169,9 +169,15 @@ const Registro = () => {
       });
   
       if (!response.ok) {
-        // Procesamos los errores del backend
         const errorData = await response.json();
-        if (errorData.message.includes('El nombre de usuario ya está registrado.')) {
+        
+        // Manejo específico del mensaje de error
+        if (errorData.message.includes('El email ya está registrado.')) {
+          setErrors((prevErrors) => ({
+            ...prevErrors,
+            email: 'El email ya está registrado. Por favor, utiliza otro.',
+          }));
+        } else if (errorData.message.includes('El nombre de usuario ya está registrado.')) {
           setErrors((prevErrors) => ({
             ...prevErrors,
             nombreUsuario: 'El nombre de usuario ya está en uso. Por favor, elige otro.',
@@ -180,11 +186,14 @@ const Registro = () => {
           throw new Error('Error en el registro');
         }
         return;
+      }else{
+        setIsSendingToken(true);
       }
 
       const data = await response.json();
       sessionStorage.setItem('showVerifyPopup', 'true');
 
+    setIsSendingToken(true);
     setTimeout(() => {
       setIsSendingToken(false);
       navigate('/login');
@@ -285,7 +294,7 @@ const Registro = () => {
               onChange={handleChange}
               margin="normal"
               error={Boolean(errors.email)}
-              helperText={errors.email}
+              helperText={errors.email || 'Introduce tu correo electrónico.'}
             />
             <TextField
               fullWidth
