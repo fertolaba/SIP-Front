@@ -57,25 +57,23 @@ export default function MiPerfil() {
 
   const validateFields = async () => {
     const newErrors = {};
-    if (!userData.useername) newErrors.username = "El nombre de usuario es obligatorio.";
+    if (!userData.username) newErrors.username = "El nombre de usuario es obligatorio.";
     if (!userData.nombreCompleto) newErrors.nombreCompleto = "El nombre es obligatorio.";
     if (!userData.apellido) newErrors.apellido = "El apellido es obligatorio.";
     if (!userData.email) newErrors.email = "El email es obligatorio.";
     if (!userData.edad) newErrors.edad = "Debes seleccionar una edad.";
-    if (!userData.localidad) {
-      newErrors.localidad = "La ubicación es obligatoria.";
-      console.log("Localidad obtenida:", userData.localidad);
-    }
-    if (!userData.genero) newErrors.genre = "Debes seleccionar un género musical.";
+    if (!userData.localidad) newErrors.localidad = "La ubicación es obligatoria.";
+    if (!userData.genero || userData.genero.length === 0) newErrors.genero = "Debes seleccionar al menos un género musical.";
   
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0; 
   };
 
   const handleUpdateUser = async () => {
+    const isValid = await validateFields(); 
+    if (!isValid) return;
     setLoading(true);
     try {
-      // Log de los datos que se enviarán al backend
       console.log("Datos enviados al backend:", JSON.stringify({
         ...userData,
         localidad: userData.localidad,
