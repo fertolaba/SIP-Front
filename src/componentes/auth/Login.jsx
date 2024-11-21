@@ -23,7 +23,7 @@ export default function Login() {
   const [password, setPassword] = React.useState('');
   const [isVerifyPopupOpen, setIsVerifyPopupOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
-  const [isSuccessPopupOpen, setIsSuccessPopupOpen] = useState(false);
+  const [isSuccessPopupOpen, setIsSuccessPopupOpen] = useState(true);
   const [isErrorPopupOpen, setIsErrorPopupOpen] = useState(false);
   
   const [isErrorEmailPopupOpen, setIsErrorEmailPopupOpen] = useState(false);
@@ -31,11 +31,11 @@ export default function Login() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Este código se ejecuta cuando el componente se monta
+    
     const shouldShowPopup = sessionStorage.getItem('showVerifyPopup');
     if (shouldShowPopup === 'true') {
       setIsVerifyPopupOpen(true);
-      sessionStorage.removeItem('showVerifyPopup'); // Limpia el estado
+      sessionStorage.removeItem('showVerifyPopup'); 
     }
   }, []);
 
@@ -234,10 +234,10 @@ export default function Login() {
             errorMessage={errorMessage}
           />
 
-<PopupValidacion 
+          <PopupValidacion 
             trigger={isSuccessPopupOpen} 
             setTrigger={setIsSuccessPopupOpen} 
-            onRedirect={handleRegisterRedirect} 
+
           />
 
           <PopupError 
