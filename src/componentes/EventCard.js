@@ -4,11 +4,17 @@ import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import PaymentIcon from '@mui/icons-material/Payment';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import FavoriteIcon from '@mui/icons-material/Favorite';
+import defaultImage from '../img/DEFAULT.jpeg';
 
-const EventCard = ({ eventId, image, name, location, dateTime, price }) => {
+
+
+
+
+const EventCard = ({ eventId, genre, name, location, dateTime, price }) => {
   const [liked, setLiked] = useState(false);
   const [attending, setAttending] = useState(false);
   const userId = Number(localStorage.getItem('userId'));  // Assuming userId is stored in localStorage
+
 
   // Obtener los eventos que el usuario ha "likeado" al cargar el componente
   useEffect(() => {
@@ -87,10 +93,19 @@ const EventCard = ({ eventId, image, name, location, dateTime, price }) => {
     return null; // Hide past events
   }
 
+  const getGenreImage = (genre) => {
+    try {
+      return require(`../img/${genre}.jpeg`);
+    } catch {
+      return defaultImage; // Imagen predeterminada
+    }
+  };
+
+  const genreImage = getGenreImage(genre);
+
   return (
     <div className="card-event">
-      <div className="card-image" style={{ backgroundImage: image ? `url(${image})` : '#ccc' }}>
-        {!image && <div className="no-image">No Image</div>}
+      <div className="card-image" style={{ backgroundImage: `url(${genreImage})`}}>
         <div className="like-icon" onClick={toggleLike}>
           {liked ? <FavoriteIcon style={{ color: 'red' }} /> : <FavoriteBorderIcon style={{ color: 'white' }} />}
         </div>

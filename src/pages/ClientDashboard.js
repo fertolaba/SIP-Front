@@ -289,6 +289,7 @@ const ClientDashboard = () => {
                 dateTime={eventReco.dateTime} 
                 latitude={eventReco.latitude}
                 longitude={eventReco.longitude}
+                genre={eventReco.genres[0]}
               />
             ))}
           </div>
@@ -315,6 +316,7 @@ const ClientDashboard = () => {
           dateTime={event.dateTime} 
           latitude={event.latitude}
           longitude={event.longitude}
+          genre={event.genres[0]}
         />
       ))
       ) : (

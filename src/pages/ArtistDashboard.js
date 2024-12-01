@@ -31,10 +31,11 @@ const ArtistDashboard = () => {
   useEffect(() => {  //eventos del home
     setLoading(true);
     eventosServices.getEventos() 
-      .then(data => setEvents(data)) 
+      .then(data => setEvents(data))
       .catch(error => console.error('Error fetching events:', error))
       .finally(() => setLoading(false)); 
   }, []);
+
 
   useEffect(() => {
     setLoading(true);  
@@ -288,6 +289,7 @@ const ArtistDashboard = () => {
                 dateTime={eventReco.dateTime} 
                 latitude={eventReco.latitude}
                 longitude={eventReco.longitude}
+                genre={eventReco.genres[0]}
               />
             ))}
           </div>
@@ -314,6 +316,7 @@ const ArtistDashboard = () => {
           dateTime={event.dateTime} 
           latitude={event.latitude}
           longitude={event.longitude}
+          genre={event.genres[0]}
         />
       ))
       ) : (
